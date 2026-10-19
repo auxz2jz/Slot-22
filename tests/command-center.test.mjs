@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {renderCommandCenter,renderCommandDetail,commandOverview,upgradeKey} from '../command-center.mjs';
+import {renderCommandCenter,renderCommandDetail,commandOverview,upgradeKey,rankCandidates} from '../command-center.mjs';
 const ex=()=>({tag:'#TEST',timestamp:1792441915,helpers:[{data:93000000,lvl:7,helper_cooldown:42583},{data:93000001,lvl:8,helper_cooldown:42583},{data:93000002,lvl:3},{data:93000003,lvl:1}],
  buildings:[{data:1000001,lvl:14},{data:1000015,lvl:2,cnt:5},{data:1000020,lvl:6,timer:236082},
  {data:1000014,lvl:9,timer:180649},{data:1000000,lvl:10,timer:94275},
@@ -100,4 +100,15 @@ test('separate reported 50% returning boost does not stack on Gold Pass twice',(
  assert.match(camp,/4,500,000 Elixir/);
  assert.match(spell,/2,100,000 Elixir/);
  assert.doesNotMatch(camp,/3,600,000 Elixir/);
+});
+
+test('current Shiny Ore shortage makes affordable Rage Vial better immediate spend than Eternal Tome',()=>{
+ const profile=p();
+ const overview=commandOverview(profile);
+ const equipment=overview.queueStates.find(q=>q.id==='equipment');
+ assert.equal(equipment.next[0].title,'Rage Vial 5 → 6');
+ assert.equal(equipment.next[0].recordedAffordable,true);
+ const tome=equipment.next.find(t=>t.title==='Eternal Tome 8 → 9');
+ assert.equal(tome.recordedAffordable,false);
+ assert.ok(equipment.next[0].priority>tome.priority);
 });
