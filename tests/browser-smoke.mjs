@@ -257,5 +257,5 @@ try{
  console.log('CUSTOM EVENT & MAGIC ITEMS:',eventResult);
  if(!['customSaved','choiceClaimed','inventorySeparate','edited','overLimitSaved','customItem','otherUnaffected'].every(k=>eventResult[k]===true))process.exitCode=1;
  console.log('BROWSER ERRORS:',failures);
- if(!body.toLowerCase().includes('your command center')||!body.toLowerCase().includes('resource vaults')||body.toLowerCase().includes('loading village tracker'))process.exitCode=1;
+ if(!body.toLowerCase().includes('village command center')||!body.toLowerCase().includes('builder gold')||body.toLowerCase().includes('loading village tracker'))process.exitCode=1;
 }catch(e){console.error(e);process.exitCode=1;}finally{ws?.close();chrome.kill('SIGKILL');}
