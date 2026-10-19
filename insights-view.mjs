@@ -1,6 +1,7 @@
 import {format} from './core.mjs';
 import {renderVillageIntelligence} from './intelligence-view.mjs';
 import {helperSummary,snapshotCoverage,bobSummary,recordSummary} from './snapshot-insights.mjs';
+import {helperActionRecommendations} from './helper-advice.mjs';
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const helperDescription={93000000:'Speeds up one Home Village building or hero upgrade when assigned.',
 93000001:'Speeds up one Laboratory research upgrade when assigned.',
@@ -30,12 +31,33 @@ function helperTile(h){
  target+(a?work+repeat:'')+cooldown+
  '<small>'+safe(helperDescription[h.id]||'Check this helper in your village.')+'</small></div>';
 }
+export function renderHelperRecommendations(profile){
+ const suggestions=helperActionRecommendations(profile);
+ if(!suggestions.length)return '';
+ return '<div class="helper-next-actions" aria-label="Helper action recommendations">'+
+ '<h3>What your assistants should do next</h3>'+
+ '<p class="subtext">All assistants share a 23-hour workday reset, but each may work once per workday. A cooldown on one does NOT prove the others are used.</p>'+
+ '<div class="helper-recommend-grid">'+suggestions.map(h=>
+  '<div class="helper-recommend" data-helper-advice="'+Number(h.id)+'">'+
+   '<strong>'+safe(h.name)+' · Lv '+Number(h.level)+'</strong>'+
+   (h.availability==='cooldown-recorded'?'<span class="helper-recommend-state">Personal cooldown recorded at export</span>':
+    '<span class="helper-recommend-state">Today’s use not confirmed</span>')+
+   '<small>Where: '+safe(h.location)+'</small>'+
+   '<span>'+safe(h.action)+'</span>'+
+   '<small>'+safe(h.note)+'</small>'+
+   (h.availability==='cooldown-recorded'&&h.cooldownEnd!==null?
+    '<small>Cooldown: <span class="helper-countdown" data-helper-cooldown-end="'+h.cooldownEnd+'">'+safe(helperCountdown(h.cooldownEnd,'cooldown'))+'</span></small>':'')+
+   '</div>').join('')+'</div>'+
+ '<p class="smallmuted">Recommendations use your most recently imported JSON, not live in-game helper assignments. Check each assistant’s own usage in the Helper Hut before acting. No Gems or resources are spent automatically.</p>'+
+ '</div>';
+}
 export function renderHelperStrip(profile){
  const list=helperSummary(profile.export);
  if(!profile.export)return '';
  return '<section class="card helper-panel"><div class="panel-heading"><div><span class="kicker">HELPER HUT</span><h2>Your helpers</h2></div>'+
  '<button class="btn secondary small" data-action="go-insights">View all export data</button></div>'+
  (list.length?'<div class="helper-grid">'+list.map(helperTile).join('')+'</div>':'<p class="subtext">No helpers appear in this snapshot.</p>')+
+ renderHelperRecommendations(profile)+
  '<p class="smallmuted">Helper assignments appear only when the game JSON reports a target. Work-session and cooldown estimates count down from the game snapshot date using your phone clock; once elapsed, refresh JSON to confirm actual status. Helpers are not controlled from this planner. No Gems spent.</p></section>';
 }
 function bobCard(b){
