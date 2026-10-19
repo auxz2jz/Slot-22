@@ -39,9 +39,9 @@ export function preserveUpgradeTracking(previous,next) {
       const match=prior.map((p,i)=>({p,i})).filter(({p,i})=>
         !used.has(i)&&p.category===category&&p.id===e.data&&p.level===e.lvl&&
         Number.isFinite(p.firstSeenAt)&&Number.isFinite(p.endAt)&&
-        p.lastSeenAt<=snapshot&&p.endAt>snapshot&&
-        // Normal snapshots share a finish time; allow accelerated or shifted timers.
-        endAt<=p.endAt+10*60*1000
+        p.lastSeenAt<=snapshot&&p.endAt>snapshot
+        // A spell, helper or boost can change the finish time while the
+        // same level is still upgrading. Never reset solely for an ETA shift.
       ).sort((a,b)=>Math.abs(a.p.endAt-endAt)-Math.abs(b.p.endAt-endAt))[0];
       if(match)used.add(match.i);
       return {category,id:e.data,level:e.lvl,
@@ -53,6 +53,11 @@ export function importVillage(state, input, now=new Date().toISOString()) {
   const x=validateExport(input);
   const copy=structuredClone(state);
   if(copy.playerTag && copy.playerTag!==x.tag) throw Error('Player tag mismatch. This planner belongs to '+copy.playerTag+'.');
+  // The game's snapshot timestamp, not the time this file was imported,
+  // determines freshness. Never replace a newer countdown with an old export.
+  const oldTimestamp=copy.export?.timestamp;
+  if(Number.isFinite(oldTimestamp) && (!Number.isFinite(x.timestamp)||x.timestamp<oldTimestamp))
+    throw Error('This village JSON is older than the saved snapshot (or has no timestamp). Copy a fresh village JSON from Clash of Clans; your current planner data is unchanged.');
   if(copy.export){
     const diff=compareSnapshots(copy.export,x);
     if(diff && (diff.changes.length||diff.other.length))copy.snapshotChanges=[...(copy.snapshotChanges||[]),diff].slice(-5);
