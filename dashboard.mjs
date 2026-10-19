@@ -59,26 +59,32 @@ export function builderBoard(profile,now=Date.now()){
     'Troops':'units','Builder troops':'units2','Spells':'spells','Pets':'pets','Siege machines':'siege_machines'
   })[r.category]||r.category}));
   const groups=queueGroups(mapped);
+  const savedTracks=Array.isArray(profile.upgradeTracking)?profile.upgradeTracking:[];
+  const usedTracks=new Set();
   const keys=['Home builders','Builder Base builders','Laboratory','Star Laboratory','Pets','Other'];
   const queueLegend={ 'Home builders':'🏠','Builder Base builders':'🛠','Laboratory':'⚗','Star Laboratory':'🔬','Pets':'🐾',Other:'◇'};
   const content=keys.filter(k=>groups[k].length).map(k=>{
     const list=groups[k];
     return '<div class="queue-group"><div class="queue-title"><strong>'+queueLegend[k]+' '+esc(k)+'</strong><span>'+list.length+' in snapshot</span></div>'+
       '<div class="queue-tiles">'+list.map(r=>{
-        const count=snapshotCountdown(ex,r,now);
+        const match=savedTracks.map((t,i)=>({t,i})).filter(({t,i})=>
+          !usedTracks.has(i)&&t.category===r.categoryId&&t.id===r.id&&t.level===r.level
+        ).sort((a,b)=>Math.abs(a.t.endAt-r.finishesAt)-Math.abs(b.t.endAt-r.finishesAt))[0];
+        if(match)usedTracks.add(match.i);
+        const count=snapshotCountdown(ex,r,now,match?.t.firstSeenAt);
         const expired=count?.remaining.expired;
         return '<button class="queue-tile" data-open-record="'+r.index+'" aria-label="Details for '+esc(r.name)+'">'+
           '<div class="queue-art">'+iconFor(r.categoryId,r.name,r.level)+'</div>'+
           '<div class="queue-data"><span class="queue-name">'+esc(r.name)+' <em>Lv '+r.level+' → '+(r.level+1)+'</em></span>'+
           '<span class="queue-time" data-timer-end="'+(count?.end||0)+'">'+(count?esc(count.remaining.text):'Timer unavailable')+'</span>'+
-          '<div class="mini-track" title="Time elapsed since snapshot; not overall construction completion"><span data-timer-progress="'+(count?.start||0)+','+(count?.end||0)+'"></span></div>'+
-          '<span class="queue-basis">'+(expired?'Snapshot is outdated':'Countdown since import')+'</span></div>'+
+          '<div class="mini-track" title="Time elapsed since first tracked; not overall construction completion"><span data-timer-progress="'+(count?.start||0)+','+(count?.end||0)+'"></span></div>'+
+          '<span class="queue-basis">'+(expired?'Snapshot is outdated':count?.basis||'Countdown since import')+'</span></div>'+
           '<span class="chevron" aria-hidden="true">›</span></button>';
       }).join('')+'</div></div>';
   }).join('');
   return '<section class="card queue-board"><div class="panel-heading"><div><span class="kicker">BUILD STATUS</span><h2>Live countdown board</h2></div>'+
     '<button class="btn secondary small" data-action="paste-shortcut">Update snapshot</button></div>'+
-    '<p class="subtext">Timers count down using the most recent imported JSON. Bars represent time elapsed since that snapshot, not the full upgrade duration. Expired timers do not mark an upgrade complete.</p>'+
+    '<p class="subtext">Timers count down using the most recent imported JSON. Bars track elapsed time since each upgrade was first observed and persist across imports. They do not represent the full construction duration. Expired timers do not mark an upgrade complete.</p>'+
     (content||'<div class="empty">No upgrade timers in this snapshot. Import newer game data to refresh.</div>')+'</section>';
 }
 export function questTrail(tasks,mode='all'){
