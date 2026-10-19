@@ -1,1403 +1,1412 @@
 {
-  "schemaVersion": 1,
-  "playerTag": "#QVLP9RVV",
+  "schemaVersion": 2,
+  "activeProfileId": "#QVLP9RVV",
+  "profiles": {
+    "#QVLP9RVV": {
+      "schemaVersion": 1,
+      "playerTag": "#QVLP9RVV",
+      "revision": 0,
+      "savedAt": null,
+      "resources": {
+        "gold": 19000000,
+        "elixir": 12608735,
+        "dark": 207783,
+        "gems": 4023,
+        "builderGold": 1605931,
+        "builderElixir": 360800,
+        "cartGold": 17000000,
+        "cartElixir": 17000000,
+        "cartDark": 170000,
+        "shiny": 940,
+        "glowy": 222,
+        "starry": 11
+      },
+      "resourceNotes": "Estimates from October 18 user messages. Builder balances reflect 2.5M and 3M spent; game values take precedence. Loot Cart and unclaimed event rewards separate.",
+      "items": {
+        "Power Potion": 8,
+        "Resource Potion": 6,
+        "Builder Potion": 4,
+        "Clock Tower Potion": 7,
+        "Hero Potion": 5,
+        "Research Potion": 6,
+        "Super Potion": 3,
+        "Pet Potion": 3,
+        "Builder Star Jar": 3,
+        "Shovel of Obstacles": 3,
+        "Book of Fighting": 1,
+        "Book of Building": 1,
+        "Book of Spells": 1,
+        "Book of Heroes": 1,
+        "Rune of Gold": 1,
+        "Rune of Elixir": 1,
+        "Rune of Dark Elixir": 1,
+        "Rune of Builder Gold": 1,
+        "Rune of Builder Elixir": 1,
+        "Wall Ring": 5
+      },
+      "roadmap": [
+        {
+          "id": "H-01",
+          "title": "Pet House 3 → 4",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "elixir",
+          "cost": 3000000,
+          "note": "Unlock Unicorn",
+          "status": "active",
+          "updatedAt": null
+        },
+        {
+          "id": "H-02",
+          "title": "Clan Castle 9 → 10",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "elixir",
+          "cost": 5000000,
+          "note": "Reinforcement capacity",
+          "status": "active",
+          "updatedAt": null
+        },
+        {
+          "id": "H-03",
+          "title": "First Army Camp 10 → 11",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "elixir",
+          "cost": 3750000,
+          "note": "Upgrade all four",
+          "status": "active",
+          "updatedAt": null
+        },
+        {
+          "id": "H-04",
+          "title": "Inferno Tower 7 → 8",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "gold",
+          "cost": 4750000,
+          "note": "Strong core defense",
+          "status": "active",
+          "updatedAt": null
+        },
+        {
+          "id": "H-05",
+          "title": "Archer Queen 47 → 48",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "dark",
+          "cost": 39500,
+          "note": "Next hero cycle",
+          "status": "active",
+          "updatedAt": null
+        },
+        {
+          "id": "L-01",
+          "title": "Freeze Spell 3 → 4",
+          "village": "Home",
+          "queue": "Laboratory",
+          "costType": "elixir",
+          "cost": 1500000,
+          "note": "Independent research",
+          "status": "active",
+          "updatedAt": null
+        },
+        {
+          "id": "P-01",
+          "title": "Electro Owl 1 → 2",
+          "village": "Home",
+          "queue": "Pet House",
+          "costType": "dark",
+          "cost": 30000,
+          "note": "Independent pet queue",
+          "status": "active",
+          "updatedAt": null
+        },
+        {
+          "id": "E-01",
+          "title": "Eternal Tome 7 → 8",
+          "village": "Home",
+          "queue": "Blacksmith",
+          "costType": "shiny",
+          "cost": 0,
+          "note": "Completed, lvl 8",
+          "status": "done",
+          "updatedAt": null
+        },
+        {
+          "id": "B-01",
+          "title": "Builder Cannon 7 → 8",
+          "village": "Builder",
+          "queue": "Builder",
+          "costType": "builderGold",
+          "cost": 2500000,
+          "note": "Toward B.O.B.",
+          "status": "active",
+          "updatedAt": null
+        },
+        {
+          "id": "B-02",
+          "title": "Star Laboratory 7 → 8",
+          "village": "Builder",
+          "queue": "Builder",
+          "costType": "builderElixir",
+          "cost": 3000000,
+          "note": "Toward B.O.B.",
+          "status": "active",
+          "updatedAt": null
+        },
+        {
+          "id": "L-02",
+          "title": "Freeze Spell 4 → 5",
+          "village": "Home",
+          "queue": "Laboratory",
+          "costType": "elixir",
+          "cost": 2100000,
+          "note": "Research next",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "P-02",
+          "title": "Unicorn 1 → 2",
+          "village": "Home",
+          "queue": "Pet House",
+          "costType": "dark",
+          "cost": 50000,
+          "note": "After Pet House finishes",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "H-06",
+          "title": "Spell Factory 6 → 7",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "elixir",
+          "cost": 4500000,
+          "note": "Unlock Recall Spell",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "H-07",
+          "title": "Second Army Camp 10 → 11",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "elixir",
+          "cost": 3750000,
+          "note": "Army capacity",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "H-08",
+          "title": "Third Army Camp 10 → 11",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "elixir",
+          "cost": 3750000,
+          "note": "Army capacity",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "H-09",
+          "title": "Fourth Army Camp 10 → 11",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "elixir",
+          "cost": 3750000,
+          "note": "Army capacity",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "H-10",
+          "title": "Second Inferno Tower 7 → 8",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "gold",
+          "cost": 4750000,
+          "note": "Core defense",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "H-11",
+          "title": "Third Inferno Tower 7 → 8",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "gold",
+          "cost": 4750000,
+          "note": "Core defense",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "L-03",
+          "title": "Freeze Spell 5 → 6",
+          "village": "Home",
+          "queue": "Laboratory",
+          "costType": "elixir",
+          "cost": 3000000,
+          "note": "Verify game cost",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "L-04",
+          "title": "Freeze Spell 6 → 7",
+          "village": "Home",
+          "queue": "Laboratory",
+          "costType": "elixir",
+          "cost": 3500000,
+          "note": "Then upgrade preferred troops",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "B-03",
+          "title": "Builder Cannon 8 → 9",
+          "village": "Builder",
+          "queue": "Builder",
+          "costType": "builderGold",
+          "cost": 3300000,
+          "note": "B.O.B. defense milestone",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "B-04",
+          "title": "Star Laboratory 8 → 9",
+          "village": "Builder",
+          "queue": "Builder",
+          "costType": "builderElixir",
+          "cost": 4000000,
+          "note": "B.O.B. lab milestone",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "B-05",
+          "title": "One Builder troop to level 18",
+          "village": "Builder",
+          "queue": "Star Laboratory",
+          "costType": "builderElixir",
+          "cost": 0,
+          "note": "Confirm selected troop",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "B-06",
+          "title": "Combined Builder hero levels to 45",
+          "village": "Builder",
+          "queue": "Builder",
+          "costType": "builderElixir",
+          "cost": 0,
+          "note": "Currently 30/45",
+          "status": "planned",
+          "updatedAt": null
+        },
+        {
+          "id": "H-12",
+          "title": "Grand Warden / Queen upgrade cycle",
+          "village": "Home",
+          "queue": "Builder",
+          "costType": "elixir",
+          "cost": 0,
+          "note": "Select upgrade after army unlocks",
+          "status": "planned",
+          "updatedAt": null
+        }
+      ],
+      "export": {
+        "tag": "#QVLP9RVV",
+        "timestamp": 1792373123,
+        "helpers": [
+          {
+            "data": 93000000,
+            "lvl": 7
+          },
+          {
+            "data": 93000001,
+            "lvl": 8
+          },
+          {
+            "data": 93000002,
+            "lvl": 3
+          }
+        ],
+        "buildings": [
+          {
+            "data": 1000001,
+            "lvl": 14,
+            "weapon": 1
+          },
+          {
+            "data": 1000014,
+            "lvl": 9,
+            "timer": 249441
+          },
+          {
+            "data": 1000008,
+            "lvl": 13,
+            "gear_up": 1
+          },
+          {
+            "data": 1000009,
+            "lvl": 13,
+            "gear_up": 1
+          },
+          {
+            "data": 1000000,
+            "lvl": 10,
+            "timer": 163067
+          },
+          {
+            "data": 1000013,
+            "lvl": 9,
+            "gear_up": 1
+          },
+          {
+            "data": 1000027,
+            "lvl": 7,
+            "timer": 206282
+          },
+          {
+            "data": 1000068,
+            "lvl": 3,
+            "timer": 98204
+          },
+          {
+            "data": 1000000,
+            "lvl": 10,
+            "cnt": 3
+          },
+          {
+            "data": 1000002,
+            "lvl": 15,
+            "cnt": 3
+          },
+          {
+            "data": 1000002,
+            "lvl": 16,
+            "cnt": 4
+          },
+          {
+            "data": 1000003,
+            "lvl": 14,
+            "cnt": 4
+          },
+          {
+            "data": 1000004,
+            "lvl": 15,
+            "cnt": 6
+          },
+          {
+            "data": 1000004,
+            "lvl": 16
+          },
+          {
+            "data": 1000005,
+            "lvl": 14,
+            "cnt": 4
+          },
+          {
+            "data": 1000006,
+            "lvl": 14
+          },
+          {
+            "data": 1000007,
+            "lvl": 12
+          },
+          {
+            "data": 1000008,
+            "lvl": 11,
+            "cnt": 3
+          },
+          {
+            "data": 1000008,
+            "lvl": 12,
+            "cnt": 2
+          },
+          {
+            "data": 1000008,
+            "lvl": 13
+          },
+          {
+            "data": 1000009,
+            "lvl": 12,
+            "cnt": 6
+          },
+          {
+            "data": 1000009,
+            "lvl": 13
+          },
+          {
+            "data": 1000010,
+            "lvl": 10,
+            "cnt": 144
+          },
+          {
+            "data": 1000010,
+            "lvl": 11,
+            "cnt": 175
+          },
+          {
+            "data": 1000010,
+            "lvl": 12,
+            "cnt": 6
+          },
+          {
+            "data": 1000011,
+            "lvl": 8,
+            "cnt": 3
+          },
+          {
+            "data": 1000011,
+            "lvl": 9,
+            "cnt": 2
+          },
+          {
+            "data": 1000012,
+            "lvl": 7,
+            "cnt": 3
+          },
+          {
+            "data": 1000012,
+            "lvl": 8
+          },
+          {
+            "data": 1000013,
+            "lvl": 8,
+            "cnt": 3
+          },
+          {
+            "data": 1000015,
+            "lvl": 2,
+            "cnt": 5
+          },
+          {
+            "data": 1000019,
+            "lvl": 8,
+            "cnt": 2
+          },
+          {
+            "data": 1000019,
+            "lvl": 9
+          },
+          {
+            "data": 1000019,
+            "lvl": 11
+          },
+          {
+            "data": 1000019,
+            "lvl": 12
+          },
+          {
+            "data": 1000020,
+            "lvl": 6
+          },
+          {
+            "data": 1000021,
+            "lvl": 5
+          },
+          {
+            "data": 1000021,
+            "lvl": 7,
+            "cnt": 3
+          },
+          {
+            "data": 1000023,
+            "lvl": 9,
+            "cnt": 3
+          },
+          {
+            "data": 1000024,
+            "lvl": 8
+          },
+          {
+            "data": 1000026,
+            "lvl": 9
+          },
+          {
+            "data": 1000027,
+            "lvl": 7,
+            "cnt": 2
+          },
+          {
+            "data": 1000028,
+            "lvl": 6
+          },
+          {
+            "data": 1000028,
+            "lvl": 7
+          },
+          {
+            "data": 1000029,
+            "lvl": 6
+          },
+          {
+            "data": 1000031,
+            "lvl": 5
+          },
+          {
+            "data": 1000032,
+            "lvl": 6,
+            "cnt": 2
+          },
+          {
+            "data": 1000059,
+            "lvl": 5
+          },
+          {
+            "data": 1000067,
+            "lvl": 3,
+            "cnt": 2
+          },
+          {
+            "data": 1000070,
+            "lvl": 6
+          },
+          {
+            "data": 1000071,
+            "lvl": 7
+          },
+          {
+            "data": 1000093,
+            "lvl": 1
+          }
+        ],
+        "traps": [
+          {
+            "data": 12000000,
+            "lvl": 5
+          },
+          {
+            "data": 12000000,
+            "lvl": 8,
+            "cnt": 7
+          },
+          {
+            "data": 12000001,
+            "lvl": 5,
+            "cnt": 9
+          },
+          {
+            "data": 12000002,
+            "lvl": 2
+          },
+          {
+            "data": 12000002,
+            "lvl": 5,
+            "cnt": 6
+          },
+          {
+            "data": 12000005,
+            "lvl": 4
+          },
+          {
+            "data": 12000005,
+            "lvl": 6,
+            "cnt": 6
+          },
+          {
+            "data": 12000006,
+            "lvl": 1
+          },
+          {
+            "data": 12000006,
+            "lvl": 2,
+            "cnt": 6
+          },
+          {
+            "data": 12000006,
+            "lvl": 3
+          },
+          {
+            "data": 12000008,
+            "lvl": 2
+          },
+          {
+            "data": 12000008,
+            "lvl": 4,
+            "cnt": 3
+          },
+          {
+            "data": 12000016,
+            "lvl": 1
+          }
+        ],
+        "heroes": [
+          {
+            "data": 28000000,
+            "lvl": 44
+          },
+          {
+            "data": 28000001,
+            "lvl": 47,
+            "timer": 76730
+          },
+          {
+            "data": 28000002,
+            "lvl": 28
+          },
+          {
+            "data": 28000004,
+            "lvl": 20
+          },
+          {
+            "data": 28000006,
+            "lvl": 50
+          }
+        ],
+        "units": [
+          {
+            "data": 4000000,
+            "lvl": 9
+          },
+          {
+            "data": 4000001,
+            "lvl": 9
+          },
+          {
+            "data": 4000002,
+            "lvl": 6
+          },
+          {
+            "data": 4000003,
+            "lvl": 8
+          },
+          {
+            "data": 4000004,
+            "lvl": 7
+          },
+          {
+            "data": 4000005,
+            "lvl": 6
+          },
+          {
+            "data": 4000006,
+            "lvl": 7
+          },
+          {
+            "data": 4000007,
+            "lvl": 5
+          },
+          {
+            "data": 4000008,
+            "lvl": 9
+          },
+          {
+            "data": 4000009,
+            "lvl": 6
+          },
+          {
+            "data": 4000010,
+            "lvl": 6
+          },
+          {
+            "data": 4000011,
+            "lvl": 8
+          },
+          {
+            "data": 4000012,
+            "lvl": 5
+          },
+          {
+            "data": 4000013,
+            "lvl": 5
+          },
+          {
+            "data": 4000015,
+            "lvl": 3
+          },
+          {
+            "data": 4000017,
+            "lvl": 6
+          },
+          {
+            "data": 4000022,
+            "lvl": 5
+          },
+          {
+            "data": 4000023,
+            "lvl": 2
+          },
+          {
+            "data": 4000024,
+            "lvl": 3
+          },
+          {
+            "data": 4000053,
+            "lvl": 2
+          },
+          {
+            "data": 4000058,
+            "lvl": 2
+          },
+          {
+            "data": 4000059,
+            "lvl": 2
+          },
+          {
+            "data": 4000082,
+            "lvl": 3
+          }
+        ],
+        "siege_machines": [
+          {
+            "data": 4000051,
+            "lvl": 4
+          },
+          {
+            "data": 4000052,
+            "lvl": 1
+          },
+          {
+            "data": 4000062,
+            "lvl": 3
+          },
+          {
+            "data": 4000075,
+            "lvl": 1
+          },
+          {
+            "data": 4000087,
+            "lvl": 1
+          }
+        ],
+        "spells": [
+          {
+            "data": 26000000,
+            "lvl": 8
+          },
+          {
+            "data": 26000001,
+            "lvl": 6
+          },
+          {
+            "data": 26000002,
+            "lvl": 6
+          },
+          {
+            "data": 26000003,
+            "lvl": 2
+          },
+          {
+            "data": 26000009,
+            "lvl": 5
+          },
+          {
+            "data": 26000010,
+            "lvl": 5
+          },
+          {
+            "data": 26000011,
+            "lvl": 4
+          },
+          {
+            "data": 26000016,
+            "lvl": 3
+          },
+          {
+            "data": 26000017,
+            "lvl": 4
+          },
+          {
+            "data": 26000028,
+            "lvl": 3
+          },
+          {
+            "data": 26000035,
+            "lvl": 2
+          },
+          {
+            "data": 26000070,
+            "lvl": 3
+          },
+          {
+            "data": 26000005,
+            "lvl": 3,
+            "timer": 34332
+          }
+        ],
+        "pets": [
+          {
+            "data": 73000000,
+            "lvl": 3
+          },
+          {
+            "data": 73000001,
+            "lvl": 1
+          },
+          {
+            "data": 73000002,
+            "lvl": 1,
+            "timer": 12846
+          }
+        ],
+        "equipment": [
+          {
+            "data": 90000000,
+            "lvl": 5
+          },
+          {
+            "data": 90000001,
+            "lvl": 5
+          },
+          {
+            "data": 90000002,
+            "lvl": 6
+          },
+          {
+            "data": 90000003,
+            "lvl": 6
+          },
+          {
+            "data": 90000004,
+            "lvl": 8
+          },
+          {
+            "data": 90000005,
+            "lvl": 7
+          },
+          {
+            "data": 90000006,
+            "lvl": 6
+          },
+          {
+            "data": 90000007,
+            "lvl": 6
+          },
+          {
+            "data": 90000008,
+            "lvl": 2
+          },
+          {
+            "data": 90000010,
+            "lvl": 1
+          },
+          {
+            "data": 90000011,
+            "lvl": 1
+          },
+          {
+            "data": 90000013,
+            "lvl": 1
+          },
+          {
+            "data": 90000014,
+            "lvl": 1
+          },
+          {
+            "data": 90000015,
+            "lvl": 1
+          },
+          {
+            "data": 90000016,
+            "lvl": 1
+          },
+          {
+            "data": 90000017,
+            "lvl": 1
+          },
+          {
+            "data": 90000019,
+            "lvl": 1
+          },
+          {
+            "data": 90000020,
+            "lvl": 1
+          },
+          {
+            "data": 90000022,
+            "lvl": 1
+          },
+          {
+            "data": 90000024,
+            "lvl": 1
+          },
+          {
+            "data": 90000032,
+            "lvl": 1
+          },
+          {
+            "data": 90000034,
+            "lvl": 1
+          },
+          {
+            "data": 90000035,
+            "lvl": 1
+          },
+          {
+            "data": 90000039,
+            "lvl": 1
+          },
+          {
+            "data": 90000040,
+            "lvl": 1
+          },
+          {
+            "data": 90000041,
+            "lvl": 1
+          },
+          {
+            "data": 90000042,
+            "lvl": 1
+          },
+          {
+            "data": 90000043,
+            "lvl": 1
+          },
+          {
+            "data": 90000044,
+            "lvl": 1
+          },
+          {
+            "data": 90000047,
+            "lvl": 1
+          },
+          {
+            "data": 90000048,
+            "lvl": 1
+          },
+          {
+            "data": 90000049,
+            "lvl": 1
+          },
+          {
+            "data": 90000050,
+            "lvl": 1
+          },
+          {
+            "data": 90000051,
+            "lvl": 1
+          },
+          {
+            "data": 90000052,
+            "lvl": 1
+          },
+          {
+            "data": 90000053,
+            "lvl": 1
+          },
+          {
+            "data": 90000057,
+            "lvl": 1
+          },
+          {
+            "data": 90000060,
+            "lvl": 1
+          },
+          {
+            "data": 90000061,
+            "lvl": 1
+          }
+        ],
+        "buildings2": [
+          {
+            "data": 1000044,
+            "lvl": 7,
+            "timer": 192687
+          },
+          {
+            "data": 1000046,
+            "lvl": 7,
+            "timer": 192282
+          },
+          {
+            "data": 1000033,
+            "lvl": 3,
+            "cnt": 148
+          },
+          {
+            "data": 1000033,
+            "lvl": 4,
+            "cnt": 32
+          },
+          {
+            "data": 1000034,
+            "lvl": 9
+          },
+          {
+            "data": 1000035,
+            "lvl": 9,
+            "cnt": 3
+          },
+          {
+            "data": 1000036,
+            "lvl": 9,
+            "cnt": 2
+          },
+          {
+            "data": 1000037,
+            "lvl": 9,
+            "cnt": 3
+          },
+          {
+            "data": 1000038,
+            "lvl": 7,
+            "cnt": 2
+          },
+          {
+            "data": 1000039,
+            "lvl": 9
+          },
+          {
+            "data": 1000040,
+            "lvl": 11
+          },
+          {
+            "data": 1000041,
+            "lvl": 4
+          },
+          {
+            "data": 1000041,
+            "lvl": 5
+          },
+          {
+            "data": 1000041,
+            "lvl": 6
+          },
+          {
+            "data": 1000042,
+            "lvl": 1,
+            "cnt": 6
+          },
+          {
+            "data": 1000043,
+            "lvl": 5,
+            "cnt": 3
+          },
+          {
+            "data": 1000044,
+            "lvl": 5,
+            "cnt": 2
+          },
+          {
+            "data": 1000045,
+            "lvl": 8
+          },
+          {
+            "data": 1000048,
+            "lvl": 5
+          },
+          {
+            "data": 1000048,
+            "lvl": 6,
+            "cnt": 2
+          },
+          {
+            "data": 1000049,
+            "lvl": 1
+          },
+          {
+            "data": 1000050,
+            "lvl": 4,
+            "cnt": 2
+          },
+          {
+            "data": 1000050,
+            "lvl": 5,
+            "cnt": 3
+          },
+          {
+            "data": 1000051,
+            "lvl": 5
+          },
+          {
+            "data": 1000052,
+            "lvl": 5
+          },
+          {
+            "data": 1000053,
+            "lvl": 1
+          },
+          {
+            "data": 1000054,
+            "lvl": 4
+          },
+          {
+            "data": 1000055,
+            "lvl": 4,
+            "cnt": 2
+          },
+          {
+            "data": 1000056,
+            "lvl": 5
+          },
+          {
+            "data": 1000057,
+            "lvl": 1
+          },
+          {
+            "data": 1000058,
+            "lvl": 6
+          },
+          {
+            "data": 1000063,
+            "lvl": 1
+          },
+          {
+            "data": 1000065,
+            "lvl": 2
+          },
+          {
+            "data": 1000078,
+            "lvl": 1
+          },
+          {
+            "data": 1000080,
+            "lvl": 1
+          },
+          {
+            "data": 1000082,
+            "lvl": 2
+          }
+        ],
+        "traps2": [
+          {
+            "data": 12000010,
+            "lvl": 4,
+            "cnt": 6
+          },
+          {
+            "data": 12000011,
+            "lvl": 9,
+            "cnt": 5
+          },
+          {
+            "data": 12000013,
+            "lvl": 9,
+            "cnt": 5
+          },
+          {
+            "data": 12000014,
+            "lvl": 7,
+            "cnt": 4
+          }
+        ],
+        "units2": [
+          {
+            "data": 4000031,
+            "lvl": 13
+          },
+          {
+            "data": 4000032,
+            "lvl": 14
+          },
+          {
+            "data": 4000033,
+            "lvl": 12
+          },
+          {
+            "data": 4000034,
+            "lvl": 12
+          },
+          {
+            "data": 4000035,
+            "lvl": 12
+          },
+          {
+            "data": 4000036,
+            "lvl": 13
+          },
+          {
+            "data": 4000037,
+            "lvl": 14
+          },
+          {
+            "data": 4000038,
+            "lvl": 11
+          },
+          {
+            "data": 4000041,
+            "lvl": 12
+          },
+          {
+            "data": 4000042,
+            "lvl": 12
+          },
+          {
+            "data": 4000070,
+            "lvl": 15
+          }
+        ],
+        "heroes2": [
+          {
+            "data": 28000003,
+            "lvl": 15
+          },
+          {
+            "data": 28000005,
+            "lvl": 15
+          }
+        ],
+        "obstacles": [
+          {
+            "data": 8000004,
+            "cnt": 1
+          },
+          {
+            "data": 8000137,
+            "cnt": 1
+          },
+          {
+            "data": 8000139,
+            "cnt": 1
+          }
+        ],
+        "obstacles2": [
+          {
+            "data": 8000041,
+            "cnt": 4
+          },
+          {
+            "data": 8000047,
+            "cnt": 1
+          },
+          {
+            "data": 8000049,
+            "cnt": 1
+          },
+          {
+            "data": 8000056,
+            "cnt": 1
+          },
+          {
+            "data": 8000057,
+            "cnt": 1
+          },
+          {
+            "data": 8000058,
+            "cnt": 5
+          },
+          {
+            "data": 8000059,
+            "cnt": 3
+          },
+          {
+            "data": 8000063,
+            "cnt": 12
+          },
+          {
+            "data": 8000064,
+            "cnt": 6
+          },
+          {
+            "data": 8000091,
+            "cnt": 3
+          },
+          {
+            "data": 8000092,
+            "cnt": 2
+          },
+          {
+            "data": 8000097,
+            "cnt": 4
+          },
+          {
+            "data": 8000098,
+            "cnt": 1
+          },
+          {
+            "data": 8000099,
+            "cnt": 1
+          },
+          {
+            "data": 8000100,
+            "cnt": 2
+          },
+          {
+            "data": 8000105,
+            "cnt": 1
+          }
+        ],
+        "decos": [
+          {
+            "data": 18000001,
+            "cnt": 4
+          },
+          {
+            "data": 18000003,
+            "cnt": 1
+          },
+          {
+            "data": 18000005,
+            "cnt": 4
+          },
+          {
+            "data": 18000006,
+            "cnt": 4
+          },
+          {
+            "data": 18000007,
+            "cnt": 1
+          },
+          {
+            "data": 18000008,
+            "cnt": 1
+          },
+          {
+            "data": 18000009,
+            "cnt": 1
+          },
+          {
+            "data": 18000010,
+            "cnt": 1
+          },
+          {
+            "data": 18000060,
+            "cnt": 1
+          },
+          {
+            "data": 18000067,
+            "cnt": 1
+          }
+        ],
+        "decos2": [],
+        "boosts": {
+          "clocktower_cooldown": 30845
+        },
+        "house_parts": [
+          82000000,
+          82000008,
+          82000009,
+          82000011,
+          82000048,
+          82000058,
+          82000059
+        ],
+        "skins": [
+          52000020,
+          52000014,
+          52000005,
+          52000015,
+          52000006,
+          52000116,
+          52000210,
+          52000206
+        ],
+        "sceneries": [],
+        "skins2": [],
+        "sceneries2": []
+      },
+      "importedAt": "2026-10-18T18:25:23-07:00",
+      "history": [
+        {
+          "at": "2026-10-18T18:25:23-07:00",
+          "kind": "baseline",
+          "note": "Initial user-exported 2026-10-18 snapshot. All 5 Home builders and 2 Builder Base builders active; Freeze and Electro Owl active."
+        }
+      ],
+      "notes": "Goal: use 50% Home Village builder/research returning boost, avoid Gem spending and Rune waste; open event rewards before expiry and only when storage permits; unlock B.O.B. sixth builder.",
+      "boostEnd": null,
+      "displayName": "Main village"
+    }
+  },
   "revision": 0,
-  "savedAt": null,
-  "resources": {
-    "gold": 19000000,
-    "elixir": 12608735,
-    "dark": 207783,
-    "gems": 4023,
-    "builderGold": 1605931,
-    "builderElixir": 360800,
-    "cartGold": 17000000,
-    "cartElixir": 17000000,
-    "cartDark": 170000,
-    "shiny": 940,
-    "glowy": 222,
-    "starry": 11
-  },
-  "resourceNotes": "Estimates from October 18 user messages. Builder balances reflect 2.5M and 3M spent; game values take precedence. Loot Cart and unclaimed event rewards separate.",
-  "items": {
-    "Power Potion": 8,
-    "Resource Potion": 6,
-    "Builder Potion": 4,
-    "Clock Tower Potion": 7,
-    "Hero Potion": 5,
-    "Research Potion": 6,
-    "Super Potion": 3,
-    "Pet Potion": 3,
-    "Builder Star Jar": 3,
-    "Shovel of Obstacles": 3,
-    "Book of Fighting": 1,
-    "Book of Building": 1,
-    "Book of Spells": 1,
-    "Book of Heroes": 1,
-    "Rune of Gold": 1,
-    "Rune of Elixir": 1,
-    "Rune of Dark Elixir": 1,
-    "Rune of Builder Gold": 1,
-    "Rune of Builder Elixir": 1,
-    "Wall Ring": 5
-  },
-  "roadmap": [
-    {
-      "id": "H-01",
-      "title": "Pet House 3 → 4",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "elixir",
-      "cost": 3000000,
-      "note": "Unlock Unicorn",
-      "status": "active",
-      "updatedAt": null
-    },
-    {
-      "id": "H-02",
-      "title": "Clan Castle 9 → 10",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "elixir",
-      "cost": 5000000,
-      "note": "Reinforcement capacity",
-      "status": "active",
-      "updatedAt": null
-    },
-    {
-      "id": "H-03",
-      "title": "First Army Camp 10 → 11",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "elixir",
-      "cost": 3750000,
-      "note": "Upgrade all four",
-      "status": "active",
-      "updatedAt": null
-    },
-    {
-      "id": "H-04",
-      "title": "Inferno Tower 7 → 8",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "gold",
-      "cost": 4750000,
-      "note": "Strong core defense",
-      "status": "active",
-      "updatedAt": null
-    },
-    {
-      "id": "H-05",
-      "title": "Archer Queen 47 → 48",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "dark",
-      "cost": 39500,
-      "note": "Next hero cycle",
-      "status": "active",
-      "updatedAt": null
-    },
-    {
-      "id": "L-01",
-      "title": "Freeze Spell 3 → 4",
-      "village": "Home",
-      "queue": "Laboratory",
-      "costType": "elixir",
-      "cost": 1500000,
-      "note": "Independent research",
-      "status": "active",
-      "updatedAt": null
-    },
-    {
-      "id": "P-01",
-      "title": "Electro Owl 1 → 2",
-      "village": "Home",
-      "queue": "Pet House",
-      "costType": "dark",
-      "cost": 30000,
-      "note": "Independent pet queue",
-      "status": "active",
-      "updatedAt": null
-    },
-    {
-      "id": "E-01",
-      "title": "Eternal Tome 7 → 8",
-      "village": "Home",
-      "queue": "Blacksmith",
-      "costType": "shiny",
-      "cost": 0,
-      "note": "Completed, lvl 8",
-      "status": "done",
-      "updatedAt": null
-    },
-    {
-      "id": "B-01",
-      "title": "Builder Cannon 7 → 8",
-      "village": "Builder",
-      "queue": "Builder",
-      "costType": "builderGold",
-      "cost": 2500000,
-      "note": "Toward B.O.B.",
-      "status": "active",
-      "updatedAt": null
-    },
-    {
-      "id": "B-02",
-      "title": "Star Laboratory 7 → 8",
-      "village": "Builder",
-      "queue": "Builder",
-      "costType": "builderElixir",
-      "cost": 3000000,
-      "note": "Toward B.O.B.",
-      "status": "active",
-      "updatedAt": null
-    },
-    {
-      "id": "L-02",
-      "title": "Freeze Spell 4 → 5",
-      "village": "Home",
-      "queue": "Laboratory",
-      "costType": "elixir",
-      "cost": 2100000,
-      "note": "Research next",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "P-02",
-      "title": "Unicorn 1 → 2",
-      "village": "Home",
-      "queue": "Pet House",
-      "costType": "dark",
-      "cost": 50000,
-      "note": "After Pet House finishes",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "H-06",
-      "title": "Spell Factory 6 → 7",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "elixir",
-      "cost": 4500000,
-      "note": "Unlock Recall Spell",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "H-07",
-      "title": "Second Army Camp 10 → 11",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "elixir",
-      "cost": 3750000,
-      "note": "Army capacity",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "H-08",
-      "title": "Third Army Camp 10 → 11",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "elixir",
-      "cost": 3750000,
-      "note": "Army capacity",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "H-09",
-      "title": "Fourth Army Camp 10 → 11",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "elixir",
-      "cost": 3750000,
-      "note": "Army capacity",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "H-10",
-      "title": "Second Inferno Tower 7 → 8",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "gold",
-      "cost": 4750000,
-      "note": "Core defense",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "H-11",
-      "title": "Third Inferno Tower 7 → 8",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "gold",
-      "cost": 4750000,
-      "note": "Core defense",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "L-03",
-      "title": "Freeze Spell 5 → 6",
-      "village": "Home",
-      "queue": "Laboratory",
-      "costType": "elixir",
-      "cost": 3000000,
-      "note": "Verify game cost",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "L-04",
-      "title": "Freeze Spell 6 → 7",
-      "village": "Home",
-      "queue": "Laboratory",
-      "costType": "elixir",
-      "cost": 3500000,
-      "note": "Then upgrade preferred troops",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "B-03",
-      "title": "Builder Cannon 8 → 9",
-      "village": "Builder",
-      "queue": "Builder",
-      "costType": "builderGold",
-      "cost": 3300000,
-      "note": "B.O.B. defense milestone",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "B-04",
-      "title": "Star Laboratory 8 → 9",
-      "village": "Builder",
-      "queue": "Builder",
-      "costType": "builderElixir",
-      "cost": 4000000,
-      "note": "B.O.B. lab milestone",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "B-05",
-      "title": "One Builder troop to level 18",
-      "village": "Builder",
-      "queue": "Star Laboratory",
-      "costType": "builderElixir",
-      "cost": 0,
-      "note": "Confirm selected troop",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "B-06",
-      "title": "Combined Builder hero levels to 45",
-      "village": "Builder",
-      "queue": "Builder",
-      "costType": "builderElixir",
-      "cost": 0,
-      "note": "Currently 30/45",
-      "status": "planned",
-      "updatedAt": null
-    },
-    {
-      "id": "H-12",
-      "title": "Grand Warden / Queen upgrade cycle",
-      "village": "Home",
-      "queue": "Builder",
-      "costType": "elixir",
-      "cost": 0,
-      "note": "Select upgrade after army unlocks",
-      "status": "planned",
-      "updatedAt": null
-    }
-  ],
-  "export": {
-    "tag": "#QVLP9RVV",
-    "timestamp": 1792373123,
-    "helpers": [
-      {
-        "data": 93000000,
-        "lvl": 7
-      },
-      {
-        "data": 93000001,
-        "lvl": 8
-      },
-      {
-        "data": 93000002,
-        "lvl": 3
-      }
-    ],
-    "buildings": [
-      {
-        "data": 1000001,
-        "lvl": 14,
-        "weapon": 1
-      },
-      {
-        "data": 1000014,
-        "lvl": 9,
-        "timer": 249441
-      },
-      {
-        "data": 1000008,
-        "lvl": 13,
-        "gear_up": 1
-      },
-      {
-        "data": 1000009,
-        "lvl": 13,
-        "gear_up": 1
-      },
-      {
-        "data": 1000000,
-        "lvl": 10,
-        "timer": 163067
-      },
-      {
-        "data": 1000013,
-        "lvl": 9,
-        "gear_up": 1
-      },
-      {
-        "data": 1000027,
-        "lvl": 7,
-        "timer": 206282
-      },
-      {
-        "data": 1000068,
-        "lvl": 3,
-        "timer": 98204
-      },
-      {
-        "data": 1000000,
-        "lvl": 10,
-        "cnt": 3
-      },
-      {
-        "data": 1000002,
-        "lvl": 15,
-        "cnt": 3
-      },
-      {
-        "data": 1000002,
-        "lvl": 16,
-        "cnt": 4
-      },
-      {
-        "data": 1000003,
-        "lvl": 14,
-        "cnt": 4
-      },
-      {
-        "data": 1000004,
-        "lvl": 15,
-        "cnt": 6
-      },
-      {
-        "data": 1000004,
-        "lvl": 16
-      },
-      {
-        "data": 1000005,
-        "lvl": 14,
-        "cnt": 4
-      },
-      {
-        "data": 1000006,
-        "lvl": 14
-      },
-      {
-        "data": 1000007,
-        "lvl": 12
-      },
-      {
-        "data": 1000008,
-        "lvl": 11,
-        "cnt": 3
-      },
-      {
-        "data": 1000008,
-        "lvl": 12,
-        "cnt": 2
-      },
-      {
-        "data": 1000008,
-        "lvl": 13
-      },
-      {
-        "data": 1000009,
-        "lvl": 12,
-        "cnt": 6
-      },
-      {
-        "data": 1000009,
-        "lvl": 13
-      },
-      {
-        "data": 1000010,
-        "lvl": 10,
-        "cnt": 144
-      },
-      {
-        "data": 1000010,
-        "lvl": 11,
-        "cnt": 175
-      },
-      {
-        "data": 1000010,
-        "lvl": 12,
-        "cnt": 6
-      },
-      {
-        "data": 1000011,
-        "lvl": 8,
-        "cnt": 3
-      },
-      {
-        "data": 1000011,
-        "lvl": 9,
-        "cnt": 2
-      },
-      {
-        "data": 1000012,
-        "lvl": 7,
-        "cnt": 3
-      },
-      {
-        "data": 1000012,
-        "lvl": 8
-      },
-      {
-        "data": 1000013,
-        "lvl": 8,
-        "cnt": 3
-      },
-      {
-        "data": 1000015,
-        "lvl": 2,
-        "cnt": 5
-      },
-      {
-        "data": 1000019,
-        "lvl": 8,
-        "cnt": 2
-      },
-      {
-        "data": 1000019,
-        "lvl": 9
-      },
-      {
-        "data": 1000019,
-        "lvl": 11
-      },
-      {
-        "data": 1000019,
-        "lvl": 12
-      },
-      {
-        "data": 1000020,
-        "lvl": 6
-      },
-      {
-        "data": 1000021,
-        "lvl": 5
-      },
-      {
-        "data": 1000021,
-        "lvl": 7,
-        "cnt": 3
-      },
-      {
-        "data": 1000023,
-        "lvl": 9,
-        "cnt": 3
-      },
-      {
-        "data": 1000024,
-        "lvl": 8
-      },
-      {
-        "data": 1000026,
-        "lvl": 9
-      },
-      {
-        "data": 1000027,
-        "lvl": 7,
-        "cnt": 2
-      },
-      {
-        "data": 1000028,
-        "lvl": 6
-      },
-      {
-        "data": 1000028,
-        "lvl": 7
-      },
-      {
-        "data": 1000029,
-        "lvl": 6
-      },
-      {
-        "data": 1000031,
-        "lvl": 5
-      },
-      {
-        "data": 1000032,
-        "lvl": 6,
-        "cnt": 2
-      },
-      {
-        "data": 1000059,
-        "lvl": 5
-      },
-      {
-        "data": 1000067,
-        "lvl": 3,
-        "cnt": 2
-      },
-      {
-        "data": 1000070,
-        "lvl": 6
-      },
-      {
-        "data": 1000071,
-        "lvl": 7
-      },
-      {
-        "data": 1000093,
-        "lvl": 1
-      }
-    ],
-    "traps": [
-      {
-        "data": 12000000,
-        "lvl": 5
-      },
-      {
-        "data": 12000000,
-        "lvl": 8,
-        "cnt": 7
-      },
-      {
-        "data": 12000001,
-        "lvl": 5,
-        "cnt": 9
-      },
-      {
-        "data": 12000002,
-        "lvl": 2
-      },
-      {
-        "data": 12000002,
-        "lvl": 5,
-        "cnt": 6
-      },
-      {
-        "data": 12000005,
-        "lvl": 4
-      },
-      {
-        "data": 12000005,
-        "lvl": 6,
-        "cnt": 6
-      },
-      {
-        "data": 12000006,
-        "lvl": 1
-      },
-      {
-        "data": 12000006,
-        "lvl": 2,
-        "cnt": 6
-      },
-      {
-        "data": 12000006,
-        "lvl": 3
-      },
-      {
-        "data": 12000008,
-        "lvl": 2
-      },
-      {
-        "data": 12000008,
-        "lvl": 4,
-        "cnt": 3
-      },
-      {
-        "data": 12000016,
-        "lvl": 1
-      }
-    ],
-    "heroes": [
-      {
-        "data": 28000000,
-        "lvl": 44
-      },
-      {
-        "data": 28000001,
-        "lvl": 47,
-        "timer": 76730
-      },
-      {
-        "data": 28000002,
-        "lvl": 28
-      },
-      {
-        "data": 28000004,
-        "lvl": 20
-      },
-      {
-        "data": 28000006,
-        "lvl": 50
-      }
-    ],
-    "units": [
-      {
-        "data": 4000000,
-        "lvl": 9
-      },
-      {
-        "data": 4000001,
-        "lvl": 9
-      },
-      {
-        "data": 4000002,
-        "lvl": 6
-      },
-      {
-        "data": 4000003,
-        "lvl": 8
-      },
-      {
-        "data": 4000004,
-        "lvl": 7
-      },
-      {
-        "data": 4000005,
-        "lvl": 6
-      },
-      {
-        "data": 4000006,
-        "lvl": 7
-      },
-      {
-        "data": 4000007,
-        "lvl": 5
-      },
-      {
-        "data": 4000008,
-        "lvl": 9
-      },
-      {
-        "data": 4000009,
-        "lvl": 6
-      },
-      {
-        "data": 4000010,
-        "lvl": 6
-      },
-      {
-        "data": 4000011,
-        "lvl": 8
-      },
-      {
-        "data": 4000012,
-        "lvl": 5
-      },
-      {
-        "data": 4000013,
-        "lvl": 5
-      },
-      {
-        "data": 4000015,
-        "lvl": 3
-      },
-      {
-        "data": 4000017,
-        "lvl": 6
-      },
-      {
-        "data": 4000022,
-        "lvl": 5
-      },
-      {
-        "data": 4000023,
-        "lvl": 2
-      },
-      {
-        "data": 4000024,
-        "lvl": 3
-      },
-      {
-        "data": 4000053,
-        "lvl": 2
-      },
-      {
-        "data": 4000058,
-        "lvl": 2
-      },
-      {
-        "data": 4000059,
-        "lvl": 2
-      },
-      {
-        "data": 4000082,
-        "lvl": 3
-      }
-    ],
-    "siege_machines": [
-      {
-        "data": 4000051,
-        "lvl": 4
-      },
-      {
-        "data": 4000052,
-        "lvl": 1
-      },
-      {
-        "data": 4000062,
-        "lvl": 3
-      },
-      {
-        "data": 4000075,
-        "lvl": 1
-      },
-      {
-        "data": 4000087,
-        "lvl": 1
-      }
-    ],
-    "spells": [
-      {
-        "data": 26000000,
-        "lvl": 8
-      },
-      {
-        "data": 26000001,
-        "lvl": 6
-      },
-      {
-        "data": 26000002,
-        "lvl": 6
-      },
-      {
-        "data": 26000003,
-        "lvl": 2
-      },
-      {
-        "data": 26000009,
-        "lvl": 5
-      },
-      {
-        "data": 26000010,
-        "lvl": 5
-      },
-      {
-        "data": 26000011,
-        "lvl": 4
-      },
-      {
-        "data": 26000016,
-        "lvl": 3
-      },
-      {
-        "data": 26000017,
-        "lvl": 4
-      },
-      {
-        "data": 26000028,
-        "lvl": 3
-      },
-      {
-        "data": 26000035,
-        "lvl": 2
-      },
-      {
-        "data": 26000070,
-        "lvl": 3
-      },
-      {
-        "data": 26000005,
-        "lvl": 3,
-        "timer": 34332
-      }
-    ],
-    "pets": [
-      {
-        "data": 73000000,
-        "lvl": 3
-      },
-      {
-        "data": 73000001,
-        "lvl": 1
-      },
-      {
-        "data": 73000002,
-        "lvl": 1,
-        "timer": 12846
-      }
-    ],
-    "equipment": [
-      {
-        "data": 90000000,
-        "lvl": 5
-      },
-      {
-        "data": 90000001,
-        "lvl": 5
-      },
-      {
-        "data": 90000002,
-        "lvl": 6
-      },
-      {
-        "data": 90000003,
-        "lvl": 6
-      },
-      {
-        "data": 90000004,
-        "lvl": 8
-      },
-      {
-        "data": 90000005,
-        "lvl": 7
-      },
-      {
-        "data": 90000006,
-        "lvl": 6
-      },
-      {
-        "data": 90000007,
-        "lvl": 6
-      },
-      {
-        "data": 90000008,
-        "lvl": 2
-      },
-      {
-        "data": 90000010,
-        "lvl": 1
-      },
-      {
-        "data": 90000011,
-        "lvl": 1
-      },
-      {
-        "data": 90000013,
-        "lvl": 1
-      },
-      {
-        "data": 90000014,
-        "lvl": 1
-      },
-      {
-        "data": 90000015,
-        "lvl": 1
-      },
-      {
-        "data": 90000016,
-        "lvl": 1
-      },
-      {
-        "data": 90000017,
-        "lvl": 1
-      },
-      {
-        "data": 90000019,
-        "lvl": 1
-      },
-      {
-        "data": 90000020,
-        "lvl": 1
-      },
-      {
-        "data": 90000022,
-        "lvl": 1
-      },
-      {
-        "data": 90000024,
-        "lvl": 1
-      },
-      {
-        "data": 90000032,
-        "lvl": 1
-      },
-      {
-        "data": 90000034,
-        "lvl": 1
-      },
-      {
-        "data": 90000035,
-        "lvl": 1
-      },
-      {
-        "data": 90000039,
-        "lvl": 1
-      },
-      {
-        "data": 90000040,
-        "lvl": 1
-      },
-      {
-        "data": 90000041,
-        "lvl": 1
-      },
-      {
-        "data": 90000042,
-        "lvl": 1
-      },
-      {
-        "data": 90000043,
-        "lvl": 1
-      },
-      {
-        "data": 90000044,
-        "lvl": 1
-      },
-      {
-        "data": 90000047,
-        "lvl": 1
-      },
-      {
-        "data": 90000048,
-        "lvl": 1
-      },
-      {
-        "data": 90000049,
-        "lvl": 1
-      },
-      {
-        "data": 90000050,
-        "lvl": 1
-      },
-      {
-        "data": 90000051,
-        "lvl": 1
-      },
-      {
-        "data": 90000052,
-        "lvl": 1
-      },
-      {
-        "data": 90000053,
-        "lvl": 1
-      },
-      {
-        "data": 90000057,
-        "lvl": 1
-      },
-      {
-        "data": 90000060,
-        "lvl": 1
-      },
-      {
-        "data": 90000061,
-        "lvl": 1
-      }
-    ],
-    "buildings2": [
-      {
-        "data": 1000044,
-        "lvl": 7,
-        "timer": 192687
-      },
-      {
-        "data": 1000046,
-        "lvl": 7,
-        "timer": 192282
-      },
-      {
-        "data": 1000033,
-        "lvl": 3,
-        "cnt": 148
-      },
-      {
-        "data": 1000033,
-        "lvl": 4,
-        "cnt": 32
-      },
-      {
-        "data": 1000034,
-        "lvl": 9
-      },
-      {
-        "data": 1000035,
-        "lvl": 9,
-        "cnt": 3
-      },
-      {
-        "data": 1000036,
-        "lvl": 9,
-        "cnt": 2
-      },
-      {
-        "data": 1000037,
-        "lvl": 9,
-        "cnt": 3
-      },
-      {
-        "data": 1000038,
-        "lvl": 7,
-        "cnt": 2
-      },
-      {
-        "data": 1000039,
-        "lvl": 9
-      },
-      {
-        "data": 1000040,
-        "lvl": 11
-      },
-      {
-        "data": 1000041,
-        "lvl": 4
-      },
-      {
-        "data": 1000041,
-        "lvl": 5
-      },
-      {
-        "data": 1000041,
-        "lvl": 6
-      },
-      {
-        "data": 1000042,
-        "lvl": 1,
-        "cnt": 6
-      },
-      {
-        "data": 1000043,
-        "lvl": 5,
-        "cnt": 3
-      },
-      {
-        "data": 1000044,
-        "lvl": 5,
-        "cnt": 2
-      },
-      {
-        "data": 1000045,
-        "lvl": 8
-      },
-      {
-        "data": 1000048,
-        "lvl": 5
-      },
-      {
-        "data": 1000048,
-        "lvl": 6,
-        "cnt": 2
-      },
-      {
-        "data": 1000049,
-        "lvl": 1
-      },
-      {
-        "data": 1000050,
-        "lvl": 4,
-        "cnt": 2
-      },
-      {
-        "data": 1000050,
-        "lvl": 5,
-        "cnt": 3
-      },
-      {
-        "data": 1000051,
-        "lvl": 5
-      },
-      {
-        "data": 1000052,
-        "lvl": 5
-      },
-      {
-        "data": 1000053,
-        "lvl": 1
-      },
-      {
-        "data": 1000054,
-        "lvl": 4
-      },
-      {
-        "data": 1000055,
-        "lvl": 4,
-        "cnt": 2
-      },
-      {
-        "data": 1000056,
-        "lvl": 5
-      },
-      {
-        "data": 1000057,
-        "lvl": 1
-      },
-      {
-        "data": 1000058,
-        "lvl": 6
-      },
-      {
-        "data": 1000063,
-        "lvl": 1
-      },
-      {
-        "data": 1000065,
-        "lvl": 2
-      },
-      {
-        "data": 1000078,
-        "lvl": 1
-      },
-      {
-        "data": 1000080,
-        "lvl": 1
-      },
-      {
-        "data": 1000082,
-        "lvl": 2
-      }
-    ],
-    "traps2": [
-      {
-        "data": 12000010,
-        "lvl": 4,
-        "cnt": 6
-      },
-      {
-        "data": 12000011,
-        "lvl": 9,
-        "cnt": 5
-      },
-      {
-        "data": 12000013,
-        "lvl": 9,
-        "cnt": 5
-      },
-      {
-        "data": 12000014,
-        "lvl": 7,
-        "cnt": 4
-      }
-    ],
-    "units2": [
-      {
-        "data": 4000031,
-        "lvl": 13
-      },
-      {
-        "data": 4000032,
-        "lvl": 14
-      },
-      {
-        "data": 4000033,
-        "lvl": 12
-      },
-      {
-        "data": 4000034,
-        "lvl": 12
-      },
-      {
-        "data": 4000035,
-        "lvl": 12
-      },
-      {
-        "data": 4000036,
-        "lvl": 13
-      },
-      {
-        "data": 4000037,
-        "lvl": 14
-      },
-      {
-        "data": 4000038,
-        "lvl": 11
-      },
-      {
-        "data": 4000041,
-        "lvl": 12
-      },
-      {
-        "data": 4000042,
-        "lvl": 12
-      },
-      {
-        "data": 4000070,
-        "lvl": 15
-      }
-    ],
-    "heroes2": [
-      {
-        "data": 28000003,
-        "lvl": 15
-      },
-      {
-        "data": 28000005,
-        "lvl": 15
-      }
-    ],
-    "obstacles": [
-      {
-        "data": 8000004,
-        "cnt": 1
-      },
-      {
-        "data": 8000137,
-        "cnt": 1
-      },
-      {
-        "data": 8000139,
-        "cnt": 1
-      }
-    ],
-    "obstacles2": [
-      {
-        "data": 8000041,
-        "cnt": 4
-      },
-      {
-        "data": 8000047,
-        "cnt": 1
-      },
-      {
-        "data": 8000049,
-        "cnt": 1
-      },
-      {
-        "data": 8000056,
-        "cnt": 1
-      },
-      {
-        "data": 8000057,
-        "cnt": 1
-      },
-      {
-        "data": 8000058,
-        "cnt": 5
-      },
-      {
-        "data": 8000059,
-        "cnt": 3
-      },
-      {
-        "data": 8000063,
-        "cnt": 12
-      },
-      {
-        "data": 8000064,
-        "cnt": 6
-      },
-      {
-        "data": 8000091,
-        "cnt": 3
-      },
-      {
-        "data": 8000092,
-        "cnt": 2
-      },
-      {
-        "data": 8000097,
-        "cnt": 4
-      },
-      {
-        "data": 8000098,
-        "cnt": 1
-      },
-      {
-        "data": 8000099,
-        "cnt": 1
-      },
-      {
-        "data": 8000100,
-        "cnt": 2
-      },
-      {
-        "data": 8000105,
-        "cnt": 1
-      }
-    ],
-    "decos": [
-      {
-        "data": 18000001,
-        "cnt": 4
-      },
-      {
-        "data": 18000003,
-        "cnt": 1
-      },
-      {
-        "data": 18000005,
-        "cnt": 4
-      },
-      {
-        "data": 18000006,
-        "cnt": 4
-      },
-      {
-        "data": 18000007,
-        "cnt": 1
-      },
-      {
-        "data": 18000008,
-        "cnt": 1
-      },
-      {
-        "data": 18000009,
-        "cnt": 1
-      },
-      {
-        "data": 18000010,
-        "cnt": 1
-      },
-      {
-        "data": 18000060,
-        "cnt": 1
-      },
-      {
-        "data": 18000067,
-        "cnt": 1
-      }
-    ],
-    "decos2": [],
-    "boosts": {
-      "clocktower_cooldown": 30845
-    },
-    "house_parts": [
-      82000000,
-      82000008,
-      82000009,
-      82000011,
-      82000048,
-      82000058,
-      82000059
-    ],
-    "skins": [
-      52000020,
-      52000014,
-      52000005,
-      52000015,
-      52000006,
-      52000116,
-      52000210,
-      52000206
-    ],
-    "sceneries": [],
-    "skins2": [],
-    "sceneries2": []
-  },
-  "importedAt": "2026-10-18T18:25:23-07:00",
-  "history": [
-    {
-      "at": "2026-10-18T18:25:23-07:00",
-      "kind": "baseline",
-      "note": "Initial user-exported 2026-10-18 snapshot. All 5 Home builders and 2 Builder Base builders active; Freeze and Electro Owl active."
-    }
-  ],
-  "notes": "Goal: use 50% Home Village builder/research returning boost, avoid Gem spending and Rune waste; open event rewards before expiry and only when storage permits; unlock B.O.B. sixth builder.",
-  "boostEnd": null
+  "savedAt": null
 }
