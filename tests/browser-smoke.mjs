@@ -17,7 +17,7 @@ try{
   if(m.id&&pending.has(m.id)){pending.get(m.id)(m);pending.delete(m.id);}
   else if(['Runtime.exceptionThrown','Log.entryAdded','Network.loadingFailed'].includes(m.method)){
    const v=m.params.exceptionDetails||m.params.entry||m.params;
-   failures.push(m.method+': '+String(v.exception?.description||v.text||JSON.stringify(v)).slice(0,1600));
+   failures.push(m.method+': '+JSON.stringify(v).slice(0,2300));
   }
  });
  const cmd=(method,params={})=>new Promise(resolve=>{let id=++seq;pending.set(id,resolve);ws.send(JSON.stringify({id,method,params}))});
