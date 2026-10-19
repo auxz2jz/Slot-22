@@ -115,8 +115,10 @@ function applyGameExport(raw){
  const advice=nextHomeBuilderRecommendations(state);
  const research=availableResearchQueues(state).filter(q=>q.status==='idle'&&q.recommendations.length);
  const hasBuilder=advice.availability?.availableAtLeast>0&&advice.recommendations.length>0;
+ const assistants=helperActionRecommendations(state);
+ const hasAssistantTasks=assistants.some(h=>h.detail||h.id===93000002||h.id===93000003);
  const shouldPrompt=Number.isFinite(x.timestamp)&&x.timestamp>oldSnapshot&&
-   (hasBuilder||research.length>0)&&state.builderPromptLastShownAt!==x.timestamp;
+   (hasBuilder||research.length>0||hasAssistantTasks)&&state.builderPromptLastShownAt!==x.timestamp;
  if(shouldPrompt){
    state.builderPromptLastShownAt=x.timestamp;
    queuedBuilderPrompt=state.playerTag;
