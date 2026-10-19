@@ -6,7 +6,6 @@ import {renderPassRewards,updatePassState,saveRewardDefinition,removeCustomRewar
 import {renderInsights,renderHelperStrip,helperCountdown} from './insights-view.mjs';
 import {ensureHelperRoadmap} from './helper-plan.mjs';
 import {helperActionRecommendations} from './helper-advice.mjs';
-import {renderFullVillagePlan} from './full-plan-view.mjs';
 import {fullVillagePlan} from './full-plan.mjs';
 import {renderCommandCenter,renderCommandDetail,rankCandidates} from './command-center.mjs';
 import {helperSummary} from './snapshot-insights.mjs';
@@ -204,7 +203,7 @@ function renderBuilderNudge(profile){
  '<h2>'+count.availableAtLeast+' standard Home builder'+(count.availableAtLeast===1?'':'s')+' available at snapshot</h2>'+
  (priorities.length?'<p>Recommended next: <strong>'+enc(priorities[0].title)+'</strong>. Confirm affordability and Hall prerequisites in game.</p>':
  '<p>No validated next upgrade in the saved snapshot; check the Build menu in Clash.</p>')+
- '<button class="btn" data-action="jump-full-plan">See full prioritized upgrade plan</button>'+
+ '<button class="btn" data-command-lane="homeBuilders">Review ranked Home builder upgrades</button>'+ 
  '<p class="smallmuted">This is a dated snapshot, not continuous builder monitoring. A Hero uses a Home builder, not a separate Hero Hall worker.</p></section>';
 }
 function renderResearchNudges(profile){
@@ -282,7 +281,7 @@ function renderOverview(){
  return renderCommandCenter(state)+
  '<details class="command-legacy" id="advanced-panels"><summary>Advanced panels · timelines, full lists and resource editing</summary>'+
  '<div class="command-legacy-content">'+coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+
- renderFullVillagePlan(state)+renderBuilderNudge(state)+renderResearchNudges(state)+renderFacilityAudit(state)+
+ renderBuilderNudge(state)+renderResearchNudges(state)+renderFacilityAudit(state)+
  '<div class="command-grid"><div>'+builderBoard(state)+'</div><div class="command-side">'+
  '<section class="card"><h2>Full roadmap</h2>'+questTrail(state.roadmap)+
  '<button class="btn secondary" data-action="goto-roadmap">Open roadmap</button></section>'+
@@ -522,7 +521,6 @@ function clickAction(e){
   notify('This upgrade quote is saved locally. Nothing changed in Clash.');
   return;
  }
- if(action==='jump-full-plan'){view='overview';render();document.querySelector('.full-plan-panel')?.scrollIntoView({block:'start',behavior:'smooth'});return;}
  if(action==='builder-dismiss'){el('builder-dialog')?.close();return;}
  if(action==='view-pets'){el('builder-dialog')?.close();view='inventory';invGroup='pets';render();return;}
  if(action==='builder-view-task'){
