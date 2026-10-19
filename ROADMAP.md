@@ -21,3 +21,14 @@ Days 7–14: keep builders, lab and pet queue active as possible, make use of re
 After boost ends: stop assuming 50% costs. Recalculate against in-game values; avoid wasting Gems and Magic Items.
 
 All roadmap prices are estimates until game confirms them. User may edit every task.
+
+## Version 0.2.0 — multi-profile maintenance (2026-10-18)
+
+- [x] S22-011 — Versioned bundle with multiple player tags and safe migration from the prior single-profile localStorage/backup.
+- [x] S22-012 — Profile selector, rename, and add-account via imported game JSON; imported account receives independent currencies, Magic Items and roadmap.
+- [x] S22-013 — Grouped comma formatting for editable resource and Magic Item inputs, preserving editing caret.
+- [x] S22-014 — Separate upgrade timer category labels from level/name for readability.
+- [x] S22-015 — Migrate remote snapshot to profile bundle v2 without removing user export, balance notes or upgrade plan; regression tests and real-browser smoke.
+- [ ] S22-016 — User test on actual Android phone with a second account; verify GitHub Load/Save across devices with explicit opt-in and do not leak tokens. Only implement fixes supported by actual evidence.
+
+Next task: user tests new account import. Recommended GPT-6 Medium for targeted browser UX improvements; escalate to High if real GitHub conflict or data migration evidence is contradictory. Checkpoint before edits.
