@@ -1,4 +1,5 @@
 import {format} from './core.mjs';
+import {renderVillageIntelligence} from './intelligence-view.mjs';
 import {helperSummary,snapshotCoverage,bobSummary,recordSummary} from './snapshot-insights.mjs';
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const helperDescription={93000000:'Speeds up one Home Village building or hero upgrade when assigned.',
@@ -47,7 +48,7 @@ export function renderInsights(profile){
  '<div class="stat"><strong>'+totalTimers+'</strong><small>Upgrade timers in snapshot</small></div>'+
  '<div class="stat"><strong>'+unknown.length+'</strong><small>Unmapped game IDs</small></div></div>'+
  '<p class="subtext">The export includes exact levels, counts, timers, and extra flags; it does not contain current resource balances, Magic Items, reward claims, or village coordinates.</p></section>'+
- renderHelperStrip(profile)+bobCard(bobSummary(x))+
+ renderHelperStrip(profile)+bobCard(bobSummary(x))+renderVillageIntelligence(profile)+
  '<section class="card"><h2>Export fields, including previously unused data</h2><p class="subtext">Each category can contain several copies of a building or decoration. Counts below include repeated items.</p>'+
  '<div class="scroll-table"><table><thead><tr><th>JSON section</th><th>Records</th><th>Items</th></tr></thead><tbody>'+details+'</tbody></table></div>'+
  '<h3>Other categories we can use next</h3><p>'+other.map(a=>safe(a.key)+' ('+a.entries+')').join(' · ')+'</p>'+
