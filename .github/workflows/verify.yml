@@ -27,4 +27,4 @@ jobs:
           test -f index.html
           test -f styles.css
           test -f data/player-state.json
-          node -e "const s=require('./data/player-state.json');if(s.schemaVersion!==1 || !s.export || s.export.tag!=='#QVLP9RVV')process.exit(1)"
+          node -e "const s=require('./data/player-state.json');if(s.schemaVersion!==2 || !s.profiles?.['#QVLP9RVV']?.export || s.profiles['#QVLP9RVV'].export.tag!=='#QVLP9RVV')process.exit(1)"
