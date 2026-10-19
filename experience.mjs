@@ -109,3 +109,69 @@ export function nextHomeBuilderRecommendations(profile){
  candidates.sort((a,b)=>Number(b.affordableFromSaved)-Number(a.affordableFromSaved)||a.sourceIndex-b.sourceIndex);
  return {availability,recommendations:candidates.slice(0,3)};
 }
+
+
+// Separate research queues: the regular Laboratory researches Home troops/spells,
+// the Star Laboratory researches Builder Base troops, and Pet House levels pets.
+// Helper cooldowns are distinct: an available Lab Assistant does not create a
+// second Laboratory slot. An absent timer means no research in the dated export,
+// never proof that the live game remains idle.
+const RESEARCH_DEFINITIONS=[
+ {key:'laboratory',name:'Home Laboratory',village:'Home',queue:'Laboratory',buildingId:1000007,buildingSection:'buildings',
+  timerSections:['units','spells','siege_machines'],recordSections:['units','spells','siege_machines']},
+ {key:'starLaboratory',name:'Star Laboratory',village:'Builder',queue:'Star Laboratory',buildingId:1000034,buildingSection:'buildings2',
+  timerSections:['units2'],recordSections:['units2']},
+ {key:'petHouse',name:'Pet House research',village:'Home',queue:'Pet House',buildingId:1000068,buildingSection:'buildings',
+  timerSections:['pets'],recordSections:['pets']}
+];
+const parseUpgradeTitle=title=>String(title||'').match(/^(?:(?:First|Second|Third|Fourth|Fifth)\s+)?(.+?)\s+(\d+)\s*→\s*(\d+)\s*$/i);
+const nextResearchTasks=(profile,def)=>{
+ const ex=profile.export;
+ const result=(profile.roadmap||[]).flatMap((t,index)=>{
+  if(t.status!=='planned'||t.village!==def.village||t.queue!==def.queue)return [];
+  const matched=parseUpgradeTitle(t.title);
+  if(!matched)return [];
+  const [,name,levelText,nextText]=matched;
+  const ids=buildIds.get(normalizedName(name))||[];
+  const level=Number(levelText),next=Number(nextText);
+  if(next!==level+1)return [];
+  const eligible=def.recordSections.some(section=>(ex[section]||[]).some(r=>
+   ids.includes(r.data)&&r.lvl===level&&!Number.isFinite(r.timer)));
+  if(!eligible)return [];
+  const cost=Number(t.cost),balance=profile.resources?.[t.costType];
+  return [{taskId:t.id,title:t.title,note:t.note||'',currency:t.costType,
+   cost:Number.isFinite(cost)&&cost>0?cost:null,
+   affordableFromSaved:Number.isFinite(cost)&&cost>0&&Number.isFinite(balance)&&balance>=cost,
+   sourceIndex:index}];
+ });
+ // The Builder Base roadmap contains a goal rather than a specific next level.
+ // Resolve only the verified level-15 candidate into a single concrete next step.
+ if(def.key==='starLaboratory' && !result.length){
+  const goal=(profile.roadmap||[]).find(t=>t.id==='B-05'&&t.status==='planned'&&t.village==='Builder'&&t.queue==='Star Laboratory');
+  const candidate=(ex.units2||[]).filter(r=>Number.isInteger(r.lvl)&&r.lvl>=1&&r.lvl<18&&!Number.isFinite(r.timer))
+   .sort((a,b)=>b.lvl-a.lvl)[0];
+  if(goal&&candidate&&names[candidate.data]){
+   result.push({taskId:goal.id,title:names[candidate.data]+' '+candidate.lvl+' → '+(candidate.lvl+1),
+    note:'Suggested Builder Base research toward the roadmap goal of level 18. Confirm availability and cost in game.',
+    currency:'builderElixir',cost:null,affordableFromSaved:false,sourceIndex:999,derivedFrom:'Builder troop roadmap goal'});
+  }
+ }
+ result.sort((a,b)=>Number(b.affordableFromSaved)-Number(a.affordableFromSaved)||a.sourceIndex-b.sourceIndex);
+ return result.slice(0,3);
+};
+export function availableResearchQueues(profile){
+ const ex=profile?.export;
+ if(!ex||!Number.isFinite(ex.timestamp))return [];
+ return RESEARCH_DEFINITIONS.map(def=>{
+  const buildings=ex[def.buildingSection];
+  const structure=Array.isArray(buildings)&&buildings.find(r=>r.data===def.buildingId);
+  const completeSections=def.timerSections.every(k=>Array.isArray(ex[k]));
+  const structureUnderConstruction=!!structure&&Number.isFinite(structure.timer);
+  const known=!!structure&&completeSections&&!structureUnderConstruction;
+  const active=known&&def.timerSections.some(k=>ex[k].some(r=>Number.isFinite(r.timer)));
+  const status=!known?'unknown':active?'busy':'idle';
+  const recommendations=status==='idle'?nextResearchTasks(profile,def):[];
+  return {key:def.key,name:def.name,status,snapshotAt:ex.timestamp*1000,
+   recommendations,source:'In-game JSON research timers (not Lab Assistant availability)'};
+ });
+}
