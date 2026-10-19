@@ -31,3 +31,5 @@ export function inferredCapacity(data,key){
  }
  return amount;
 }
+
+export function resolvedCapacity(p,k){const v=inferredCapacity(p?.export,k);return {value:v??0,source:'game export'};}
