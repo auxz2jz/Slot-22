@@ -1,11 +1,14 @@
 import {names,categories,moneyKeys,itemGroups,labelFor} from './catalog.mjs';
 import {artworkUrl,artForResource} from './artwork.mjs';
+import {coverFor,gaugeDeck,builderBoard,questTrail,gallery,detailContent} from './dashboard.mjs';
+import {planPreview,snapshotCountdown,remainingTime} from './experience.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
 const STORAGE='clash-slot22-state-v2',LEGACY_STORAGE='clash-slot22-state-v1',TESTS='clash-slot22-tests-v1';
 const el=id=>document.getElementById(id);
 const enc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let bundle=normalizeBundle(seedState()),state=bundle.profiles[bundle.activeProfileId],view='overview',filter='all',invGroup='buildings',ghSha=null;
+let inventoryMode='gallery',activeDialog=null;
 let diagnostics=[],manualTests={};
 const testSteps=[
  'Overview lists current resource values.',
@@ -134,21 +137,22 @@ function card(label,value,cls='',tip=''){
  return '<div class="card tint"><div class="label">'+enc(label)+'</div><div class="metric '+cls+'">'+enc(value)+'</div><div class="smallmuted">'+enc(tip)+'</div></div>';
 }
 function renderOverview(){
- const r=state.resources,pending=state.roadmap.filter(x=>x.status==='active');
- let next=ongoingFromExport(state.export);
- let now=Date.now();
- return '<div class="grid kpis">'+card('Gold in storage',format(r.gold),'gold','Loot Cart: '+format(r.cartGold))+card('Elixir in storage',format(r.elixir),'elixir','Loot Cart: '+format(r.cartElixir))+card('Dark Elixir',format(r.dark),'dark','Loot Cart: '+format(r.cartDark))+card('Gems saved',format(r.gems),'green','No Gems scheduled for use')+'</div>'+
- '<div class="grid two"><section class="card"><div class="row between wrap"><h2>Current upgrade queues</h2><span class="pill active">'+pending.length+' marked active</span></div><div class="timeline">'+
- (next.length ? next.slice(0,12).map(t=>'<div class="rowcard"><div class="item-identity">'+itemImage(categories.find(c=>c[1]===t.category)?.[0]||'missing',t.name,t.level,true)+'<div><strong>'+enc(t.name)+' · Lv '+t.level+' → '+(t.level+1)+'</strong><small>'+enc(t.category)+'</small></div></div><span class="pill '+(t.finishesAt && t.finishesAt<now?'planned':'active')+'">'+(t.finishesAt&&t.finishesAt<now?'Refresh export':t.finishesAt?new Date(t.finishesAt).toLocaleString():'Timer unknown')+'</span></div>').join(''):
- pending.slice(0,8).map(t=>'<div class="rowcard"><div class="item-identity">'+roadmapImage(t)+'<div><strong>'+enc(t.title)+'</strong><small>'+enc(t.queue+' · '+t.village)+'</small></div></div><span class="pill active">Self-reported active</span></div>').join(''))+
- '</div><p class="smallmuted">Timers come from the most recent JSON snapshot, not from a live connection to Supercell. Expired timers need a fresh import.</p></section>'+
- '<section class="card"><h2>Resources & loot reserve</h2><p class="smallmuted">Editable balances are separate from imported game data. Loot Cart is reserved and cannot be spent until collected.</p>'+resourcePanel()+
- '<p class="alertline">Your Loot Cart and Runes should be used only when storage has enough room. The app never collects anything in-game.</p></section></div>'+
- '<div class="grid two space"><section class="card"><h2>Recommended next actions</h2>'+recommendations()+'</section>'+
- '<section class="card"><h2>Account & progress</h2><div class="grid two">'+
- card('Home base','TH '+(state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—'),'','From imported account snapshot')+card('Builder base','BH '+(state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—'),'','From imported account snapshot')+'</div>'+
- '<p class="smallmuted">Player: '+enc(state.playerTag)+'<br>Last import: '+enc(state.importedAt?new Date(state.importedAt).toLocaleString():'Not yet imported')+'<br>Export timestamp: '+enc(state.export?.timestamp?new Date(state.export.timestamp*1000).toLocaleString():'None')+'</p>'+
- '<div class="row wrap"><button class="btn" data-action="choose-file">↑ Import game JSON</button><button class="btn secondary" data-action="goto-roadmap">View roadmap</button></div></section></div>';
+ const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
+ const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
+ return coverFor(state)+gaugeDeck(state)+
+ '<div class="command-grid"><div>'+builderBoard(state)+'</div><div class="command-side">'+
+ '<section class="card"><div class="panel-heading"><div><span class="kicker">NEXT MOVES</span><h2>Upgrade quest path</h2></div><button class="btn secondary small" data-action="goto-roadmap">Full roadmap ›</button></div>'+
+ '<p class="subtext">Tap a quest to inspect its cost and change its status. These are suggested steps, not automatic game actions.</p>'+
+ questTrail(state.roadmap)+'</section>'+
+ '<section class="card"><div class="panel-heading"><div><span class="kicker">RESOURCE CONTROL</span><h2>Adjust balances</h2></div></div>'+
+ '<p class="subtext">These amounts are entered manually. Gold and Elixir in the Loot Cart are tracked separately.</p>'+resourcePanel()+'</section></div></div>'+
+ '<div class="grid two space"><section class="card"><h2>Account status</h2><div class="grid two">'+
+ card('Home base','TH '+th,'','Imported snapshot')+card('Builder base','BH '+bh,'','Imported snapshot')+'</div>'+
+ '<p class="smallmuted">Player: '+enc(state.playerTag)+'<br>Latest import: '+enc(state.importedAt?new Date(state.importedAt).toLocaleString():'Not imported yet')+'</p>'+
+ '<div class="row wrap"><button class="btn" data-action="paste-shortcut">Import fresh JSON</button>'+
+ '<button class="btn secondary" data-action="goto-roadmap">Plan next upgrades</button></div></section>'+
+ '<section class="card"><h2>How progress works</h2><p class="note">Upgrade timer bars start at the latest snapshot date. They are not percentages of total build duration. To see current remaining time, import new game data.</p>'+
+ '<p class="subtext space">Storage gauges stay unfilled until you enter a real storage capacity. No game upgrade or in-game resource spending happens automatically.</p></section></div>';
 }
 function recommendations(){
  const targets=state.roadmap.filter(x=>x.status==='planned').slice(0,5);
