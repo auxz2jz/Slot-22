@@ -69,6 +69,32 @@ try{
  const interactionResult=interaction.result?.result?.value||{};
  console.log('ACCOUNT & COMMA FORMATTING:',interactionResult);
  if(!['initiallyGrouped','commaGrouped','added','altEmpty','preserved','switchedBack'].every(k=>interactionResult[k]===true))process.exitCode=1;
+ const pasted=await cmd('Runtime.evaluate',{
+  expression:`(()=>{
+    document.querySelector('[data-tab="sync"]').click();
+    const third={tag:'#THIRD33',timestamp:1792374100,buildings:[{data:1000001,lvl:11}],buildings2:[{data:1000034,lvl:7}]};
+    document.getElementById('paste-export').value=JSON.stringify(third);
+    document.querySelector('[data-action="import-pasted"]').click();
+    const stored=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
+    const count=document.getElementById('profile-select').options.length;
+    const selected=document.getElementById('profile-select').value;
+    const zero=document.querySelector('[data-money="gold"]').value==='0';
+    const oldGold=stored.profiles['#QVLP9RVV'].resources.gold===1200000;
+    return {count,selected,zero,oldGold};
+  })()`,
+  returnByValue:true
+ });
+ const pasteResult=pasted.result?.result?.value||{};
+ console.log('PASTE JSON:',pasteResult);
+ if(pasteResult.count!==3||pasteResult.selected!=='#THIRD33'||!pasteResult.zero||!pasteResult.oldGold)process.exitCode=1;
+ const spacing=await cmd('Runtime.evaluate',{expression:`(()=>{
+   document.getElementById('profile-select').value='#QVLP9RVV';
+   document.getElementById('profile-select').dispatchEvent(new Event('change',{bubbles:true}));
+   const label=document.querySelector('.timeline .item-identity small');
+   return Boolean(label)&&getComputedStyle(label).display==='block';
+ })()`,returnByValue:true});
+ console.log('UPGRADE LABEL SPACING:',spacing.result?.result?.value);
+ if(spacing.result?.result?.value!==true)process.exitCode=1;
  console.log('BROWSER ERRORS:',failures);
  if(!body.toLowerCase().includes('gold in storage')||body.toLowerCase().includes('loading village tracker'))process.exitCode=1;
 }catch(e){console.error(e);process.exitCode=1;}finally{ws?.close();chrome.kill('SIGKILL');}
