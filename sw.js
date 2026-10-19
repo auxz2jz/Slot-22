@@ -1,6 +1,6 @@
 // Cache only public static app assets; never cache GitHub API or user state.
-const VERSION='slot22-static-v4';
-const ASSETS=['./','./index.html','./styles.css','./app.js','./core.mjs','./catalog.mjs','./artwork.mjs','./manifest.webmanifest','./icon.svg'];
+const VERSION='slot22-static-v5';
+const ASSETS=['./','./index.html','./styles.css','./app.js','./core.mjs','./catalog.mjs','./artwork.mjs','./dashboard.mjs','./experience.mjs','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(VERSION).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('slot22-static-')&&k!==VERSION).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{
