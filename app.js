@@ -1,7 +1,7 @@
 import {names,categories,moneyKeys,itemGroups,labelFor} from './catalog.mjs';
 import {artworkUrl,artForResource} from './artwork.mjs';
 import {coverFor,gaugeDeck,builderBoard,questTrail,gallery,detailContent} from './dashboard.mjs';
-import {planPreview,snapshotCountdown,remainingTime} from './experience.mjs';
+import {planPreview,snapshotCountdown,remainingTime,nextHomeBuilderRecommendations} from './experience.mjs';
 import {renderPassRewards,updatePassState,saveRewardDefinition,removeCustomReward} from './pass-rewards.mjs';
 import {renderInsights,renderHelperStrip,helperCountdown} from './insights-view.mjs';
 import {ensureHelperRoadmap} from './helper-plan.mjs';
@@ -13,7 +13,7 @@ const el=id=>document.getElementById(id);
 const enc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let bundle=normalizeBundle(seedState()),state=bundle.profiles[bundle.activeProfileId],view='overview',filter='all',invGroup='buildings',ghSha=null;
 let inventoryMode='gallery',activeDialog=null,passFilter='unclaimed',editingRewardId=null;
-let diagnostics=[],manualTests={};
+let diagnostics=[],manualTests={},queuedBuilderPrompt=null,builderDialogProfile=null,builderDialogSnapshot=null;
 const testSteps=[
  'Overview lists current resource values.',
  'Changing a Gold balance survives a page reload.',
@@ -81,6 +81,15 @@ async function initialize(){
   document.addEventListener('click',clickAction);
   setInterval(updateVisualTimers,10000);
   el('item-dialog').addEventListener('click',e=>{if(e.target===el('item-dialog'))el('item-dialog').close();});
+  el('builder-dialog').addEventListener('click',e=>{if(e.target===el('builder-dialog'))el('builder-dialog').close();});
+  el('builder-dialog').addEventListener('close',()=>{
+    if(state.playerTag===builderDialogProfile && state.export?.timestamp===builderDialogSnapshot){
+      state.builderPromptDismissedAt=builderDialogSnapshot;
+      saveLocal('builder-prompt-ack');render();
+      log('builder-recommendation','OK','Acknowledged snapshot '+builderDialogSnapshot);
+    }
+    builderDialogProfile=null;builderDialogSnapshot=null;
+  });
   document.addEventListener('input',commaInput);
   document.addEventListener('change',changeAction);
   document.addEventListener('submit',submitAction);
@@ -96,11 +105,21 @@ function download(name,data){
 }
 function applyGameExport(raw){
  const x=validateExport(raw);
+ const oldSnapshot=bundle.profiles[x.tag]?.export?.timestamp??0;
  if(!bundle.profiles[x.tag]&&!confirm('Add a new village profile for '+x.tag+'? Its currencies, Magic Items and roadmap will start empty.'))return false;
  bundle.profiles[bundle.activeProfileId]=state;
  useBundle(importIntoBundle(bundle,x));
  const improved=ensureHelperRoadmap(state);
  if(improved.added){state=improved.profile;bundle.profiles[bundle.activeProfileId]=state;}
+ const advice=nextHomeBuilderRecommendations(state);
+ const shouldPrompt=Number.isFinite(x.timestamp)&&x.timestamp>oldSnapshot&&
+   advice.availability?.availableAtLeast>0&&advice.recommendations.length>0&&
+   state.builderPromptLastShownAt!==x.timestamp;
+ if(shouldPrompt){
+   state.builderPromptLastShownAt=x.timestamp;
+   queuedBuilderPrompt=state.playerTag;
+   log('builder-free-detected','OK','Free builders: '+advice.availability.availableAtLeast+'; next: '+advice.recommendations[0].taskId);
+ }
  const snapshotTime=Number.isFinite(x.timestamp)?new Date(x.timestamp*1000).toLocaleString():'unknown';
  notify('Imported '+x.tag+' (game snapshot: '+snapshotTime+'). Countdown and estimated finish times refreshed. Resources, Magic Items and roadmap preserved.');
  log('game-timer-refresh','OK','Refreshed estimate from village JSON timestamp');
@@ -120,6 +139,7 @@ async function readFile(e,kind){
       useBundle(restored);notify('Planner backup restored ('+Object.keys(bundle.profiles).length+' profiles).');
     }
     saveLocal(kind+'-import');render();
+    if(kind==='game')showQueuedBuilderPrompt();
   }catch(err){notify(err.message||'Import failed','error');log(kind+'-import','FAILED',err.message);}
   finally{e.target.value='';}
 }
@@ -153,10 +173,51 @@ function roadmapImage(task){
 function card(label,value,cls='',tip=''){
  return '<div class="card tint"><div class="label">'+enc(label)+'</div><div class="metric '+cls+'">'+enc(value)+'</div><div class="smallmuted">'+enc(tip)+'</div></div>';
 }
+function renderBuilderRecommendationCard(t){
+ const money=moneyLabels[t.currency]||t.currency||'resources';
+ const price=t.cost?format(t.cost)+' '+money+' (roadmap estimate; verify in game)':'Cost unknown; check in game';
+ return '<div class="builder-choice"><strong>'+enc(t.title)+'</strong>'+
+ '<span>'+enc(price)+'</span>'+
+ '<small>'+enc(t.affordableFromSaved?'Saved balance appears sufficient; verify current game amount.':'Current affordability not confirmed. Confirm price and resources in game.')+'</small>'+
+ (t.note?'<small>'+enc(t.note)+'</small>':'')+
+ '<button class="btn small" data-action="builder-view-task" data-task-id="'+encodeURIComponent(t.taskId)+'">View upgrade details</button></div>';
+}
+function renderBuilderNudge(profile){
+ const result=nextHomeBuilderRecommendations(profile);
+ if(!result.availability||result.availability.availableAtLeast<1)return '';
+ if(profile.builderPromptDismissedAt===profile.export.timestamp)return '';
+ const n=result.availability.availableAtLeast;
+ return '<section class="card builder-nudge" role="status" aria-label="Builder available">'+
+ '<span class="kicker">AVAILABLE BUILDER · FROM LAST GAME JSON</span>'+
+ '<h2>'+n+' Home builder'+(n===1?'':'s')+' available at snapshot</h2>'+
+ (result.recommendations.length?'<p>Recommended next: <strong>'+enc(result.recommendations[0].title)+'</strong>. Check in Clash before starting.</p>'+
+ '<div class="row wrap"><button class="btn" data-action="builder-view-task" data-task-id="'+encodeURIComponent(result.recommendations[0].taskId)+'">See next upgrade</button>'+
+ '<button class="btn secondary" data-action="goto-roadmap">Full roadmap</button></div>':
+ '<p>No verified next upgrade in your current roadmap. Review the roadmap and in-game availability.</p>')+
+ '<p class="smallmuted">Estimate counts your Builder Huts and active Home building, hero and trap timers. The JSON does not report actual builder assignments, and current resources are manually recorded.</p></section>';
+}
+function showQueuedBuilderPrompt(){
+ const tag=queuedBuilderPrompt;queuedBuilderPrompt=null;
+ if(tag!==state.playerTag)return;
+ const rec=nextHomeBuilderRecommendations(state);
+ if(!rec.availability||rec.availability.availableAtLeast<1||!rec.recommendations.length)return;
+ const dialog=el('builder-dialog');
+ builderDialogProfile=state.playerTag;builderDialogSnapshot=state.export.timestamp;
+ const n=rec.availability.availableAtLeast;
+ el('builder-dialog-body').innerHTML='<div class="kicker">NEW GAME JSON · BUILDER AVAILABLE</div>'+
+ '<h2 id="builder-dialog-title">Your next upgrade is ready to review</h2>'+
+ '<p>At least '+n+' Home Village builder'+(n===1?' was':'s were')+' available in the '+enc(new Date(rec.availability.snapshotAt).toLocaleString())+' snapshot.</p>'+
+ '<p class="subtext">Priority recommendations from your roadmap:</p>'+
+ '<div class="builder-choice-list">'+rec.recommendations.map(renderBuilderRecommendationCard).join('')+'</div>'+
+ '<p class="smallmuted">Suggestions only. Confirm the builder is still free and verify actual costs in Clash. Nothing starts or deducts resources automatically.</p>'+
+ '<button class="btn secondary" data-action="builder-dismiss">Not now</button>';
+ log('builder-recommendation','OK','Displayed '+rec.recommendations.map(t=>t.taskId).join(','));
+ if(!dialog.open)dialog.showModal();
+}
 function renderOverview(){
  const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
- return coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+
+ return coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+renderBuilderNudge(state)+
  '<div class="command-grid"><div>'+builderBoard(state)+'</div><div class="command-side">'+
  '<section class="card"><div class="panel-heading"><div><span class="kicker">NEXT MOVES</span><h2>Upgrade quest path</h2></div><button class="btn secondary small" data-action="goto-roadmap">Full roadmap ›</button></div>'+
  '<p class="subtext">Tap a quest to inspect its cost and change its status. These are suggested steps, not automatic game actions.</p>'+
@@ -358,6 +419,13 @@ function clickAction(e){
  if(target.dataset.openRecord!==undefined){openDetail({recordIndex:Number(target.dataset.openRecord),fromQueue:true});return;}
  if(target.dataset.openInventory!==undefined){openDetail({recordIndex:Number(target.dataset.openInventory),category:invGroup});return;}
  const action=target.dataset.action;
+ if(action==='builder-dismiss'){el('builder-dialog')?.close();return;}
+ if(action==='builder-view-task'){
+   const id=decodeURIComponent(target.dataset.taskId||'');
+   el('builder-dialog')?.close();
+   if(!state.roadmap.some(t=>t.id===id)){notify('This recommendation is no longer available; import a newer JSON.','warn');return;}
+   openDetail({taskId:id});return;
+ }
  if(action==='go-items'){view='items';render();return;}
  if(action==='go-insights'){view='insights';render();return;}
  if(action==='go-pass'){view='pass';render();return;}
@@ -373,7 +441,7 @@ function clickAction(e){
   try{
    const raw=el('paste-export')?.value?.trim();
    if(!raw)throw Error('Paste the Clash of Clans JSON from the game first.');
-   if(applyGameExport(raw)){saveLocal('paste-import');view='overview';render();}
+   if(applyGameExport(raw)){saveLocal('paste-import');view='overview';render();showQueuedBuilderPrompt();}
   }catch(err){notify(err.message||'Paste failed','error');log('paste-import','FAILED',err.message);}
  }
  if(action==='restore')el('backup-file').click();
