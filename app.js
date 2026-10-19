@@ -253,10 +253,19 @@ function showQueuedBuilderPrompt(){
   '<h3>'+enc(q.name)+' · idle in JSON</h3>'+
   '<p class="subtext">Recommended research, independent of construction builders:</p>'+
   '<div class="builder-choice-list">'+q.recommendations.map(renderBuilderRecommendationCard).join('')+'</div></section>').join('');
- el('builder-dialog-body').innerHTML='<div class="kicker">NEW GAME JSON · UPGRADE SLOTS AVAILABLE</div>'+
+ const helperHtml=assistantActions.length?'<section class="builder-popup-queue" data-alert-queue="helpers">'+
+ '<h3>Helper Hut · what each assistant should do next</h3>'+
+ '<p class="subtext">One use per assistant per shared 23-hour workday. Confirm availability in the game.</p>'+
+ '<div class="builder-choice-list">'+assistantActions.map(h=>
+ '<div class="builder-choice helper-popup-item"><strong>'+enc(h.name)+' · Lv '+Number(h.level)+'</strong>'+
+ '<span>'+enc(h.action)+'</span>'+
+ '<small>'+enc(h.availability==='cooldown-recorded'?'Cooldown reported for this helper in the JSON.':
+  'This assistant’s use today is not confirmed; check Helper Hut.')+'</small></div>').join('')+
+ '</div></section>':'';
+ el('builder-dialog-body').innerHTML='<div class="kicker">NEW GAME JSON · UPGRADE SLOTS AND HELPERS</div>'+
   '<h2 id="builder-dialog-title">Your next upgrades are ready to review</h2>'+
   '<p>Based on the '+enc(new Date(state.export.timestamp*1000).toLocaleString())+' village snapshot:</p>'+
-  builderHtml+researchHtml+
+  builderHtml+researchHtml+helperHtml+
   '<p class="smallmuted">Verify that each queue is still idle, and check actual costs and balances in Clash. A Lab Assistant speeds research but does not create a second research slot. No game actions or deductions happen automatically.</p>'+
   '<button class="btn secondary" data-action="builder-dismiss">Not now</button>';
  log('upgrade-recommendation','OK','Displayed builder '+(hasBuilder?'yes':'no')+' research '+research.map(q=>q.key).join(','));
