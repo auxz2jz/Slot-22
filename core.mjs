@@ -1,4 +1,5 @@
 import {categories,labelFor} from './catalog.mjs';
+import {compareSnapshots} from './snapshot-intelligence.mjs';
 export const VERSION = 1;
 export const REPO = 'auxz2jz/Slot-22';
 export const STATE_PATH = 'data/player-state.json';
@@ -27,6 +28,10 @@ export function importVillage(state, input, now=new Date().toISOString()) {
   const x=validateExport(input);
   const copy=structuredClone(state);
   if(copy.playerTag && copy.playerTag!==x.tag) throw Error('Player tag mismatch. This planner belongs to '+copy.playerTag+'.');
+  if(copy.export){
+    const diff=compareSnapshots(copy.export,x);
+    if(diff && (diff.changes.length||diff.other.length))copy.snapshotChanges=[...(copy.snapshotChanges||[]),diff].slice(-5);
+  }
   copy.playerTag=x.tag;
   copy.export=x;
   copy.importedAt=now;
