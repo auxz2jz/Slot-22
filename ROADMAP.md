@@ -50,3 +50,11 @@ Next task: user tests new account import. Recommended GPT-6 Medium for targeted 
 - [x] S22-026: Tests for complete reward catalog, choice validation, profile separation and zero currency changes.
 - [ ] S22-027: User test on Android, reconcile actual reward collection by October 30 (October 31 season rollover).
 All positions and recommendations are defined in pass-rewards.mjs and claim records are per-profile seasonalPlan.claims.
+
+## October event and inventory editing (2026-10-18)
+- [x] S22-028: Separate what is CLAIMED from what is ACTUALLY OWNED; actual Books/Runes/Potions remain editable above normal limits.
+- [x] S22-029: Add editable reward entries (Silver, Gold, Other Event), each fixed or choose-one, and correct original 49 item definitions.
+- [x] S22-030: Show unclaimed, claimed, all, and either/or filters. Confirm claims manually; never change resource/magic inventory automatically.
+- [x] S22-031: Support extra inventory item names and quantities for items outside the starting list.
+- [x] S22-032: Unit tests and real browser acceptance for creating and editing rewards, choosing one, and saving inventory > usual capacity.
+- [ ] S22-033: Ask user to inspect event's Unclaimed rewards only filter, compare with tracker, enter actual Magic Item holdings and validate on their Android phone.
