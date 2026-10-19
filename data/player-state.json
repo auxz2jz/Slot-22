@@ -46,6 +46,116 @@
       },
       "roadmap": [
         {
+          "id": "GP-OCT26-00",
+          "title": "Gold Pass purchased",
+          "village": "Home",
+          "queue": "Season Pass",
+          "costType": "gold",
+          "cost": 0,
+          "status": "done",
+          "note": "Confirmed by user: October 2026 Gold Pass purchased for $2.99. This is a tracker note, not a receipt.",
+          "updatedAt": null
+        },
+        {
+          "id": "GP-OCT26-01",
+          "title": "Claim seasonal Gold Pass perks now",
+          "village": "Home",
+          "queue": "Season Pass",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "Claim unlocked discounts and Hoggy Bank-related perks promptly; boosts apply during the remaining October season.",
+          "updatedAt": null
+        },
+        {
+          "id": "GP-OCT26-02",
+          "title": "Audit every unclaimed Gold/Silver Pass choice",
+          "village": "Home",
+          "queue": "Season Pass",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "The screenshots show some, NOT all, rewards. Scroll both reward tracks; pick options deliberately. Default at season end is first choice or Gems if item inventory is full.",
+          "updatedAt": null
+        },
+        {
+          "id": "GP-OCT26-03",
+          "title": "Use current Books before collecting replacement Books",
+          "village": "Home",
+          "queue": "Season Pass",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "Existing inventory last reported: Book of Building, Fighting, Spells and Heroes = 1 each. Use only for real long or strategically important upgrades, then collect newly earned books before October 31.",
+          "updatedAt": null
+        },
+        {
+          "id": "GP-OCT26-04",
+          "title": "Empty resource storages before using and replacing Runes",
+          "village": "Home",
+          "queue": "Season Pass",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "Existing Runes last reported: one each of Gold, Elixir, Dark Elixir, Builder Gold and Builder Elixir. Spend resources in meaningful upgrades first, use a Rune when storage is low and claim new Rune choices with space.",
+          "updatedAt": null
+        },
+        {
+          "id": "GP-OCT26-05",
+          "title": "Claim potions, Wall Rings and ore without overflow",
+          "village": "Home",
+          "queue": "Season Pass",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "Prior inventory had Research and Clock Tower Potions above usual caps. Verify actual current counts. Use potions while relevant queues are active. Do not assume unclaimed ore and consumables will fit.",
+          "updatedAt": null
+        },
+        {
+          "id": "GP-OCT26-06",
+          "title": "Keep a builder free for Gold/Elixir wall upgrades",
+          "village": "Home",
+          "queue": "Season Pass",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "By October 28–30, free one builder if possible; spend excess Gold or Elixir instantly on walls to make room for pending Season Pass resource rewards. Remember Loot Cart is separate.",
+          "updatedAt": null
+        },
+        {
+          "id": "GP-OCT26-07",
+          "title": "Collect all affordable Gold/Silver Pass rewards by October 30",
+          "village": "Home",
+          "queue": "Season Pass",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "Choose each reward manually, create storage space, claim Books and Runes after using existing ones, claim cosmetics and rewards that do not compete for storage. Avoid automatic end-season Gem conversions.",
+          "updatedAt": null
+        },
+        {
+          "id": "GP-OCT26-08",
+          "title": "Check Hoggy Bank and any remaining choice prizes",
+          "village": "Home",
+          "queue": "Season Pass",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "Hoggy Bank and Pass Track rewards can behave differently; inspect in-game instructions. Confirm which rewards were actually claimed. Gold Pass season ends Oct 31.",
+          "updatedAt": null
+        },
+        {
+          "id": "GP-OCT26-09",
+          "title": "Final October 30 reward sweep",
+          "village": "Home",
+          "queue": "Season Pass",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "Check the Unclaimed rewards only filter on both Gold and Silver tracks and confirm remaining expiring choices and items are used or claimed before the October 31 cutoff.",
+          "updatedAt": null
+        },
+        {
           "id": "H-01",
           "title": "Pet House 3 → 4",
           "village": "Home",
@@ -1400,11 +1510,26 @@
           "at": "2026-10-18T18:25:23-07:00",
           "kind": "baseline",
           "note": "Initial user-exported 2026-10-18 snapshot. All 5 Home builders and 2 Builder Base builders active; Freeze and Electro Owl active."
+        },
+        {
+          "at": "2026-10-18T21:30:00-07:00",
+          "kind": "gold-pass-plan",
+          "note": "Gold Pass purchased; unclaimed Silver/Gold rewards need deliberate claim-and-use by October 30. No resources/items changed."
         }
       ],
       "notes": "Goal: use 50% Home Village builder/research returning boost, avoid Gem spending and Rune waste; open event rewards before expiry and only when storage permits; unlock B.O.B. sixth builder.",
       "boostEnd": null,
-      "displayName": "Main village"
+      "displayName": "Main village",
+      "seasonalPlan": {
+        "season": "2026-10",
+        "name": "Cosmic Curse: Portal Panic Season Pass",
+        "goldPassPurchased": true,
+        "rewardTrackCompletedReported": true,
+        "rewardClaimsUnconfirmed": true,
+        "plannedFinalReview": "2026-10-30",
+        "seasonEnd": "2026-10-31",
+        "note": "User confirmed Gold Pass purchase and stated rewards were not collected. Exact choices/quantities need current in-game inspection; never infer them from cropped screenshots."
+      }
     }
   },
   "revision": 0,
