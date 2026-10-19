@@ -51,3 +51,16 @@ test('progress bar continues from first observation after a newer JSON',()=>{
  const different=snapshotCountdown({timestamp:1900},{timer:2700},1900*1000,1900000);
  assert.equal(different.percent,0);
 });
+
+test('JSON timestamp plus 17h 5m produces the same finish regardless of import time',()=>{
+ const timestamp=1000000, timer=17*3600+5*60;
+ const hourLater=(timestamp+3600)*1000;
+ const first=snapshotCountdown({timestamp},{timer},hourLater,timestamp*1000);
+ const refreshed=snapshotCountdown({timestamp:timestamp+3600},{timer:timer-3600},hourLater,timestamp*1000);
+ assert.equal(first.end,(timestamp+timer)*1000);
+ assert.equal(first.remaining.text,'16h 5m left');
+ assert.equal(first.end,refreshed.end);
+ assert.equal(first.percent,refreshed.percent);
+ assert.ok(first.percent>0 && first.percent<100);
+ assert.equal(snapshotCountdown({timestamp},{timer},first.end+1000).remaining.expired,true);
+});
