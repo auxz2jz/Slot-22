@@ -43,8 +43,13 @@ const quoteInfo=(p,group,id,next)=>{
 };
 const discountFor=(p,group)=>{
  const prefs=p.upgradePreferences||{};
- return group==='spells'||group==='units'||group==='siege_machines'||group==='pets'||group==='units2'?
+ const ordinary=group==='spells'||group==='units'||group==='siege_machines'||group==='pets'||group==='units2'?
   prefs.researchBoost:prefs.builderBoost;
+ // The separate returning-player discount is NOT automatically stacked with Gold Pass.
+ // Treat 50% as a confirmed effective boost only when manually selected and not expired.
+ const expires=p.boostEnd?new Date(p.boostEnd).getTime():null;
+ const returning=prefs.returningBoost===50&&(!Number.isFinite(expires)||expires>Date.now())?50:null;
+ return returning!==null?Math.max(returning,ordinary??0):ordinary;
 };
 const costDisplay=(profile,group,id,next)=>{
  const q=quoteInfo(profile,group,id,next);
@@ -120,10 +125,13 @@ export function renderCommandCenter(profile){
  '<p class="smallmuted">Gold Pass is '+(profile.seasonalPlan?.goldPassPurchased?'recorded as purchased':'not confirmed')+
  ', but active discount levels are not in the exported JSON. Select what your game actually shows. Discounts apply only to quotes marked BEFORE boost.</p>'+
  '<div class="command-boost-controls"><label>Builder discount <select data-command-boost="builderBoost">'+optionPct(prefs.builderBoost)+'</select></label>'+
- '<label>Research discount <select data-command-boost="researchBoost">'+optionPct(prefs.researchBoost)+'</select></label></div>'+
+ '<label>Research discount <select data-command-boost="researchBoost">'+optionPct(prefs.researchBoost)+'</select></label>'+
+ '<label>Separate returning boost <select data-command-boost="returningBoost">'+
+ '<option value="" '+(prefs.returningBoost!==50?'selected':'')+'>Not confirmed</option>'+
+ '<option value="50" '+(prefs.returningBoost===50?'selected':'')+'>50% reported</option></select></label></div>'+
  '<p class="smallmuted">Special returning-player boost expiry: '+
  esc(profile.boostEnd?new Date(profile.boostEnd).toLocaleString():'not recorded')+
- ' — this bonus is not stacked onto estimates without confirmed rules.</p>'+
+ ' — if you confirm 50%, estimates use that single effective percentage, not an additional stacked discount. Confirm expiry in game.</p>'+
  '<button class="btn secondary small" data-action="command-edit-resources">Edit saved resource balances</button></details>'+
  '<div class="command-queue-grid">'+data.queueStates.map(q=>'<button class="command-queue" type="button" data-command-lane="'+q.id+'">'+
  '<span class="command-queue-title">'+esc(q.label)+'</span>'+
