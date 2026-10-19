@@ -462,6 +462,14 @@ function commaInput(e){
 function changeAction(e){
  const t=e.target;
  if(t.dataset.passChoice){try{state=updatePassState(state,t.dataset.passChoice,'choose',t.value);saveLocal('pass-choice-selection');render();}catch(err){notify(err.message,'error');render();}return;}
+ if(t.dataset.commandBoost){
+  const value=t.value===''?null:Number(t.value);
+  if(value!==null&&![0,10,15,20].includes(value)){notify('Choose the boost percentage visible in game.','warn');return;}
+  state.upgradePreferences??={};
+  state.upgradePreferences[t.dataset.commandBoost]=value;
+  saveLocal('confirmed-gold-pass-boost');
+  render();return;
+ }
  if(t.dataset.cap){state.storageCaps??={};state.storageCaps[t.dataset.cap]=integer(t.value);saveLocal('capacity-edit');render();return;}
  if(t.dataset.money){state.resources[t.dataset.money]=integer(t.value);t.value=format(state.resources[t.dataset.money]);saveLocal('resource-edit');return;}
  if(t.dataset.item){state.items[t.dataset.item]=integer(t.value);t.value=format(state.items[t.dataset.item]);saveLocal('item-edit');return;}
