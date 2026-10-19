@@ -24,6 +24,31 @@ export function validateExport(input) {
   if (JSON.stringify(x).length>1200000) throw Error('Export is too large.');
   return x;
 }
+// Remember the first snapshot where each active job was observed. Clash exports
+// contain remaining time, not the construction start time. Never claim full progress.
+export function preserveUpgradeTracking(previous,next) {
+  const snapshot=Number(next?.timestamp)*1000;
+  if(!Number.isFinite(snapshot)||snapshot<=0)return [];
+  const prior=Array.isArray(previous?.upgradeTracking)?previous.upgradeTracking:
+    (previous?.export?preserveUpgradeTracking({},previous.export):[]);
+  const used=new Set();
+  return categories.flatMap(([category])=>(next[category]||[])
+    .filter(e=>Number.isFinite(e.timer)&&e.timer>=0)
+    .map(e=>{
+      const endAt=snapshot+e.timer*1000;
+      const match=prior.map((p,i)=>({p,i})).filter(({p,i})=>
+        !used.has(i)&&p.category===category&&p.id===e.data&&p.level===e.lvl&&
+        Number.isFinite(p.firstSeenAt)&&Number.isFinite(p.endAt)&&
+        p.lastSeenAt<=snapshot&&p.endAt>snapshot&&
+        // Normal snapshots share a finish time; allow accelerated or shifted timers.
+        endAt<=p.endAt+10*60*1000
+      ).sort((a,b)=>Math.abs(a.p.endAt-endAt)-Math.abs(b.p.endAt-endAt))[0];
+      if(match)used.add(match.i);
+      return {category,id:e.data,level:e.lvl,
+        firstSeenAt:match?.p.firstSeenAt??snapshot,endAt,lastSeenAt:snapshot};
+    }));
+}
+
 export function importVillage(state, input, now=new Date().toISOString()) {
   const x=validateExport(input);
   const copy=structuredClone(state);
@@ -32,6 +57,7 @@ export function importVillage(state, input, now=new Date().toISOString()) {
     const diff=compareSnapshots(copy.export,x);
     if(diff && (diff.changes.length||diff.other.length))copy.snapshotChanges=[...(copy.snapshotChanges||[]),diff].slice(-5);
   }
+  copy.upgradeTracking=preserveUpgradeTracking(copy,x);
   copy.playerTag=x.tag;
   copy.export=x;
   copy.importedAt=now;
