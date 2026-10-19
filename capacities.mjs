@@ -32,4 +32,4 @@ export function inferredCapacity(data,key){
  return amount;
 }
 
-export function resolvedCapacity(p,k){const v=inferredCapacity(p?.export,k);return {value:v??0,source:'game export'};}
+export function resolvedCapacity(p,k){const v=inferredCapacity(p?.export,k),m=Number(p?.storageCaps?.[k]);if(Number.isFinite(m)&&m>0)return {value:Math.floor(m),source:'manual',derived:v};return {value:v??0,source:v===null?'unknown':'game export',derived:v};}
