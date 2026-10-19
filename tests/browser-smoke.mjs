@@ -30,6 +30,18 @@ try{
  const artwork=await cmd('Runtime.evaluate',{expression:"({overview:document.querySelectorAll('img.item-art').length,loaded:[...document.querySelectorAll('img.item-art')].filter(i=>i.complete&&i.naturalWidth>0).length,first:[...document.querySelectorAll('img.item-art')].slice(0,3).map(i=>i.src)})",returnByValue:true});
  const counts=artwork.result?.result?.value||{};
  console.log('ARTWORK:',counts);
+ const upgradeEstimate=await cmd('Runtime.evaluate',{expression:`(()=>{
+   const tile=document.querySelector('.queue-tile'),label=tile?.querySelector('[data-timer-end]');
+   const bar=tile?.querySelector('[data-timer-progress]'),percent=tile?.querySelector('[data-timer-percent]');
+   const saved=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
+   const ex=saved.profiles[saved.activeProfileId].export;
+   const finishes=Object.values(ex).filter(Array.isArray).flatMap(rows=>rows.filter(row=>Number.isFinite(row.timer)).map(row=>(ex.timestamp+row.timer)*1000));
+   return {tile:!!tile,finish:!!tile?.querySelector('.queue-finish'),bar:!!bar,percent:!!percent,match:finishes.includes(Number(label?.dataset.timerEnd))};
+ })()`,returnByValue:true});
+ const estimateResult=upgradeEstimate.result?.result?.value||{};
+ console.log('UPGRADE ETA / PROGRESS UI:',estimateResult);
+ if(!['tile','finish','bar','percent','match'].every(k=>estimateResult[k]===true))process.exitCode=1;
+
  if((counts.overview||0)<10) {console.error('No artwork rendered on dashboard');process.exitCode=1;}
  await cmd('Runtime.evaluate',{expression:"document.querySelector('[data-tab=inventory]').click()"});
  const inventory=await cmd('Runtime.evaluate',{expression:"document.querySelectorAll('img.item-art').length",returnByValue:true});
