@@ -40,3 +40,14 @@ test('roadmap status percentages are honest on empty and mixed accounts',()=>{
  const p=progressSummary([{status:'done'},{status:'active'},{status:'planned'},{status:'done'}]);
  assert.equal(p.percent,50);
 });
+
+test('progress bar continues from first observation after a newer JSON',()=>{
+ const first=snapshotCountdown({timestamp:1000},{timer:3600},1000*1000+900*1000,1000000);
+ const updated=snapshotCountdown({timestamp:1900},{timer:2700},1900*1000+100*1000,1000000);
+ assert.equal(first.percent,25);
+ assert.ok(updated.percent>first.percent);
+ assert.equal(updated.basis,'Since first tracked');
+ assert.equal(updated.end,first.end);
+ const different=snapshotCountdown({timestamp:1900},{timer:2700},1900*1000,1900000);
+ assert.equal(different.percent,0);
+});
