@@ -192,18 +192,17 @@ function renderBuilderRecommendationCard(t){
  '<small>Open the in-game upgrade menu to confirm this research.</small>')+'</div>';
 }
 function renderBuilderNudge(profile){
- const result=nextHomeBuilderRecommendations(profile);
- if(!result.availability||result.availability.availableAtLeast<1)return '';
+ const count=nextHomeBuilderRecommendations(profile).availability;
+ if(!count||count.availableAtLeast<1)return '';
  if(profile.builderPromptDismissedAt===profile.export.timestamp)return '';
- const n=result.availability.availableAtLeast;
+ const priorities=fullVillagePlan(profile)?.queues.find(q=>q.id==='homeBuilders')?.next||[];
  return '<section class="card builder-nudge" role="status" aria-label="Builder available">'+
- '<span class="kicker">AVAILABLE BUILDER · FROM LAST GAME JSON</span>'+
- '<h2>'+n+' Home builder'+(n===1?'':'s')+' available at snapshot</h2>'+
- (result.recommendations.length?'<p>Recommended next: <strong>'+enc(result.recommendations[0].title)+'</strong>. Check in Clash before starting.</p>'+
- '<div class="row wrap"><button class="btn" data-action="builder-view-task" data-task-id="'+encodeURIComponent(result.recommendations[0].taskId)+'">See next upgrade</button>'+
- '<button class="btn secondary" data-action="goto-roadmap">Full roadmap</button></div>':
- '<p>No verified next upgrade in your current roadmap. Review the roadmap and in-game availability.</p>')+
- '<p class="smallmuted">Estimate counts your Builder Huts and active Home building, hero and trap timers. The JSON does not report actual builder assignments, and current resources are manually recorded.</p></section>';
+ '<span class="kicker">AVAILABLE HOME BUILDER · DATED GAME JSON</span>'+
+ '<h2>'+count.availableAtLeast+' standard Home builder'+(count.availableAtLeast===1?'':'s')+' available at snapshot</h2>'+
+ (priorities.length?'<p>Recommended next: <strong>'+enc(priorities[0].title)+'</strong>. Confirm affordability and Hall prerequisites in game.</p>':
+ '<p>No validated next upgrade in the saved snapshot; check the Build menu in Clash.</p>')+
+ '<button class="btn" data-action="jump-full-plan">See full prioritized upgrade plan</button>'+
+ '<p class="smallmuted">This is a dated snapshot, not continuous builder monitoring. A Hero uses a Home builder, not a separate Hero Hall worker.</p></section>';
 }
 function renderResearchNudges(profile){
  const idle=availableResearchQueues(profile).filter(q=>q.status==='idle');
