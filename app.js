@@ -3,6 +3,7 @@ import {artworkUrl,artForResource} from './artwork.mjs';
 import {coverFor,gaugeDeck,builderBoard,questTrail,gallery,detailContent} from './dashboard.mjs';
 import {planPreview,snapshotCountdown,remainingTime} from './experience.mjs';
 import {renderPassRewards,updatePassState,saveRewardDefinition,removeCustomReward} from './pass-rewards.mjs';
+import {renderInsights,renderHelperStrip} from './insights-view.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
 const STORAGE='clash-slot22-state-v2',LEGACY_STORAGE='clash-slot22-state-v1',TESTS='clash-slot22-tests-v1';
@@ -145,7 +146,7 @@ function card(label,value,cls='',tip=''){
 function renderOverview(){
  const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
- return coverFor(state)+gaugeDeck(state)+
+ return coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+
  '<div class="command-grid"><div>'+builderBoard(state)+'</div><div class="command-side">'+
  '<section class="card"><div class="panel-heading"><div><span class="kicker">NEXT MOVES</span><h2>Upgrade quest path</h2></div><button class="btn secondary small" data-action="goto-roadmap">Full roadmap ›</button></div>'+
  '<p class="subtext">Tap a quest to inspect its cost and change its status. These are suggested steps, not automatic game actions.</p>'+
@@ -158,7 +159,7 @@ function renderOverview(){
  '<div class="row wrap"><button class="btn" data-action="paste-shortcut">Import fresh JSON</button>'+
  '<button class="btn secondary" data-action="goto-roadmap">Plan next upgrades</button></div></section>'+
  '<section class="card"><h2>How progress works</h2><p class="note">Upgrade timer bars start at the latest snapshot date. They are not percentages of total build duration. To see current remaining time, import new game data.</p>'+
- '<p class="subtext space">Storage gauges stay unfilled until you enter a real storage capacity. No game upgrade or in-game resource spending happens automatically.</p></section></div>';
+ '<p class="subtext space">Storage gauges infer maximum capacity from your imported buildings. In-game balances still require manual entry, and no game resources are spent automatically.</p></section></div>';
 }
 function recommendations(){
  const targets=state.roadmap.filter(x=>x.status==='planned').slice(0,5);
@@ -290,7 +291,7 @@ function trackUpgradeAction(action,encodedId){
  }catch(err){notify(err.message,'error');log('upgrade-action','FAILED',err.message);}
 }
 
-const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'Village inventory',items:'Magic Items & ores',pass:'Season Pass prizes',sync:'GitHub & backups',testing:'Testing & diagnostics'};
+const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'Village inventory',items:'Magic Items & ores',pass:'Season Pass prizes',insights:'JSON insights & helpers',sync:'GitHub & backups',testing:'Testing & diagnostics'};
 function render() {
  for(const b of document.querySelectorAll('[data-tab]'))b.classList.toggle('active',b.dataset.tab===view);
  el('section-title').textContent=titles[view];el('player-tag').textContent=state.playerTag;
@@ -298,7 +299,7 @@ function render() {
  const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
  el('village-subtitle').textContent='TOWN HALL '+th+' · BUILDER HALL '+bh;
- el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter,editingRewardId),sync:renderSync,testing:renderTesting}[view])();
+ el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter,editingRewardId),insights:()=>renderInsights(state),sync:renderSync,testing:renderTesting}[view])();
  updateVisualTimers();
 }
 function commaInput(e){
@@ -341,6 +342,7 @@ function clickAction(e){
  if(target.dataset.openInventory!==undefined){openDetail({recordIndex:Number(target.dataset.openInventory),category:invGroup});return;}
  const action=target.dataset.action;
  if(action==='go-items'){view='items';render();return;}
+ if(action==='go-insights'){view='insights';render();return;}
  if(action==='go-pass'){view='pass';render();return;}
  if(action==='go-sync'){view='sync';render();return;}
  if(action==='reward-cancel'){editingRewardId=null;render();return;}
