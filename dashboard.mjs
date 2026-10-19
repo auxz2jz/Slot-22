@@ -87,7 +87,6 @@ export function questTrail(tasks,mode='all'){
   const seq=[...completed,...next];
   if(!seq.length)return '<div class="empty">No upgrade steps yet. Add them below to build your path.</div>';
   return '<div class="quest-trail">'+seq.map((t,i)=>{
-    const affordable=planPreview(t,{}); // affordability is shown in modal, not assumed here
     return '<button class="quest-node '+esc(t.status)+'" data-open-task="'+encodeURIComponent(t.id)+'" aria-label="Open upgrade '+esc(t.title)+'">'+
       '<span class="quest-order">'+(t.status==='done'?'✓':i+1)+'</span><span class="quest-copy"><strong>'+esc(t.title)+'</strong>'+
       '<small>'+esc(t.village)+' · '+esc(t.queue)+(t.cost?' · '+format(t.cost)+' '+esc(t.costType):' · Cost to confirm')+'</small></span>'+
