@@ -77,3 +77,16 @@ Automated tests cover repeated snapshot imports, duplicate same-type buildings, 
 8. Check another account and restore your main one. Expected: no cross-account sharing of upgrade timers or manually tracked values. If not, export **Test & diagnostics**, avoid sharing tokens, and report the affected account/timer.
 
 The display is estimated from the device clock and game export, not from live Supercell synchronization. A substantially incorrect device clock gives inaccurate results. Percent tracked is **not** the whole construction percentage because the JSON does not provide actual start time or original duration. Android visual confirmation is still required after GitHub Actions tests.
+
+## Actual Helper Hut assignments and countdowns — v14 candidate (2026-10-19)
+
+1. In **GitHub & backups**, first download a full local backup. Do not press **Load from GitHub** if this phone contains newer unsynced edits.
+2. Open **Village overview**. In **Your helpers**, find **Builder's Apprentice — Level 7**. With the confirmed October 19 2:20 AM snapshot, its card should show **Assigned in snapshot: Archer Queen (Lv 47)**, **Repeat assignment: On**, a session countdown and a cooldown countdown. **Archer Queen's upgrade tile** should show **Builder's Apprentice assigned in JSON · repeats**.
+3. The screenshot in game remains the authority. Session duration was **3,587 seconds** and cooldown **82,787 seconds** at the 2:20 AM export; values on screen must count down from the JSON's timestamp, not restart from when the file is imported or when the page is reloaded.
+4. If the dated helper work-session estimate is past its end, expect **Session estimate elapsed · refresh JSON**, never an assertion that the helper is still working. If cooldown estimate expires, show **verify in game**, not **Ready**.
+5. Open **JSON insights & helpers** and confirm the same assignment/timers. Re-import an **identical or newer** game JSON (not a planner backup); verify assignments refresh from new snapshot, and resources, Magic Items, event rewards, roadmap and other profiles remain unchanged.
+6. For a snapshot without a helper assignment, show **Assignment not reported in this JSON** rather than falsely claiming idle/unassigned. For multiple possible targets, show ambiguity rather than guessing.
+7. Repeat assignment is the game's helper_recurrent flag on the target upgrade, not on the helper record. Cooldown is the helper's helper_cooldown; session is target's helper_timer.
+8. No feature here can assign, stop, collect rewards or spend Gems in Clash; updates are derived only from manual JSON imports. Report incorrect display with a redacted diagnostics export and screenshot, not GitHub credentials.
+
+Automated regression covers link between Archer Queen and Builder's Apprentice, Lab Assistant research, ambiguous/missing records, timer rollover text, HTML rendering and browser smoke. Android visual verification remains pending.
