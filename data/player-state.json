@@ -156,6 +156,66 @@
           "updatedAt": null
         },
         {
+          "id": "HP-01",
+          "title": "Daily: Builder's Apprentice L7 → longest Home Village upgrade",
+          "village": "Home",
+          "queue": "Helper Hut",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "From latest export: Builder's Apprentice level 7. When ready, assign to the longest remaining high-priority Home builder upgrade (Clan Castle, Pet House, Army Camp, Inferno Tower, or hero as applicable). Works on an existing job; not another permanent builder. Verify target, current remaining time, and cooldown inside game. Repeat each cycle; do not use Gems.",
+          "updatedAt": null,
+          "recurring": true
+        },
+        {
+          "id": "HP-02",
+          "title": "Daily: Lab Assistant L8 → active Laboratory research",
+          "village": "Home",
+          "queue": "Helper Hut",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "From latest export: Lab Assistant level 8. When ready, assign to ongoing Laboratory research such as Freeze Spell or the next priority; cannot accelerate Star Laboratory or pets. Avoid using near the end of a job if faster completion would waste remaining helper work. Shares helper work-day/cooldown. Repeat each cycle; no Gems.",
+          "updatedAt": null,
+          "recurring": true
+        },
+        {
+          "id": "HP-03",
+          "title": "Daily: Alchemist L3 → convert excess resources strategically",
+          "village": "Home",
+          "queue": "Helper Hut",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "Export includes helper ID 93000002 level 3, tentatively Alchemist; verify in Helper Hut. When ready, convert surplus Gold↔Elixir only if it helps make space for pass rewards or fund army upgrades. Confirm conversion limits/bonus and available storage in game to avoid resource waste. Repeat each cycle; no Gem upgrades.",
+          "updatedAt": null,
+          "recurring": true
+        },
+        {
+          "id": "HP-04",
+          "title": "Gold Pass Prospector → convert unneeded ore when unlocked",
+          "village": "Home",
+          "queue": "Helper Hut",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "Gold Pass purchased; Prospector unlocked by season points/perk, but older export does NOT confirm it is active. Check Gold Pass perk and Helper Hut first. When available use ore conversion to address Shiny/Glowy/Starry bottleneck for equipment; respect exchange loss and 23-hour shared helper cycle. Do not spend Gems or assume ownership.",
+          "updatedAt": null,
+          "recurring": true
+        },
+        {
+          "id": "HP-05",
+          "title": "Check shared helper availability every play session",
+          "village": "Home",
+          "queue": "Helper Hut",
+          "costType": "gold",
+          "cost": 0,
+          "status": "planned",
+          "note": "Review Helper Hut once per play session and each 23h workday; ensure the Builder's Apprentice, Lab Assistant, Alchemist, and Gold Pass Prospector are assigned or used only when helpful. No available-again timer exists in the saved JSON, so do not automatically mark ready/used. Repeat habit; this roadmap task should remain planned rather than permanently done.",
+          "updatedAt": null,
+          "recurring": true
+        },
+        {
           "id": "H-01",
           "title": "Pet House 3 → 4",
           "village": "Home",
@@ -1515,6 +1575,11 @@
           "at": "2026-10-18T21:30:00-07:00",
           "kind": "gold-pass-plan",
           "note": "Gold Pass purchased; unclaimed Silver/Gold rewards need deliberate claim-and-use by October 30. No resources/items changed."
+        },
+        {
+          "at": "2026-10-18T23:46:00-07:00",
+          "kind": "roadmap-helper-plan",
+          "note": "Added five recurring Helper Hut tasks based on saved helper levels, Gold Pass entitlement, and TH14 priorities. No live helper availability assumed; no inventory/resources changed."
         }
       ],
       "notes": "Goal: use 50% Home Village builder/research returning boost, avoid Gem spending and Rune waste; open event rewards before expiry and only when storage permits; unlock B.O.B. sixth builder.",
@@ -1535,6 +1600,26 @@
         "reportedChoicePositions": 22,
         "claimSource": "User dictated exact remaining rewards October 18, 2026. See pass-rewards.mjs. Current real game claim counts require user confirmation.",
         "claims": {}
+      },
+      "helperPlan": {
+        "version": 1,
+        "snapshotTimestamp": 1792373123,
+        "helperLevels": {
+          "93000000": 7,
+          "93000001": 8,
+          "93000002": 3
+        },
+        "prospectorStatus": "Gold Pass purchased; activation not verified",
+        "cooldownSource": "unknown—verify in game",
+        "routineTaskIds": [
+          "HP-01",
+          "HP-02",
+          "HP-03",
+          "HP-04",
+          "HP-05"
+        ],
+        "gemsSpendAllowed": false,
+        "notes": "Helper workday assignments are not visible in the saved JSON. Helper tasks are repeatable routines; statuses don't imply present availability."
       }
     }
   },
