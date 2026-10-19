@@ -1,11 +1,11 @@
 import {names,categories,moneyKeys,itemGroups,labelFor} from './catalog.mjs';
 import {artworkUrl,artForResource} from './artwork.mjs';
-import {REPO,STATE_PATH,seedState,validateState,importVillage,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
+import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
-const STORAGE='clash-slot22-state-v1',TESTS='clash-slot22-tests-v1';
+const STORAGE='clash-slot22-state-v2',LEGACY_STORAGE='clash-slot22-state-v1',TESTS='clash-slot22-tests-v1';
 const el=id=>document.getElementById(id);
 const enc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let state=seedState(),view='overview',filter='all',invGroup='buildings',ghSha=null;
+let bundle=normalizeBundle(seedState()),state=bundle.profiles[bundle.activeProfileId],view='overview',filter='all',invGroup='buildings',ghSha=null;
 let diagnostics=[],manualTests={};
 const testSteps=[
  'Overview lists current resource values.',
@@ -27,17 +27,28 @@ function log(type,outcome='OK',detail='') {
 function saveLocal(type='edit') {
   state.revision=(state.revision||0)+1;
   state.savedAt=new Date().toISOString();
-  try{localStorage.setItem(STORAGE,JSON.stringify(state));log(type,'OK');}catch(e){notify('Storage unavailable. Export a backup now.','error');log(type,'FAILED','Local storage failed');}
+  bundle.profiles[bundle.activeProfileId]=state;
+  bundle.revision=(bundle.revision||0)+1;
+  bundle.savedAt=state.savedAt;
+  try{localStorage.setItem(STORAGE,JSON.stringify(bundle));log(type,'OK');}
+  catch(e){notify('Storage unavailable. Export a backup now.','error');log(type,'FAILED','Local storage failed');}
 }
 function notify(message,kind='ok') {
   const target=el('notice'); target.className='notice'+(kind==='error'?' error':kind==='warn'?' warn':'');target.textContent=message;
+}
+function useBundle(next) {
+  bundle=normalizeBundle(next);
+  state=bundle.profiles[bundle.activeProfileId];
 }
 function readSaved() {
   try{
     diagnostics=JSON.parse(localStorage.getItem('clash-slot22-diagnostics')||'[]');
     manualTests=JSON.parse(localStorage.getItem(TESTS)||'{}');
-    const v=localStorage.getItem(STORAGE);if(v){state=validateState(v);return true;}
-  }catch(e){notify('Saved local data could not be loaded. Default profile shown.','error');log('startup','ERROR',e.message);}
+    const v=localStorage.getItem(STORAGE);
+    if(v){useBundle(v);return true;}
+    const old=localStorage.getItem(LEGACY_STORAGE);
+    if(old){useBundle(old);localStorage.setItem(STORAGE,JSON.stringify(bundle));log('migration','OK','Preserved original local profile');return true;}
+  }catch(e){notify('Local data could not be loaded. Restore a backup if needed.','error');log('startup','ERROR',e.message);}
   return false;
 }
 async function initialize(){
@@ -45,15 +56,17 @@ async function initialize(){
   if(!local) {
     try{
       const response=await fetch('./data/player-state.json',{cache:'no-store'});
-      if(response.ok) state=validateState(await response.json());
-    }catch{}
-    try{localStorage.setItem(STORAGE,JSON.stringify(state));}catch{}
+      if(response.ok)useBundle(await response.json());
+    }catch(e){log('baseline-load','FAILED','Could not fetch default profile');}
+    try{localStorage.setItem(STORAGE,JSON.stringify(bundle));}catch{}
   }
   for(const nav of document.querySelectorAll('[data-tab]')) nav.addEventListener('click',()=>{view=nav.dataset.tab;render();});
-  el('download-backup').addEventListener('click',()=>download('clash-village-backup.json',state));
+  el('download-backup').addEventListener('click',()=>download('clash-all-profiles-backup.json',bundle));
   el('game-file').addEventListener('change', async e=>readFile(e,'game'));
   el('backup-file').addEventListener('change',async e=>readFile(e,'backup'));
+  el('profile-select').addEventListener('change',e=>{try{bundle.profiles[bundle.activeProfileId]=state;useBundle(selectProfile(bundle,e.target.value));saveLocal('profile-switch');render();}catch(err){notify(err.message,'error');render();}});
   document.addEventListener('click',clickAction);
+  document.addEventListener('input',commaInput);
   document.addEventListener('change',changeAction);
   document.addEventListener('submit',submitAction);
   document.addEventListener('error',event=>{if(event.target instanceof HTMLImageElement && event.target.classList.contains('item-art'))event.target.closest('.art-badge')?.classList.add('broken');},true);
@@ -69,10 +82,19 @@ function download(name,data){
 async function readFile(e,kind){
   const f=e.target.files?.[0];if(!f)return;
   try {
-    if(f.size>1200000)throw Error('File larger than 1.2 MB.');
-    const text=await f.text();
-    if(kind==='game'){state=importVillage(state,text);notify('Game export imported. Resource and Magic Item balances preserved.');}
-    else {const restored=validateState(text);if(!confirm('Restore all planner data? This replaces the local planner state.'))return;state=restored;notify('Planner backup restored.');}
+    if(f.size>(kind==='game'?1200000:9000000))throw Error('File exceeds import size limit.');
+    const raw=await f.text();
+    if(kind==='game'){
+      const x=validateExport(raw);
+      if(!bundle.profiles[x.tag]&&!confirm('Add a new village profile for '+x.tag+'? Its currencies, Magic Items and roadmap will start empty.'))return;
+      bundle.profiles[bundle.activeProfileId]=state;
+      useBundle(importIntoBundle(bundle,x));
+      notify('Imported '+x.tag+'. Every account retains its own balances and upgrade plan.');
+    }else{
+      const restored=normalizeBundle(raw);
+      if(!confirm('Restore all profiles from this backup? This replaces local profiles, currency and roadmaps. Download a backup first if needed.'))return;
+      useBundle(restored);notify('Planner backup restored ('+Object.keys(bundle.profiles).length+' profiles).');
+    }
     saveLocal(kind+'-import');render();
   }catch(err){notify(err.message||'Import failed','error');log(kind+'-import','FAILED',err.message);}
   finally{e.target.value='';}
