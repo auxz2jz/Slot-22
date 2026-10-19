@@ -161,24 +161,32 @@ function recommendations(){
 function renderRoadmap(){
  const data=state.roadmap.filter(x=>filter==='all'||x.village===filter||x.status===filter);
  const progress=state.roadmap.filter(t=>t.status==='done').length;
- return '<div class="grid three">'+card('Completed',progress+' / '+state.roadmap.length,'green','Manually recorded')+
+ return '<section class="card quest-panel"><div class="panel-heading"><div><span class="kicker">YOUR UPGRADE PATH</span><h2>Quest progression</h2></div></div>'+questTrail(state.roadmap,filter==='Home'||filter==='Builder'?filter:'all')+'</section><div class="grid three">'+card('Completed',progress+' / '+state.roadmap.length,'green','Manually recorded')+
  card('Active',state.roadmap.filter(t=>t.status==='active').length,'gold','Review when timers finish')+
  card('Remaining boost',state.boostEnd?timeLeft(state.boostEnd):'Set end date','','50% returning boost; dates are manual')+'</div>'+
  '<div class="grid two space"><section class="card"><h2>Your upgrade timeline</h2><div class="filters">'+
  ['all','Home','Builder','active','planned','done'].map(x=>'<button class="chip '+(filter===x?'selected':'')+'" data-filter="'+x+'">'+enc(x[0].toUpperCase()+x.slice(1))+'</button>').join('')+'</div>'+
- '<div>'+data.map(t=>'<div class="task"><div class="item-identity">'+roadmapImage(t)+'<div><strong>'+enc(t.title)+'</strong><div class="micro">'+enc(t.village)+' · '+enc(t.queue)+' · '+enc(t.cost?format(t.cost)+' '+(moneyLabels[t.costType]||t.costType):'Check in-game cost')+'</div><p>'+enc(t.note)+'</p></div></div><aside><span class="pill '+enc(t.status)+'">'+enc(t.status)+'</span><select aria-label="Status of '+enc(t.title)+'" data-task="'+enc(t.id)+'">'+['planned','active','done','skipped'].map(s=>'<option value="'+s+'" '+(t.status===s?'selected':'')+'>'+s+'</option>').join('')+'</select></aside></div>').join('')+'</div></section>'+
+ '<div>'+data.map(t=>'<div class="task"><div class="item-identity">'+roadmapImage(t)+'<div><button class="task-launch" data-open-task="'+encodeURIComponent(t.id)+'">'+enc(t.title)+' ↗</button>'<div class="micro">'+enc(t.village)+' · '+enc(t.queue)+' · '+enc(t.cost?format(t.cost)+' '+(moneyLabels[t.costType]||t.costType):'Check in-game cost')+'</div><p>'+enc(t.note)+'</p></div></div><aside><span class="pill '+enc(t.status)+'">'+enc(t.status)+'</span><select aria-label="Status of '+enc(t.title)+'" data-task="'+enc(t.id)+'">'+['planned','active','done','skipped'].map(s=>'<option value="'+s+'" '+(t.status===s?'selected':'')+'>'+s+'</option>').join('')+'</select></aside></div>').join('')+'</div></section>'+
  '<section class="stack"><div class="card"><h2>Boost deadline</h2><p class="smallmuted">A 50% building/research boost was observed. Set its expiry from your game screen; do not assume the countdown lasts forever.</p><div class="field"><label>Returning boost expires (device local time)</label><input type="datetime-local" data-boost-end value="'+enc(state.boostEnd||'')+'"></div><p class="smallmuted">Suggested order: finish Army Camps, unlock Unicorn and Recall Spell, raise Freeze Spell, then tackle B.O.B. milestones. Keep all queues working.</p></div>'+
  '<div class="card"><h2>Add a custom upgrade</h2><form id="task-form" class="stack"><div class="field"><label>Upgrade title</label><input name="title" maxlength="100" required placeholder="Example: Grand Warden 28 → 29"></div><div class="grid two"><div class="field"><label>Village</label><select name="village"><option>Home</option><option>Builder</option></select></div><div class="field"><label>Queue</label><select name="queue"><option>Builder</option><option>Laboratory</option><option>Star Laboratory</option><option>Pet House</option><option>Blacksmith</option></select></div></div><div class="grid two"><div class="field"><label>Cost resource</label><select name="costType">'+moneyKeys.map(([key,label])=>'<option value="'+key+'">'+enc(label)+'</option>').join('')+'</select></div><div class="field"><label>Cost (0 if unknown)</label><input name="cost" type="number" min="0" value="0"></div></div><div class="field"><label>Notes</label><textarea name="note" maxlength="350" placeholder="Why and when to build this"></textarea></div><button class="btn" type="submit">Add roadmap step</button></form></div>'+
  '<div class="card"><h2>Planner notes</h2><div class="field"><label>Editable instructions</label><textarea data-state-note>'+enc(state.notes||'')+'</textarea></div></div></section></div>';
 }
 function timeLeft(s){const secs=Math.ceil((new Date(s).getTime()-Date.now())/1000);if(!Number.isFinite(secs))return'Unknown';if(secs<=0)return'Expired';return Math.floor(secs/86400)+'d '+Math.floor(secs%86400/3600)+'h';}
 function renderInventory(){
- let rows=rowsFromExport(state.export,invGroup);
- return '<section class="card"><div class="row between wrap"><div><h2>Game export inventory</h2><p class="smallmuted">Shows imported levels and upgrade timers. Counts reflect the selected snapshot.</p></div><button class="btn" data-action="choose-file">↑ Import JSON</button></div>'+
+ const rows=rowsFromExport(state.export,invGroup);
+ return '<section class="card"><div class="panel-heading"><div><span class="kicker">YOUR COLLECTION</span><h2>Village inventory</h2></div>'+
+ '<button class="btn" data-action="choose-file">↑ Update game JSON</button></div>'+
+ '<p class="subtext">Tap any card for its level, snapshot timer and matching upgrade plan.</p>'+
  '<div class="filters">'+categories.map(([id,title])=>'<button class="chip '+(invGroup===id?'selected':'')+'" data-category="'+id+'">'+enc(title)+'</button>').join('')+'</div>'+
- (!state.export?'<div class="empty">Import a village JSON export to see your full buildings, troops, spells, walls, pets and Builder Base. Your manual resources will not change.</div>':
- '<p class="smallmuted">Player '+enc(state.export.tag)+' · Snapshot: '+(state.export.timestamp?new Date(state.export.timestamp*1000).toLocaleString():'Unknown')+'</p>'+
- '<div class="scroll-table"><table class="inventory-table"><thead><tr><th>Name</th><th class="num">Level</th><th class="num">Count</th><th>Upgrading</th></tr></thead><tbody>'+rows.map(x=>'<tr><td><span class="item-identity">'+itemImage(invGroup,x.name,x.level,true)+'<span>'+enc(x.name)+'</span></span></td><td class="num">'+x.level+'</td><td class="num">'+x.count+'</td><td>'+(x.timer!==null?(x.finishesAt ? enc(new Date(x.finishesAt).toLocaleString()) : enc(x.timer+'s')):'—')+'</td></tr>').join('')+'</tbody></table></div><div class="smallmuted">'+rows.reduce((a,x)=>a+x.count,0)+' objects in this category. Unknown game IDs stay visible for later catalog updates.</div>')+'</section>';
+ '<div class="collection-toolbar"><span class="smallmuted">'+(state.export?'Snapshot: '+new Date(state.export.timestamp*1000).toLocaleString():'No snapshot')+'</span>'+
+ '<div class="row"><button class="btn small '+(inventoryMode==='gallery'?'':'secondary')+'" data-inventory-mode="gallery">▦ Cards</button>'+
+ '<button class="btn small '+(inventoryMode==='table'?'':'secondary')+'" data-inventory-mode="table">≡ Table</button></div></div>'+
+ (!state.export?'<div class="empty">Import a village JSON export to see this collection.</div>':
+ inventoryMode==='gallery'?gallery(state,invGroup):
+ '<div class="scroll-table"><table class="inventory-table"><thead><tr><th>Item</th><th class="num">Level</th><th class="num">Count</th><th>Upgrade timer</th></tr></thead><tbody>'+
+ rows.map((r,i)=>'<tr><td><button class="inventory-link" data-open-inventory="'+i+'"><span class="item-identity">'+itemImage(invGroup,r.name,r.level,true)+'<span>'+enc(r.name)+'</span></span></button></td>'+
+ '<td class="num">'+r.level+'</td><td class="num">'+r.count+'</td><td>'+(r.timer!==null?(r.finishesAt?enc(new Date(r.finishesAt).toLocaleString()):'Pending'):'—')+'</td></tr>').join('')+
+ '</tbody></table></div>')+'</section>';
 }
 function renderItems(){
  let groups=itemGroups.map(([group,keys])=>'<section class="card"><h2>'+enc(group)+'</h2><div class="grid items">'+keys.map(key=>'<div class="item-field"><label class="label-with-art">'+itemImage('magicItem',key,1,true)+enc(key)+'</label><input type="text" inputmode="numeric" autocomplete="off" data-item="'+enc(key)+'" value="'+format(state.items[key])+'"></div>').join('')+'</div></section>').join('');
@@ -235,10 +243,14 @@ function changeAction(e){
  if(t.dataset.test!==undefined){manualTests[t.dataset.test]=t.checked;localStorage.setItem(TESTS,JSON.stringify(manualTests));log('guided-test','MANUAL',t.dataset.test+' '+(t.checked?'checked':'unchecked'));}
 }
 function clickAction(e){
- const target=e.target.closest('[data-action],[data-filter],[data-category]');
+ const target=e.target.closest('[data-action],[data-filter],[data-category],[data-open-task],[data-open-record],[data-open-inventory],[data-inventory-mode]');
  if(!target)return;
  if(target.dataset.filter){filter=target.dataset.filter;render();return;}
  if(target.dataset.category){invGroup=target.dataset.category;render();return;}
+ if(target.dataset.inventoryMode){inventoryMode=target.dataset.inventoryMode;render();return;}
+ if(target.dataset.openTask){openDetail({taskId:decodeURIComponent(target.dataset.openTask)});return;}
+ if(target.dataset.openRecord!==undefined){openDetail({recordIndex:Number(target.dataset.openRecord),fromQueue:true});return;}
+ if(target.dataset.openInventory!==undefined){openDetail({recordIndex:Number(target.dataset.openInventory),category:invGroup});return;}
  const action=target.dataset.action;
  if(action==='goto-roadmap'){view='roadmap';render();}
  if(action==='choose-file')el('game-file').click();
