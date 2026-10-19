@@ -29,3 +29,15 @@ Next atomic task S22-007: enable GitHub Pages from main root; user opens app on 
 - Added direct pasted JSON import (for Android clipboard exports) alongside the original file upload.
 - Last code/test commit `401d7d70b7c65db7d87ae750534841c13557d334`. Automated verify run **39191272456** PASS; Chrome browser interaction run **39191272459** PASS: comma formatting, migration/isolation, file import, pasted third account, label spacing, no browser errors; Pages deployment run **39191272395** PASS.
 - User still needs visual acceptance on Android and may have browser-local edits not synchronized to public GitHub yet. Ensure user backs up before loading from GitHub. Next: targeted Android testing of switching and pasting; recommendation GPT-6 Medium, with checkpoint if a bug is observed.
+
+## Version 0.3.0 Command Center – 2026-10-18
+
+The user explicitly requested implementation of the previously proposed more interactive styling. Last user-tested version was the prior v0.2 site, described as looking good. v0.3 remains a CANDIDATE until user visually tests Android.
+
+New files: experience.mjs (pure calculations), dashboard.mjs (themed HTML composition). Updated app.js, styles.css, index.html dialog, service worker static asset list. No changes to existing user snapshot, currencies, Magic Items or GitHub profile data. An optional storageCaps field is saved per profile.
+
+Features: animated command header, resource gauges only when capacity is supplied, live snapshot-based countdown, grouped builders and research/pets, tap-to-open upgrade cost/detail, visual quest path, inventory card gallery/table, confirm-only tracker resource deduction. The action never touches Clash of Clans and refuses unknown, unaffordable, repeated, or Gem spending.
+
+Successful Chrome integration run 39192580463 checked banner/modal/preview, actual one-time tracker-only deduction, other profile isolation, capacity persistence/fill, gallery modal; browser errors were empty. Verification run 39192580449 and Pages deployment 39192580037 succeeded before documentation updates. Check final source latest CI again before user handoff.
+
+Next S22-023: user tests Android; address focused defects in atomic steps, continue preserving previous baseline. Recommended GPT-6 Medium for simple UI fixes, High for complex sync conflicts. Observe global library recovery/diagnostics/testing standards.
