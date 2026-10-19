@@ -230,3 +230,15 @@ summary{cursor:pointer;font-weight:750}
 .builder-popup-queue{border-bottom:1px solid #526178;padding:10px 0}
 .builder-popup-queue h3{color:#ffdea8;margin:3px 0 8px}
 .builder-popup-queue .subtext{margin-bottom:9px}
+
+/* Upgradable army building audit: construction status vs. independent research. */
+.factory-audit{margin:15px 0;border-color:#44697e}
+.factory-audit .kicker{font-weight:800;color:#a6dff6}
+.factory-audit h2{margin:8px 0}
+.factory-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:9px;margin:15px 0}
+.factory-row{display:grid;align-content:start;gap:5px;padding:11px 13px;background:#112439;border:1px solid #37546a;border-radius:10px}
+.factory-row strong{font-size:13px;color:#ffe0a1}
+.factory-row strong span{font-size:11px;font-weight:650;color:#aac2da}
+.factory-row small{color:#b9cadd;font-size:11px;line-height:1.4}
+@media(max-width:600px){.factory-grid{grid-template-columns:1fr 1fr;gap:7px}.factory-row{padding:9px}}
+@media(max-width:430px){.factory-grid{grid-template-columns:1fr}}
