@@ -8,7 +8,7 @@ import {ensureHelperRoadmap} from './helper-plan.mjs';
 import {helperActionRecommendations} from './helper-advice.mjs';
 import {renderFullVillagePlan} from './full-plan-view.mjs';
 import {fullVillagePlan} from './full-plan.mjs';
-import {renderCommandCenter,renderCommandDetail} from './command-center.mjs';
+import {renderCommandCenter,renderCommandDetail,rankCandidates} from './command-center.mjs';
 import {helperSummary} from './snapshot-insights.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
@@ -119,7 +119,7 @@ function applyGameExport(raw){
  if(improved.added){state=improved.profile;bundle.profiles[bundle.activeProfileId]=state;}
  const advice=nextHomeBuilderRecommendations(state);
  const research=availableResearchQueues(state).filter(q=>q.status==='idle'&&q.recommendations.length);
- const builderCandidates=fullVillagePlan(state)?.queues.find(q=>q.id==='homeBuilders')?.next||[];
+ const builderCandidates=rankCandidates(state,fullVillagePlan(state)?.queues.find(q=>q.id==='homeBuilders')?.next||[]);
  const hasBuilder=advice.availability?.availableAtLeast>0&&builderCandidates.length>0;
  const assistants=helperActionRecommendations(state);
  const hasAssistantTasks=assistants.some(h=>h.detail||h.id===93000002||h.id===93000003);
@@ -198,7 +198,7 @@ function renderBuilderNudge(profile){
  const count=nextHomeBuilderRecommendations(profile).availability;
  if(!count||count.availableAtLeast<1)return '';
  if(profile.builderPromptDismissedAt===profile.export.timestamp)return '';
- const priorities=fullVillagePlan(profile)?.queues.find(q=>q.id==='homeBuilders')?.next||[];
+ const priorities=rankCandidates(profile,fullVillagePlan(profile)?.queues.find(q=>q.id==='homeBuilders')?.next||[]);
  return '<section class="card builder-nudge" role="status" aria-label="Builder available">'+
  '<span class="kicker">AVAILABLE HOME BUILDER · DATED GAME JSON</span>'+
  '<h2>'+count.availableAtLeast+' standard Home builder'+(count.availableAtLeast===1?'':'s')+' available at snapshot</h2>'+
@@ -244,7 +244,7 @@ function showQueuedBuilderPrompt(){
  const tag=queuedBuilderPrompt;queuedBuilderPrompt=null;
  if(tag!==state.playerTag)return;
  const rec=nextHomeBuilderRecommendations(state);
- const highPriority=fullVillagePlan(state)?.queues.find(q=>q.id==='homeBuilders')?.next||[];
+ const highPriority=rankCandidates(state,fullVillagePlan(state)?.queues.find(q=>q.id==='homeBuilders')?.next||[]);
  const hasBuilder=rec.availability?.availableAtLeast>0&&highPriority.length>0;
  const research=availableResearchQueues(state).filter(q=>q.status==='idle'&&q.recommendations.length);
  const assistantActions=helperActionRecommendations(state);
