@@ -155,12 +155,12 @@ const nextResearchTasks=(profile,def,structure)=>{
  });
  if(def.key==='starLaboratory' && !result.length){
   const goal=(profile.roadmap||[]).find(t=>t.id==='B-05'&&t.status==='planned'&&t.village==='Builder'&&t.queue==='Star Laboratory');
-  if(goal){
+  {
    const eligible=(ex.units2||[]).filter(r=>Number.isInteger(r.lvl)&&r.lvl>=1&&r.lvl<18&&!Number.isFinite(r.timer)
       &&builderTroopResearchCap(r.data,structure.lvl)>r.lvl&&names[r.data])
     .sort((a,b)=>b.lvl-a.lvl);
    for(const [i,r] of eligible.slice(0,3).entries())result.push({
-    taskId:goal.id,title:names[r.data]+' '+r.lvl+' → '+(r.lvl+1),note:
+    taskId:goal?.id??null,title:names[r.data]+' '+r.lvl+' → '+(r.lvl+1),note:
       'Specific Builder Base troop step toward roadmap goal level 18. Current Star Laboratory Lv '+structure.lvl+
       '; verify research access and actual Builder Elixir price in game.',
     currency:'builderElixir',cost:null,affordableFromSaved:false,sourceIndex:999+i,
