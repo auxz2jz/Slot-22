@@ -115,7 +115,7 @@ test('candidate ordering prefers affordable from SAVED manual balance while warn
 });
 
 
-test('new snapshot: Home Lab busy, Star Lab upgrading and idle, Pet House upgrading and pet idle',()=>{
+test('new snapshot: Home Lab busy, Star Lab construction blocks research, pet upgrades remain available',()=>{
  const ex={timestamp:1792438344,
  buildings:[{data:1000001,lvl:14},{data:1000007,lvl:12},{data:1000068,lvl:3,timer:32983},
  {data:1000020,lvl:6,timer:239653}],
@@ -129,7 +129,7 @@ test('new snapshot: Home Lab busy, Star Lab upgrading and idle, Pet House upgrad
   {id:'B-05',title:'One Builder troop to level 18',village:'Builder',queue:'Star Laboratory',status:'planned',costType:'builderElixir',cost:0},
   {id:'P-02',title:'Unicorn 1 → 2',village:'Home',queue:'Pet House',status:'planned',costType:'dark',cost:50000}]};
  const result=availableResearchQueues(profile);
- assert.deepEqual(result.map(q=>q.status),['busy','idle','idle']);
+ assert.deepEqual(result.map(q=>q.status),['busy','blocked','idle']);
  assert.equal(result[0].recommendations.length,0);
  assert.equal(result[1].structureUpgrading,true);
  assert.equal(result[1].structureLevel,7);
