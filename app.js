@@ -1,4 +1,5 @@
 import {names,categories,moneyKeys,itemGroups,labelFor} from './catalog.mjs';
+import {artworkUrl,artForResource} from './artwork.mjs';
 import {REPO,STATE_PATH,seedState,validateState,importVillage,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
 const STORAGE='clash-slot22-state-v1',TESTS='clash-slot22-tests-v1';
@@ -55,6 +56,7 @@ async function initialize(){
   document.addEventListener('click',clickAction);
   document.addEventListener('change',changeAction);
   document.addEventListener('submit',submitAction);
+  document.addEventListener('error',event=>{if(event.target instanceof HTMLImageElement && event.target.classList.contains('item-art'))event.target.closest('.art-badge')?.classList.add('broken');},true);
   render();
   if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 }
@@ -78,7 +80,29 @@ async function readFile(e,kind){
 function resourcePanel(){
   const keys=['gold','elixir','dark','gems','builderGold','builderElixir','cartGold','cartElixir','cartDark'];
   const labels={gold:'Gold · Home',elixir:'Elixir · Home',dark:'Dark Elixir',gems:'Gems · protected',builderGold:'Builder Gold',builderElixir:'Builder Elixir',cartGold:'Loot Cart Gold',cartElixir:'Loot Cart Elixir',cartDark:'Loot Cart Dark'};
-  return '<div class="resource-grid">'+keys.map(k=>'<div class="field"><label for="money-'+k+'">'+labels[k]+'</label><input id="money-'+k+'" data-money="'+k+'" type="number" min="0" step="1" value="'+integer(state.resources[k])+'"></div>').join('')+'</div>';
+  return '<div class="resource-grid">'+keys.map(k=>'<div class="field"><label for="money-'+k+'" class="label-with-art">'+resImage(k)+enc(labels[k])+'</label><input id="money-'+k+'" data-money="'+k+'" type="number" min="0" step="1" value="'+integer(state.resources[k])+'"></div>').join('')+'</div>';
+}
+function itemImage(category,name,level,compact=false){
+ const url=artworkUrl(category,name,level);
+ const abbreviation=String(name||'?').trim().slice(0,1).toUpperCase()||'?';
+ return '<span class="art-badge '+(compact?'compact':'')+(url?'':' broken')+'">'+(url?'<img class="item-art" src="'+enc(url)+'" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">':'')+'<span class="art-fallback" aria-hidden="true">'+enc(abbreviation)+'</span></span>';
+}
+function resImage(key){return itemImage('resource',({gold:'Gold',elixir:'Elixir',dark:'Dark Elixir',gems:'Gems',builderGold:'Builder Gold',builderElixir:'Builder Elixir',cartGold:'Gold',cartElixir:'Elixir',cartDark:'Dark Elixir',shiny:'Shiny Ore',glowy:'Glowy Ore',starry:'Starry Ore'})[key]);}
+const idCategory={heroes:'heroes',heroes2:'heroes2',pets:'pets',spells:'spells',units:'units',units2:'units2',equipment:'equipment',siege_machines:'siege_machines',buildings:'buildings',buildings2:'buildings2'};
+function roadmapImage(task){
+ // Match longest confirmed label, never derive an illustration from an unknown ID.
+ const namesSorted=[...new Set(Object.values(names))].sort((a,b)=>b.length-a.length);
+ const item=namesSorted.find(n=>task.title.toLowerCase().includes(n.toLowerCase()));
+ if(!item)return itemImage('missing',task.title,1,true);
+ let category='buildings';
+ if(['Barbarian King','Archer Queen','Grand Warden','Royal Champion','Minion Prince','Battle Machine','Battle Copter'].includes(item))category='heroes';
+ else if(['L.A.S.S.I','Electro Owl','Mighty Yak','Unicorn'].includes(item))category='pets';
+ else if(task.queue==='Blacksmith')category='equipment';
+ else if(task.queue==='Laboratory')category=item.endsWith('Spell')?'spells':'units';
+ else if(task.queue==='Star Laboratory')category='units2';
+ else if(task.village==='Builder')category='buildings2';
+ const levelMatch=task.title.match(/(\d+)\s*→/);
+ return itemImage(category,item,levelMatch?Number(levelMatch[1]):1,true);
 }
 function card(label,value,cls='',tip=''){
  return '<div class="card tint"><div class="label">'+enc(label)+'</div><div class="metric '+cls+'">'+enc(value)+'</div><div class="smallmuted">'+enc(tip)+'</div></div>';
@@ -89,8 +113,8 @@ function renderOverview(){
  let now=Date.now();
  return '<div class="grid kpis">'+card('Gold in storage',format(r.gold),'gold','Loot Cart: '+format(r.cartGold))+card('Elixir in storage',format(r.elixir),'elixir','Loot Cart: '+format(r.cartElixir))+card('Dark Elixir',format(r.dark),'dark','Loot Cart: '+format(r.cartDark))+card('Gems saved',format(r.gems),'green','No Gems scheduled for use')+'</div>'+
  '<div class="grid two"><section class="card"><div class="row between wrap"><h2>Current upgrade queues</h2><span class="pill active">'+pending.length+' marked active</span></div><div class="timeline">'+
- (next.length ? next.slice(0,12).map(t=>'<div class="rowcard"><div><strong>'+enc(t.name)+' · Lv '+t.level+' → '+(t.level+1)+'</strong><small>'+enc(t.category)+'</small></div><span class="pill '+(t.finishesAt && t.finishesAt<now?'planned':'active')+'">'+(t.finishesAt&&t.finishesAt<now?'Refresh export':t.finishesAt?new Date(t.finishesAt).toLocaleString():'Timer unknown')+'</span></div>').join(''):
- pending.slice(0,8).map(t=>'<div class="rowcard"><div><strong>'+enc(t.title)+'</strong><small>'+enc(t.queue+' · '+t.village)+'</small></div><span class="pill active">Self-reported active</span></div>').join(''))+
+ (next.length ? next.slice(0,12).map(t=>'<div class="rowcard"><div class="item-identity">'+itemImage(categories.find(c=>c[1]===t.category)?.[0]||'missing',t.name,t.level,true)+'<div><strong>'+enc(t.name)+' · Lv '+t.level+' → '+(t.level+1)+'</strong><small>'+enc(t.category)+'</small></div></div><span class="pill '+(t.finishesAt && t.finishesAt<now?'planned':'active')+'">'+(t.finishesAt&&t.finishesAt<now?'Refresh export':t.finishesAt?new Date(t.finishesAt).toLocaleString():'Timer unknown')+'</span></div>').join(''):
+ pending.slice(0,8).map(t=>'<div class="rowcard"><div class="item-identity">'+roadmapImage(t)+'<div><strong>'+enc(t.title)+'</strong><small>'+enc(t.queue+' · '+t.village)+'</small></div></div><span class="pill active">Self-reported active</span></div>').join(''))+
  '</div><p class="smallmuted">Timers come from the most recent JSON snapshot, not from a live connection to Supercell. Expired timers need a fresh import.</p></section>'+
  '<section class="card"><h2>Resources & loot reserve</h2><p class="smallmuted">Editable balances are separate from imported game data. Loot Cart is reserved and cannot be spent until collected.</p>'+resourcePanel()+
  '<p class="alertline">Your Loot Cart and Runes should be used only when storage has enough room. The app never collects anything in-game.</p></section></div>'+
@@ -102,7 +126,7 @@ function renderOverview(){
 }
 function recommendations(){
  const targets=state.roadmap.filter(x=>x.status==='planned').slice(0,5);
- return '<div class="stack">'+targets.map((t,i)=>'<div class="row"><span class="tag">'+(i+1)+'</span><div class="grow"><strong>'+enc(t.title)+'</strong><div class="smallmuted">'+enc(t.queue+' · '+t.note)+'</div></div></div>').join('')+'</div><div class="note space">Keep Laboratory and pet research busy independently of your builders. Verify costs in Clash of Clans before starting each job.</div>';
+ return '<div class="stack">'+targets.map((t,i)=>'<div class="row"><span class="tag">'+(i+1)+'</span>'+roadmapImage(t)+'<div class="grow"><strong>'+enc(t.title)+'</strong><div class="smallmuted">'+enc(t.queue+' · '+t.note)+'</div></div></div>').join('')+'</div><div class="note space">Keep Laboratory and pet research busy independently of your builders. Verify costs in Clash of Clans before starting each job.</div>';
 }
 function renderRoadmap(){
  const data=state.roadmap.filter(x=>filter==='all'||x.village===filter||x.status===filter);
@@ -112,7 +136,7 @@ function renderRoadmap(){
  card('Remaining boost',state.boostEnd?timeLeft(state.boostEnd):'Set end date','','50% returning boost; dates are manual')+'</div>'+
  '<div class="grid two space"><section class="card"><h2>Your upgrade timeline</h2><div class="filters">'+
  ['all','Home','Builder','active','planned','done'].map(x=>'<button class="chip '+(filter===x?'selected':'')+'" data-filter="'+x+'">'+enc(x[0].toUpperCase()+x.slice(1))+'</button>').join('')+'</div>'+
- '<div>'+data.map(t=>'<div class="task"><div><strong>'+enc(t.title)+'</strong><div class="micro">'+enc(t.village)+' · '+enc(t.queue)+' · '+enc(t.cost?format(t.cost)+' '+(moneyLabels[t.costType]||t.costType):'Check in-game cost')+'</div><p>'+enc(t.note)+'</p></div><aside><span class="pill '+enc(t.status)+'">'+enc(t.status)+'</span><select aria-label="Status of '+enc(t.title)+'" data-task="'+enc(t.id)+'">'+['planned','active','done','skipped'].map(s=>'<option value="'+s+'" '+(t.status===s?'selected':'')+'>'+s+'</option>').join('')+'</select></aside></div>').join('')+'</div></section>'+
+ '<div>'+data.map(t=>'<div class="task"><div class="item-identity">'+roadmapImage(t)+'<div><strong>'+enc(t.title)+'</strong><div class="micro">'+enc(t.village)+' · '+enc(t.queue)+' · '+enc(t.cost?format(t.cost)+' '+(moneyLabels[t.costType]||t.costType):'Check in-game cost')+'</div><p>'+enc(t.note)+'</p></div></div><aside><span class="pill '+enc(t.status)+'">'+enc(t.status)+'</span><select aria-label="Status of '+enc(t.title)+'" data-task="'+enc(t.id)+'">'+['planned','active','done','skipped'].map(s=>'<option value="'+s+'" '+(t.status===s?'selected':'')+'>'+s+'</option>').join('')+'</select></aside></div>').join('')+'</div></section>'+
  '<section class="stack"><div class="card"><h2>Boost deadline</h2><p class="smallmuted">A 50% building/research boost was observed. Set its expiry from your game screen; do not assume the countdown lasts forever.</p><div class="field"><label>Returning boost expires (device local time)</label><input type="datetime-local" data-boost-end value="'+enc(state.boostEnd||'')+'"></div><p class="smallmuted">Suggested order: finish Army Camps, unlock Unicorn and Recall Spell, raise Freeze Spell, then tackle B.O.B. milestones. Keep all queues working.</p></div>'+
  '<div class="card"><h2>Add a custom upgrade</h2><form id="task-form" class="stack"><div class="field"><label>Upgrade title</label><input name="title" maxlength="100" required placeholder="Example: Grand Warden 28 → 29"></div><div class="grid two"><div class="field"><label>Village</label><select name="village"><option>Home</option><option>Builder</option></select></div><div class="field"><label>Queue</label><select name="queue"><option>Builder</option><option>Laboratory</option><option>Star Laboratory</option><option>Pet House</option><option>Blacksmith</option></select></div></div><div class="grid two"><div class="field"><label>Cost resource</label><select name="costType">'+moneyKeys.map(([key,label])=>'<option value="'+key+'">'+enc(label)+'</option>').join('')+'</select></div><div class="field"><label>Cost (0 if unknown)</label><input name="cost" type="number" min="0" value="0"></div></div><div class="field"><label>Notes</label><textarea name="note" maxlength="350" placeholder="Why and when to build this"></textarea></div><button class="btn" type="submit">Add roadmap step</button></form></div>'+
  '<div class="card"><h2>Planner notes</h2><div class="field"><label>Editable instructions</label><textarea data-state-note>'+enc(state.notes||'')+'</textarea></div></div></section></div>';
@@ -124,13 +148,13 @@ function renderInventory(){
  '<div class="filters">'+categories.map(([id,title])=>'<button class="chip '+(invGroup===id?'selected':'')+'" data-category="'+id+'">'+enc(title)+'</button>').join('')+'</div>'+
  (!state.export?'<div class="empty">Import a village JSON export to see your full buildings, troops, spells, walls, pets and Builder Base. Your manual resources will not change.</div>':
  '<p class="smallmuted">Player '+enc(state.export.tag)+' · Snapshot: '+(state.export.timestamp?new Date(state.export.timestamp*1000).toLocaleString():'Unknown')+'</p>'+
- '<div class="scroll-table"><table class="inventory-table"><thead><tr><th>Name</th><th class="num">Level</th><th class="num">Count</th><th>Upgrading</th></tr></thead><tbody>'+rows.map(x=>'<tr><td>'+enc(x.name)+'</td><td class="num">'+x.level+'</td><td class="num">'+x.count+'</td><td>'+(x.timer!==null?(x.finishesAt ? enc(new Date(x.finishesAt).toLocaleString()) : enc(x.timer+'s')):'—')+'</td></tr>').join('')+'</tbody></table></div><div class="smallmuted">'+rows.reduce((a,x)=>a+x.count,0)+' objects in this category. Unknown game IDs stay visible for later catalog updates.</div>')+'</section>';
+ '<div class="scroll-table"><table class="inventory-table"><thead><tr><th>Name</th><th class="num">Level</th><th class="num">Count</th><th>Upgrading</th></tr></thead><tbody>'+rows.map(x=>'<tr><td><span class="item-identity">'+itemImage(invGroup,x.name,x.level,true)+'<span>'+enc(x.name)+'</span></span></td><td class="num">'+x.level+'</td><td class="num">'+x.count+'</td><td>'+(x.timer!==null?(x.finishesAt ? enc(new Date(x.finishesAt).toLocaleString()) : enc(x.timer+'s')):'—')+'</td></tr>').join('')+'</tbody></table></div><div class="smallmuted">'+rows.reduce((a,x)=>a+x.count,0)+' objects in this category. Unknown game IDs stay visible for later catalog updates.</div>')+'</section>';
 }
 function renderItems(){
- let groups=itemGroups.map(([group,keys])=>'<section class="card"><h2>'+enc(group)+'</h2><div class="grid items">'+keys.map(key=>'<div class="item-field"><label>'+enc(key)+'</label><input type="number" min="0" step="1" data-item="'+enc(key)+'" value="'+integer(state.items[key])+'"></div>').join('')+'</div></section>').join('');
+ let groups=itemGroups.map(([group,keys])=>'<section class="card"><h2>'+enc(group)+'</h2><div class="grid items">'+keys.map(key=>'<div class="item-field"><label class="label-with-art">'+itemImage('magicItem',key,1,true)+enc(key)+'</label><input type="number" min="0" step="1" data-item="'+enc(key)+'" value="'+integer(state.items[key])+'"></div>').join('')+'</div></section>').join('');
  const ores=['shiny','glowy','starry'];
  return '<div class="note">These balances are not in the Supercell JSON export. Update them manually after events, magic item use, chests, or Blacksmith upgrades. Changes are saved locally until you click “Save to GitHub”.</div>'+
- '<div class="grid two space">'+groups+'</div><section class="card space"><h2>Hero equipment ores</h2><div class="resource-grid">'+ores.map(k=>'<div class="field"><label>'+enc(moneyLabels[k])+'</label><input type="number" min="0" data-money="'+k+'" value="'+integer(state.resources[k])+'"></div>').join('')+'</div><p class="smallmuted">Eternal Tome is currently Lv 8 per your report. Save your Shiny and Glowy Ore for deliberate milestones.</p></section>';
+ '<div class="grid two space">'+groups+'</div><section class="card space"><h2>Hero equipment ores</h2><div class="resource-grid">'+ores.map(k=>'<div class="field"><label class="label-with-art">'+resImage(k)+enc(moneyLabels[k])+'</label><input type="number" min="0" data-money="'+k+'" value="'+integer(state.resources[k])+'"></div>').join('')+'</div><p class="smallmuted">Eternal Tome is currently Lv 8 per your report. Save your Shiny and Glowy Ore for deliberate milestones.</p></section>';
 }
 function renderSync(){
  return '<div class="grid two"><section class="card"><h2>Import & export</h2><p class="smallmuted">Game export updates building/troop levels only. Planner backup includes balances, inventory, and roadmap.</p><div class="stack"><button class="btn" data-action="choose-file">↑ Import Clash of Clans JSON</button><button class="btn secondary" data-action="download">↓ Download full planner backup</button><button class="btn secondary" data-action="restore">↑ Restore planner backup</button></div><div class="divider"></div><div class="field"><label>Latest imported game snapshot</label><div class="note">'+enc(state.importedAt||'No game export imported yet')+'</div></div></section>'+
