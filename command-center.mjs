@@ -66,6 +66,33 @@ const costDisplay=(profile,group,id,next)=>{
   (discounted!==null?' · '+pct+'% confirmed boost applied to base quote':' · no extra discount calculated'),
   detail:q};
 };
+export function rankCandidates(profile,candidates){
+ const snap=profile?.export||{},r=profile?.resources||{},prefs=profile?.upgradePreferences||{};
+ const current=(g,id)=>rows(snap,g).some(x=>x.data===id);
+ return (candidates||[]).map((t,i)=>{
+  const group=['heroes','buildings','heroes2','buildings2','spells','units','pets','equipment','units2','siege_machines'].find(g=>current(g,t.id));
+  const ref=group&&REFERENCE_CATALOG[group+':'+t.id]?.levels.find(x=>x.l===t.targetLevel);
+  const lab=rows(snap,'buildings').find(x=>x.data===1000007)?.lvl;
+  const star=rows(snap,'buildings2').find(x=>x.data===1000046)?.lvl;
+  const hero=rows(snap,'buildings').find(x=>x.data===1000071)?.lvl;
+  const th=rows(snap,'buildings').find(x=>x.data===1000001)?.lvl;
+  const bh=rows(snap,'buildings2').find(x=>x.data===1000034)?.lvl;
+  const requirements=[['TH',ref?.th,th],['BH',ref?.bh,bh],['Lab',ref?.lab,lab],
+    ['Star Lab',ref?.sl,star],['Hero Hall',ref?.hh,hero]];
+  const unmet=requirements.find(([name,needed,have])=>Number.isFinite(needed)&&needed>0&&Number.isFinite(have)&&have<needed);
+  if(unmet)return null;
+  const quote=group&&t.targetLevel?quoteInfo(profile,group,t.id,t.targetLevel):null;
+  const boost=group?discountFor(profile,group):null;
+  const factor=quote?.beforeBoost&&Number.isFinite(boost)?(100-boost)/100:1;
+  const cost=Number.isFinite(quote?.price)?Math.ceil(quote.price*factor):null;
+  const funded=Number.isFinite(cost)&&Number.isFinite(r[quote?.currency])?r[quote.currency]>=cost:null;
+  const hours=quote?.hours?quote.hours*factor:null;
+  const priority=(t.weight??(80-i*2))+(funded===true?5:funded===false?-10:0)+
+    (hours?Math.max(-3,3-Math.log2(1+hours)):0);
+  return {...t,priority,recordedAffordable:funded,
+   eligibilityNote:ref?'Reference level requirements checked; game confirmation required':'Prerequisites not verified in catalog'};
+ }).filter(Boolean).sort((a,b)=>b.priority-a.priority);
+}
 const snapshotFinish=(x,r)=>{
  if(!timed(r)||!Number.isFinite(x?.timestamp))return 'Not upgrading in JSON';
  const end=(x.timestamp+r.timer)*1000;
