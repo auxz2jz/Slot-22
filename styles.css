@@ -125,3 +125,14 @@ body{background:radial-gradient(circle at 80% 0%,#253351 0,transparent 40%),radi
 @media(max-width:1200px){.vault-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.command-grid{grid-template-columns:1fr}.queue-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.royal-hero{padding:17px;margin-top:12px}.royal-hall .art-badge{height:70px;width:70px;flex-basis:70px}.royal-stats{gap:10px}.royal-stats span{font-size:10px}.royal-stats strong{font-size:15px}.vault-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.queue-tiles{grid-template-columns:1fr}.vault{padding:10px}.vault-value{font-size:15px}.vault-foot input{width:92px}.collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.collection-card{min-height:155px}.detail-dialog-inner{padding:18px}}
 @media(prefers-reduced-motion:reduce){.royal-glint{animation:none;display:none}.queue-tile,.quest-node,.collection-card,.mini-track>span,.vault-track>span,.royal-meter>span{transition:none}}
+
+
+.task-launch,.inventory-link{border:0;background:transparent;color:#f5f0e4;padding:0;text-align:left;cursor:pointer}
+.task-launch{font-weight:800;font-size:14px;line-height:1.35}
+.task-launch:hover,.inventory-link:hover{color:#ffda94;text-decoration:underline;text-underline-offset:3px}
+.task-launch:focus-visible,.inventory-link:focus-visible{outline:2px solid #ffcf7f;border-radius:4px}
+.quest-panel{margin:18px 0}
+.quest-panel .quest-trail{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.quest-panel .quest-node{min-height:75px}
+.inventory-link .item-identity{color:inherit;font-weight:750}
+@media(max-width:760px){.quest-panel .quest-trail{grid-template-columns:1fr}}
