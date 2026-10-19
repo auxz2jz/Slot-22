@@ -39,6 +39,36 @@ try{
  const magic=await cmd('Runtime.evaluate',{expression:"document.querySelectorAll('img.item-art').length",returnByValue:true});
  console.log('MAGIC ITEMS ARTWORK COUNT:',magic.result?.result?.value);
  if((magic.result?.result?.value||0)<20)process.exitCode=1;
+ const interaction=await cmd('Runtime.evaluate',{
+  expression:`(async()=>{
+    document.querySelector('[data-tab="overview"]').click();
+    const gold=document.querySelector('[data-money="gold"]');
+    const initiallyGrouped=gold.value==='19,000,000'&&gold.type==='text';
+    gold.value='1200000';
+    gold.dispatchEvent(new Event('input',{bubbles:true}));
+    const commaGrouped=gold.value==='1,200,000';
+    gold.dispatchEvent(new Event('change',{bubbles:true}));
+    const snapshot={tag:'#SECOND1',timestamp:1792374000,buildings:[{data:1000001,lvl:12}],buildings2:[{data:1000034,lvl:8}]};
+    window.confirm=()=>true;
+    const transfer=new DataTransfer();
+    transfer.items.add(new File([JSON.stringify(snapshot)],'second.json',{type:'application/json'}));
+    const file=document.getElementById('game-file');file.files=transfer.files;
+    file.dispatchEvent(new Event('change',{bubbles:true}));
+    await new Promise(done=>setTimeout(done,450));
+    const added=document.querySelector('#profile-select').options.length===2;
+    const altEmpty=document.querySelector('[data-money="gold"]').value==='0';
+    const snapshotLocal=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
+    const preserved=snapshotLocal.profiles['#QVLP9RVV'].resources.gold===1200000;
+    document.getElementById('profile-select').value='#QVLP9RVV';
+    document.getElementById('profile-select').dispatchEvent(new Event('change',{bubbles:true}));
+    const switchedBack=document.querySelector('[data-money="gold"]').value==='1,200,000';
+    return {initiallyGrouped,commaGrouped,added,altEmpty,preserved,switchedBack,selected:document.getElementById('profile-select').value};
+  })()`,
+  awaitPromise:true,returnByValue:true
+ });
+ const interactionResult=interaction.result?.result?.value||{};
+ console.log('ACCOUNT & COMMA FORMATTING:',interactionResult);
+ if(!['initiallyGrouped','commaGrouped','added','altEmpty','preserved','switchedBack'].every(k=>interactionResult[k]===true))process.exitCode=1;
  console.log('BROWSER ERRORS:',failures);
  if(!body.toLowerCase().includes('gold in storage')||body.toLowerCase().includes('loading village tracker'))process.exitCode=1;
 }catch(e){console.error(e);process.exitCode=1;}finally{ws?.close();chrome.kill('SIGKILL');}
