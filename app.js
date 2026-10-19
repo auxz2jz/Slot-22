@@ -142,7 +142,7 @@ function renderOverview(){
  '<p class="alertline">Your Loot Cart and Runes should be used only when storage has enough room. The app never collects anything in-game.</p></section></div>'+
  '<div class="grid two space"><section class="card"><h2>Recommended next actions</h2>'+recommendations()+'</section>'+
  '<section class="card"><h2>Account & progress</h2><div class="grid two">'+
- card('Home base','TH 14','','Five builders active')+card('Builder base','BH 9','','Two builders active')+'</div>'+
+ card('Home base','TH '+(state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—'),'','From imported account snapshot')+card('Builder base','BH '+(state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—'),'','From imported account snapshot')+'</div>'+
  '<p class="smallmuted">Player: '+enc(state.playerTag)+'<br>Last import: '+enc(state.importedAt?new Date(state.importedAt).toLocaleString():'Not yet imported')+'<br>Export timestamp: '+enc(state.export?.timestamp?new Date(state.export.timestamp*1000).toLocaleString():'None')+'</p>'+
  '<div class="row wrap"><button class="btn" data-action="choose-file">↑ Import game JSON</button><button class="btn secondary" data-action="goto-roadmap">View roadmap</button></div></section></div>';
 }
@@ -176,7 +176,7 @@ function renderItems(){
  let groups=itemGroups.map(([group,keys])=>'<section class="card"><h2>'+enc(group)+'</h2><div class="grid items">'+keys.map(key=>'<div class="item-field"><label class="label-with-art">'+itemImage('magicItem',key,1,true)+enc(key)+'</label><input type="text" inputmode="numeric" autocomplete="off" data-item="'+enc(key)+'" value="'+format(state.items[key])+'"></div>').join('')+'</div></section>').join('');
  const ores=['shiny','glowy','starry'];
  return '<div class="note">These balances are not in the Supercell JSON export. Update them manually after events, magic item use, chests, or Blacksmith upgrades. Changes are saved locally until you click “Save to GitHub”.</div>'+
- '<div class="grid two space">'+groups+'</div><section class="card space"><h2>Hero equipment ores</h2><div class="resource-grid">'+ores.map(k=>'<div class="field"><label class="label-with-art">'+resImage(k)+enc(moneyLabels[k])+'</label><input type="text" inputmode="numeric" autocomplete="off" data-money="'+k+'" value="'+format(state.resources[k])+'"></div>').join('')+'</div><p class="smallmuted">Eternal Tome is currently Lv 8 per your report. Save your Shiny and Glowy Ore for deliberate milestones.</p></section>';
+ '<div class="grid two space">'+groups+'</div><section class="card space"><h2>Hero equipment ores</h2><div class="resource-grid">'+ores.map(k=>'<div class="field"><label class="label-with-art">'+resImage(k)+enc(moneyLabels[k])+'</label><input type="text" inputmode="numeric" autocomplete="off" data-money="'+k+'" value="'+format(state.resources[k])+'"></div>').join('')+'</div><p class="smallmuted">Equipment levels belong to the selected profile. Confirm actual Blacksmith costs before spending ores.</p></section>';
 }
 function renderSync(){
  return '<div class="grid two"><section class="card"><h2>Import & export</h2><p class="smallmuted">Import an unfamiliar player tag to add another profile. An existing tag updates only that account. Full backups contain ALL profiles, currencies, Magic Items and roadmaps.</p><div class="stack"><button class="btn" data-action="choose-file">↑ Import Clash of Clans JSON</button><button class="btn secondary" data-action="download">↓ Download full planner backup</button><button class="btn secondary" data-action="restore">↑ Restore planner backup</button></div><div class="divider"></div><div class="field"><label>Latest imported game snapshot</label><div class="note">'+enc(state.importedAt||'No game export imported yet')+'</div></div></section>'+
@@ -280,7 +280,7 @@ async function gitLoad(){
 }
 async function gitSave(){
  try{
-  if(!confirm('This will publish your game inventory, balances and roadmap to a PUBLIC GitHub file. Continue?'))return;
+  if(!confirm('Save ALL '+Object.keys(bundle.profiles).length+' Clash profile(s), inventories, balances and roadmaps to a PUBLIC GitHub file? Everyone can view them.'))return;
   const current=await api(apiUrl()+'?ref=main');
   if(!current.missing && ghSha && current.sha!==ghSha)throw Error('Conflict: the GitHub copy changed on another device. Load it and reconcile before saving.');
   if(!current.missing && !ghSha && !confirm('You have not loaded the current GitHub copy in this tab. Overwrite it with the current local planner?'))return;
