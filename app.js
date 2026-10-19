@@ -7,6 +7,7 @@ import {renderInsights,renderHelperStrip,helperCountdown} from './insights-view.
 import {ensureHelperRoadmap} from './helper-plan.mjs';
 import {helperActionRecommendations} from './helper-advice.mjs';
 import {renderFullVillagePlan} from './full-plan-view.mjs';
+import {fullVillagePlan} from './full-plan.mjs';
 import {helperSummary} from './snapshot-insights.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
@@ -115,7 +116,8 @@ function applyGameExport(raw){
  if(improved.added){state=improved.profile;bundle.profiles[bundle.activeProfileId]=state;}
  const advice=nextHomeBuilderRecommendations(state);
  const research=availableResearchQueues(state).filter(q=>q.status==='idle'&&q.recommendations.length);
- const hasBuilder=advice.availability?.availableAtLeast>0&&advice.recommendations.length>0;
+ const builderCandidates=fullVillagePlan(state)?.queues.find(q=>q.id==='homeBuilders')?.next||[];
+ const hasBuilder=advice.availability?.availableAtLeast>0&&builderCandidates.length>0;
  const assistants=helperActionRecommendations(state);
  const hasAssistantTasks=assistants.some(h=>h.detail||h.id===93000002||h.id===93000003);
  const shouldPrompt=Number.isFinite(x.timestamp)&&x.timestamp>oldSnapshot&&
