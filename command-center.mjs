@@ -192,6 +192,20 @@ export function renderCommandDetail(profile,selection){
   const near=overview.queueStates.find(q=>q.id===(group==='buildings2'||group==='heroes2'?'builderBuilders':'homeBuilders'));
   const groupName=group==='buildings2'||group==='heroes2'?'Builder Base':'Home Village';
   const nextLevel=row.lvl+1,quote=costDisplay(profile,group,id,nextLevel);
+  const relatedActive=mapped?workRows(mapped,e):[];
+  const filterRelated=t=>id===1000020?['Lightning Spell','Healing Spell','Rage Spell','Jump Spell','Freeze Spell','Clone Spell','Invisibility Spell','Overgrowth Spell'].some(n=>(t.title||'').startsWith(n)):
+   id===1000029?['Poison Spell','Earthquake Spell','Haste Spell','Skeleton Spell','Bat Spell'].some(n=>(t.title||'').startsWith(n)):
+   id===1000059?['Wall Wrecker','Battle Blimp','Stone Slammer','Siege Barracks','Log Launcher'].some(n=>(t.title||'').startsWith(n)):
+   (id===1000006||id===1000026)?(t.location||'').includes('Army Upgrades')&&!/Spell/.test(t.title||''):
+   true;
+  const relatedNext=(sub?.next||[]).filter(filterRelated);
+  const relatedPreview=relation&&sub?
+   '<h4>Working in its linked queue</h4>'+
+   (relatedActive.length?relatedActive.map(t=>'<p>'+esc(snapshotFinish(e,t))+' · '+esc(labelFor(t.data))+'</p>').join(''):
+    '<p>No timed research recorded in last snapshot.</p>')+
+   '<h4>Then work on</h4>'+
+   (relatedNext.length?relatedNext.slice(0,3).map((t,i)=>'<p><b>'+String(i+1)+'. '+esc(t.title)+'</b></p>').join(''):
+    '<p>No verified next candidate; check game unlocks.</p>'):'';
   const categoriesText=id===1000020?'The Spell Factory is not a second research worker.':
     id===1000071?'The Hero Hall is not a separate Hero-upgrade builder.':'';
   return '<div class="command-detail" data-focus="'+esc(selection)+'"><h2>'+esc(name)+'</h2>'+
@@ -200,7 +214,8 @@ export function renderCommandDetail(profile,selection){
    '<h3>Building itself · '+row.lvl+' → '+nextLevel+'</h3>'+
    '<p>'+esc(quote.line)+'</p>'+quoteForm(profile,group,row)+
    (relation?'<div class="command-related"><h3>What this structure does</h3><p>'+esc(relation[1])+'</p>'+
-    (sub?'<button class="btn small" data-command-lane="'+mapped+'">Open '+esc(sub.name)+' work queue</button>':'')+
+    relatedPreview+
+    (sub?'<button class="btn small" data-command-lane="'+mapped+'">Open complete '+esc(sub.name)+' queue</button>':'')+
     '<p>'+esc(categoriesText)+'</p></div>':'<p>This structure can be upgraded if the game offers another level and a builder is available. It has no separate ongoing research queue.</p>')+
     (near?.status==='busy'?'<small>Builder pool was occupied at snapshot; queue this building for a later slot.</small>':'')+'</div>';
  }
