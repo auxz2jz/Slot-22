@@ -1,14 +1,17 @@
 import {spawn} from 'node:child_process';
 import {setTimeout as delay} from 'node:timers/promises';
-const chrome=spawn(process.env.CHROME_PATH||'/usr/bin/google-chrome',['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--remote-debugging-port=9431','--user-data-dir=/tmp/clash-chrome-'+process.pid,'about:blank'],{stdio:'ignore'});
+const chrome=spawn(process.env.CHROME_PATH||'/usr/bin/google-chrome',['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--remote-debugging-port=9431','--user-data-dir=/tmp/clash-chrome-'+process.pid,'about:blank'],{stdio:['ignore','ignore','pipe']});
+let chromeStartupLog='';
+chrome.stderr?.on('data',chunk=>{chromeStartupLog=(chromeStartupLog+String(chunk)).slice(-2400)});
+chrome.on('error',e=>{chromeStartupLog=(chromeStartupLog+' Spawn error: '+e.message).slice(-2400)});
 let ws,failures=[];
 try{
  let target;
- for(let i=0;i<40;i++){
+ for(let i=0;i<120;i++){
   try{const pages=await(await fetch('http://127.0.0.1:9431/json')).json();target=pages.find(x=>x.type==='page');if(target)break;}catch{}
   await delay(250);
  }
- if(!target)throw Error('Chrome debugger unavailable');
+ if(!target)throw Error('Chrome debugger unavailable after 30s; exit code '+chrome.exitCode+'; '+chromeStartupLog);
  ws=new WebSocket(target.webSocketDebuggerUrl);
  await new Promise((resolve,reject)=>{ws.addEventListener('open',resolve,{once:true});ws.addEventListener('error',reject,{once:true});});
  let seq=0;const pending=new Map();
