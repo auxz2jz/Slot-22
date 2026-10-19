@@ -21,6 +21,8 @@ jobs:
           node --check app.js
           node --check dashboard.mjs
           node --check experience.mjs
+          node --check helper-advice.mjs
+          node --check insights-view.mjs
           node --check sw.js
       - name: Run unit tests
         run: node --test tests/*.test.mjs
