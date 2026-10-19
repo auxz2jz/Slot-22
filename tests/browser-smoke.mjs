@@ -41,17 +41,22 @@ try{
  const estimateResult=upgradeEstimate.result?.result?.value||{};
  console.log('UPGRADE ETA / PROGRESS UI:',estimateResult);
 
- const audited=await cmd('Runtime.evaluate',{expression:`(()=>{
-  const f=document.querySelector('.factory-audit'),r=document.querySelector('.research-nudge'),b=document.querySelector('.builder-nudge:not(.research-nudge)');
+ const audited=await cmd('Runtime.evaluate',{expression:`(async()=>{
+  const f=document.querySelector('.factory-audit'),b=document.querySelector('.builder-nudge:not(.research-nudge)');
+  const {availableResearchQueues}=await import('./experience.mjs');
+  const saved=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
+  const profile=saved.profiles[saved.activeProfileId];
+  const q=availableResearchQueues(profile);
   return {factory:!!f,darkSpell:f?.textContent.includes('Dark Spell Factory'),workshop:f?.textContent.includes('Workshop'),
     starLab:f?.textContent.includes('Star Laboratory'),petHouse:f?.textContent.includes('Pet House'),
-    research:!!r,pet:r?.textContent.includes('Electro Owl 2 → 3'),
-    star:r?.textContent.includes('Raged Barbarian 13 → 14'),notHog:!r?.textContent.includes('Hog Glider 15 → 16'),
+    pet:q.some(z=>z.key==='petHouse'&&z.status==='idle'&&z.recommendations[0]?.title==='Electro Owl 2 → 3'),
+    star:q.some(z=>z.key==='starLaboratory'&&z.status==='idle'&&z.recommendations[0]?.title==='Raged Barbarian 13 → 14'),
+    notHog:!q.some(z=>z.recommendations.some(t=>t.title.includes('Hog Glider 15 → 16'))),
     noFreeHomeBuilder:!b,modal:!!document.getElementById('builder-dialog')};
- })()`,returnByValue:true});
+ })()`,awaitPromise:true,returnByValue:true});
  const auditedResult=audited.result?.result?.value||{};
  console.log('FACTORY AUDIT AND IDLE PET/STAR RESEARCH:',auditedResult);
- if(!['factory','darkSpell','workshop','starLab','petHouse','research','pet','star','notHog','noFreeHomeBuilder','modal'].every(k=>auditedResult[k]===true))process.exitCode=1;
+ if(!['factory','darkSpell','workshop','starLab','petHouse','pet','star','notHog','noFreeHomeBuilder','modal'].every(k=>auditedResult[k]===true))process.exitCode=1;
  const builderPopup=await cmd('Runtime.evaluate',{expression:`(async()=>{
   const bundle=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
   const player=bundle.profiles[bundle.activeProfileId],newer=structuredClone(player.export);
