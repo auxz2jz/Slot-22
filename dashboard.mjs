@@ -1,6 +1,7 @@
 import {artworkUrl,artForResource} from './artwork.mjs';
 import {rowsFromExport,ongoingFromExport,format} from './core.mjs';
 import {gauge,snapshotCountdown,queueGroups,progressSummary,planPreview} from './experience.mjs';
+import {resolvedCapacity} from './capacities.mjs';
 
 export function esc(s){return String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch]));}
 export function iconFor(category,name,level=1,large=false){
@@ -37,7 +38,7 @@ export function gaugeDeck(profile){
   '<p class="subtext">Fill bars are accurate only after you enter your in-game storage capacity. No guessed capacities.</p>'+
   '<div class="vault-grid">'+gauges.map(({key,label,className})=>{
     const balance=profile.resources?.[key]||0;
-    const cap=profile.storageCaps?.[key]||0;
+    const selected=resolvedCapacity(profile,key),cap=selected.value;
     const g=gauge(balance,cap);
     const img=artForResource(key);
     return '<div class="vault '+className+'"><div class="vault-top"><span class="vault-label">'+
