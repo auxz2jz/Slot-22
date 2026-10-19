@@ -200,7 +200,7 @@ function renderItems(){
  const group=(title,keys)=>'<section class="card"><h2>'+enc(title)+'</h2><div class="grid items">'+keys.map(key=>
   '<div class="item-field"><label class="label-with-art">'+itemImage('magicItem',key,1,true)+enc(key)+'</label>'+
   '<input type="text" inputmode="numeric" autocomplete="off" aria-label="Actual quantity of '+enc(key)+'" data-item="'+enc(key)+'" value="'+format(state.items[key])+'"></div>').join('')+'</div></section>';
- const groups=itemGroups.map(([label,keys])=>group(label,keys)).join('')+(additions?group('Additional inventory items',additions):'');
+ const groups=itemGroups.map(([label,keys])=>group(label,keys)).join('')+(additions.length?group('Additional inventory items',additions):'');
  const ores=['shiny','glowy','starry'];
  return '<section class="card magic-lead"><span class="kicker">ACTUAL INVENTORY</span><h2>Books, Runes, Potions & Magic Items</h2>'+
  '<p><strong>Enter what you currently OWN</strong>, not what is still unclaimed in the event. There is no 5/5 limit in this tracker: enter 6, 8, 12 or any real amount shown by your game.</p>'+
