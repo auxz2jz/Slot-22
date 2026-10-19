@@ -280,3 +280,41 @@ summary{cursor:pointer;font-weight:750}
 .full-plan-audit details{margin:8px 0;padding:7px;border-top:1px solid #39536a}
 .full-plan-audit table{width:100%;font-size:11px}
 @media(max-width:600px){.full-plan-grid{grid-template-columns:1fr}.full-plan-lane{padding:11px}.full-plan-panel{padding:12px}}
+
+/* v20 compact resource-first command center and drill-down detail */
+.command-center{display:grid;gap:12px;margin:0 0 12px;border-color:#55738d}
+.command-header{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.command-header h2{margin:3px 0}
+.command-header-actions{display:flex;gap:6px;flex-wrap:wrap}
+.command-resource-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.command-resource-grid>div{padding:9px;background:#13283d;border:1px solid #435e76;border-radius:8px;min-width:0}
+.command-resource-grid small{display:block;color:#aac4d8;font-size:11px}
+.command-resource-grid b{font-size:13px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.command-queue-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.command-queue{display:flex;flex-direction:column;gap:6px;padding:14px;background:#182e44;border:1px solid #4e718c;border-radius:10px;text-align:left;color:#e7efff;cursor:pointer}
+.command-queue:hover,.command-queue:focus-visible{border-color:#e0bb76;background:#28445b}
+.command-queue-title{font-size:15px;font-weight:800;color:#f3d29b}
+.command-queue-status,.command-more{font-size:11px;color:#a3d8ff}
+.command-queue small{font-size:12px;color:#bad1e8;line-height:1.4}
+.command-queue strong{font-size:13px;line-height:1.45}
+.command-settings,.command-structures,.command-legacy{border:1px solid #465f7a;border-radius:9px;padding:10px}
+.command-settings summary,.command-structures summary,.command-legacy summary{cursor:pointer;color:#b9dcf1}
+.command-boost-controls{display:flex;flex-wrap:wrap;gap:10px;padding:10px 0}
+.command-boost-controls label{display:grid;gap:5px}
+.command-boost-controls select,.command-quote input,.command-quote select{padding:8px;border:1px solid #526f8e;background:#12263b;color:#fff;border-radius:7px}
+.command-structure-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:7px;padding:8px 0}
+.command-structure-grid button{padding:9px;color:#e5f5ff;background:#1b3449;border:1px solid #3e5d75;border-radius:7px;text-align:left;cursor:pointer}
+.command-structures>details{padding:8px 0;border-bottom:1px solid #36516c}
+.command-legacy-content{margin:12px 0}
+.command-dialog{width:min(94vw,680px);max-height:90dvh;overflow:auto}
+.command-detail h3{color:#f6d69e;margin:15px 0 7px}
+.command-detail p,.command-detail small{font-size:12px;line-height:1.5}
+.command-active,.command-helper,.command-related,.command-quote{padding:11px;border:1px solid #3e5d7c;background:#172c42;border-radius:8px;margin:9px 0}
+.command-active small,.command-choices small{display:block;color:#b8cfe6}
+.command-choices{padding-left:22px;display:grid;gap:12px}
+.command-choices li{font-size:12px}
+.command-choices small{margin:5px 0}
+.command-quote label{display:block;font-size:12px;margin:10px 0}
+.command-quote label input[type=checkbox]{width:auto}
+@media(max-width:690px){.command-resource-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.command-queue-grid{grid-template-columns:1fr}}
+@media(max-width:470px){.command-resource-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.command-center{padding:12px}}
