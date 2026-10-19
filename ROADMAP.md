@@ -140,3 +140,10 @@ All positions and recommendations are defined in pass-rewards.mjs and claim reco
 - [x] S22-079: Show assistant-specific next tasks in Helper Hut overview and fresh JSON popup alongside any builder/research queue recommendations, once per imported snapshot.
 - [x] S22-080: Add unit tests and browser assertions; cache v18 and syntax validation; all four GitHub checks passed at app code commit b5a9232e708c609bfa67e4bda5bd932f201d59a9.
 - [ ] S22-081: Confirm Android visual display with newly imported game JSON; preserve unsynced phone data and prior resource/Magic Item tracking.
+
+## October 19 — V19 complete village upgrade pipeline
+- [x] S22-082: Inspect latest saved Oct 19 12:52 PM Pacific JSON; audit 5 Home construction jobs, 2 Builder Base jobs, active Freeze Spell, 5 idle Home Heroes, idle pet research and Hero Equipment opportunities.
+- [x] S22-083: Add full-plan.mjs, full-plan-view.mjs — Home builders and Hero Hall, Builder builders/B.O.B., shared Home Lab spell/troop/siege research, Star Lab, Hero Pets, Blacksmith ore equipment, Helper Hut, and expandable exhaustive 4-category buildings/traps table.
+- [x] S22-084: Rank current next and follow-ons; Warden28->29/Queen48->49 and Army Camps after builder frees; Freeze Spell5->6 after current research (verify unlock), Electro Owl2->3 now, Unicorn after Pet House4 unlock, Eternal Tome8->9 if ore allows; Star Lab level7 research may be started during structure construction per official 2022 notes but Hog15->16 requires Lv9. Every candidate requires in-game eligibility/cost check.
+- [x] S22-085: Show plan on Overview after every fresh import and use its offensive priorities for free-builder popup; do not let stale manually marked roadmap tasks determine all choices. Add unit and browser regression tests, cache v19.
+- [ ] S22-086: Confirm all four latest GitHub Actions and Pages, Android physical validation, and follow-up after user's next real game JSON. Do not touch manually saved currency, event rewards, magic items or game JSON when developing logic.
