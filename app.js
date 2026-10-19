@@ -69,6 +69,8 @@ async function initialize(){
   el('backup-file').addEventListener('change',async e=>readFile(e,'backup'));
   el('profile-select').addEventListener('change',e=>{try{bundle.profiles[bundle.activeProfileId]=state;useBundle(selectProfile(bundle,e.target.value));saveLocal('profile-switch');render();}catch(err){notify(err.message,'error');render();}});
   document.addEventListener('click',clickAction);
+  setInterval(updateVisualTimers,30000);
+  el('item-dialog').addEventListener('click',e=>{if(e.target===el('item-dialog'))el('item-dialog').close();});
   document.addEventListener('input',commaInput);
   document.addEventListener('change',changeAction);
   document.addEventListener('submit',submitAction);
@@ -208,6 +210,65 @@ function renderTesting(){
  '<section class="card"><h2>Diagnostics</h2><p class="smallmuted">Action results are logged locally without tokens or raw imported account content. Export the report if you encounter a problem.</p><button class="btn secondary" data-action="diagnostics">Export diagnostics</button><div class="divider"></div>'+
  diagnostics.slice(-18).reverse().map(x=>'<div class="task"><div><strong>'+enc(x.type)+'</strong><p>'+enc(x.time)+' · '+enc(x.detail)+'</p></div><aside><span class="pill '+(x.outcome==='OK'?'done':'skipped')+'">'+enc(x.outcome)+'</span></aside></div>').join('')+'</section></div>';
 }
+
+function openDetail({taskId=null,recordIndex=null,category=null,fromQueue=false}={}){
+ try{
+  const task=taskId?state.roadmap.find(t=>t.id===taskId):null;
+  let record=null,kind=category;
+  if(recordIndex!==null && Number.isInteger(recordIndex) && recordIndex>=0){
+   if(fromQueue){
+    const records=ongoingFromExport(state.export);
+    record=records[recordIndex]||null;
+    kind=categories.find(c=>c[1]===record?.category)?.[0]||null;
+   }else{
+    record=rowsFromExport(state.export,category)[recordIndex]||null;
+   }
+  }
+  if(!task&&!record)throw Error('Upgrade details could not be found. Refresh the page and try again.');
+  const dialog=el('item-dialog');
+  el('item-dialog-body').innerHTML=detailContent({profile:state,record,category:kind,task});
+  if(!dialog.open)dialog.showModal();
+  log('open-upgrade','OK',(task?.id||record?.name||'unknown').slice(0,55));
+ }catch(err){notify(err.message,'error');log('open-upgrade','FAILED',err.message);}
+}
+function updateVisualTimers(){
+ const now=Date.now();
+ document.querySelectorAll('[data-timer-end]').forEach(node=>{
+   const end=Number(node.dataset.timerEnd);
+   node.textContent=end?remainingTime(end,now).text:'Timer unavailable';
+ });
+ document.querySelectorAll('[data-timer-progress]').forEach(node=>{
+   const [start,end]=node.dataset.timerProgress.split(',').map(Number);
+   if(end>start && Number.isFinite(start)){
+     const pct=Math.max(0,Math.min(100,100*(now-start)/(end-start)));
+     node.style.width=pct.toFixed(1)+'%';
+   }
+ });
+}
+function trackUpgradeAction(action,encodedId){
+ try{
+  const id=decodeURIComponent(encodedId||'');
+  const task=state.roadmap.find(t=>t.id===id);
+  if(!task)throw Error('This roadmap task no longer exists.');
+  if(action==='mark-task'){
+   state=setTaskStatus(state,id,'active');
+   saveLocal('task-mark-active');notify('Task marked active in planner. No game action performed.');
+  }else{
+   if(task.status!=='planned')throw Error('This task was already started, finished or skipped. No resources changed.');
+   const preview=planPreview(task,state.resources);
+   if(!preview.valid||!preview.affordable||preview.key==='gems')throw Error('Unknown cost or insufficient resources. No balance changed.');
+   if(!confirm('Record '+task.title+' as started and subtract '+format(preview.cost)+' '+(moneyLabels[preview.key]||preview.key)+' from the selected profile? This does not start the upgrade in Clash of Clans.'))return;
+   state.resources[preview.key]=preview.remaining;
+   state=setTaskStatus(state,id,'active');
+   state.history=(state.history||[]).concat({at:new Date().toISOString(),kind:'manual-upgrade-spend',note:task.title+' · '+format(preview.cost)+' '+preview.key}).slice(-120);
+   saveLocal('resource-spent-in-tracker');
+   notify('Upgrade recorded in planner; '+format(preview.cost)+' '+(moneyLabels[preview.key]||preview.key)+' deducted locally.');
+  }
+  el('item-dialog')?.close();
+  render();
+ }catch(err){notify(err.message,'error');log('upgrade-action','FAILED',err.message);}
+}
+
 const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'Village inventory',items:'Magic Items & ores',sync:'GitHub & backups',testing:'Testing & diagnostics'};
 function render() {
  for(const b of document.querySelectorAll('[data-tab]'))b.classList.toggle('active',b.dataset.tab===view);
@@ -217,10 +278,11 @@ function render() {
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
  el('village-subtitle').textContent='TOWN HALL '+th+' · BUILDER HALL '+bh;
  el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,sync:renderSync,testing:renderTesting}[view])();
+ updateVisualTimers();
 }
 function commaInput(e){
  const field=e.target;
- if(!field.matches?.('[data-money],[data-item]'))return;
+ if(!field.matches?.('[data-money],[data-item],[data-cap]'))return;
  const original=field.value;
  const start=field.selectionStart??original.length;
  const digitPosition=original.slice(0,start).replace(/\D/g,'').length;
@@ -235,6 +297,7 @@ function commaInput(e){
 }
 function changeAction(e){
  const t=e.target;
+ if(t.dataset.cap){state.storageCaps??={};state.storageCaps[t.dataset.cap]=integer(t.value);saveLocal('capacity-edit');render();return;}
  if(t.dataset.money){state.resources[t.dataset.money]=integer(t.value);t.value=format(state.resources[t.dataset.money]);saveLocal('resource-edit');return;}
  if(t.dataset.item){state.items[t.dataset.item]=integer(t.value);t.value=format(state.items[t.dataset.item]);saveLocal('item-edit');return;}
  if(t.dataset.task){try{state=setTaskStatus(state,t.dataset.task,t.value);saveLocal('roadmap-status');render();}catch(err){notify(err.message,'error');}return;}
@@ -253,6 +316,8 @@ function clickAction(e){
  if(target.dataset.openInventory!==undefined){openDetail({recordIndex:Number(target.dataset.openInventory),category:invGroup});return;}
  const action=target.dataset.action;
  if(action==='goto-roadmap'){view='roadmap';render();}
+ if(action==='close-detail'){el('item-dialog')?.close();return;}
+ if(action==='mark-task'||action==='record-upgrade'){trackUpgradeAction(action,target.dataset.taskId);return;}
  if(action==='choose-file')el('game-file').click();
  if(action==='paste-shortcut'){view='sync';render();el('paste-export')?.focus();}
  if(action==='import-pasted'){
