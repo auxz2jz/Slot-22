@@ -221,3 +221,12 @@ summary{cursor:pointer;font-weight:750}
 .builder-choice span,.builder-choice small{font-size:12px;line-height:1.4;color:#c9d7e8}
 .builder-choice .btn{margin-top:4px;white-space:normal;text-align:left}
 @media(max-width:600px){.builder-alert-dialog .detail-dialog-inner{padding:16px}.builder-choice{padding:11px}}
+
+/* Dated, independent laboratory/pet research queue recommendations. */
+.research-nudge{border-color:#496f86;background:linear-gradient(130deg,#173844,#1e2a43)}
+.research-nudge-row{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:8px 0;padding:10px 0;border-bottom:1px solid #44637a;font-size:12px}
+.research-nudge-row strong{color:#a8edff}
+.research-nudge-row span{flex:1 1 175px;color:#e1ebf6}
+.builder-popup-queue{border-bottom:1px solid #526178;padding:10px 0}
+.builder-popup-queue h3{color:#ffdea8;margin:3px 0 8px}
+.builder-popup-queue .subtext{margin-bottom:9px}
