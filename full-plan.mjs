@@ -31,7 +31,7 @@ const topSpellIds=[26000005,26000035,26000002,26000009,26000000,26000001,2600001
 const topTroopIds=[4000007,4000008,4000059,4000011,4000058,4000017,4000022,4000005];
 const topSiegeIds=[4000087,4000052,4000075,4000051];
 const petRanks=[73000002,73000000,73000001,73000003];
-const equipmentRanks=[90000004,90000003,90000005,90000007,90000006,90000001];
+const equipmentRanks=[90000004,90000003,90000005,90000007,90000006,90000001,90000008];
 const rowLabel=r=>labelFor(r.data);
 const timed=r=>Number.isFinite(r?.timer)&&r.timer>=0;
 const rows=(x,key)=>Array.isArray(x?.[key])?x[key]:[];
@@ -132,7 +132,7 @@ function equipmentRecommendations(x){
   return r?[{...task(r,'Equipment upgrades use Shiny/Glowy/Starry Ore, not a builder or Laboratory worker.',
    'Home Village → Build → Hero Equipment'),state:'check-ore'}]:[];
  });
- return rank.slice(0,5);
+ return rank.slice(0,7);
 }
 function inventoryAudit(x){
  const groups=[['Home buildings','buildings'],['Home traps','traps'],['Builder Base buildings','buildings2'],
