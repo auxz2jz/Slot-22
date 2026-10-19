@@ -41,3 +41,11 @@ Features: animated command header, resource gauges only when capacity is supplie
 Successful Chrome integration run 39192580463 checked banner/modal/preview, actual one-time tracker-only deduction, other profile isolation, capacity persistence/fill, gallery modal; browser errors were empty. Verification run 39192580449 and Pages deployment 39192580037 succeeded before documentation updates. Check final source latest CI again before user handoff.
 
 Next S22-023: user tests Android; address focused defects in atomic steps, continue preserving previous baseline. Recommended GPT-6 Medium for simple UI fixes, High for complex sync conflicts. Observe global library recovery/diagnostics/testing standards.
+
+## October 18 2026 Gold Pass reward tracking handoff
+
+User dictated all unclaimed remaining prizes: Silver 30, Gold 19, of which Silver 8 and Gold 14 are either-or options (22 total). This is specific to player #QVLP9RVV. Earlier screenshots contained overlapping entries and already claimed items, so only this fresh verbal list is the authoritative remaining catalog. Fixed Silver rewards: 9 chests, four times 450k Gold, four times 450k Elixir, four times 7,500 DE, one Book of Heroes. Choice-only Silver rewards include two Builder Gold 1M, two Builder Elixir 1M, and a 750k Gold/Elixir choice.
+
+New pass-rewards.mjs module, Season Pass prizes page, data persistence under optional seasonalPlan.claims, and tests. Remote account seasonalPlan now notes 49 rewards without changing Books, Runes, Gold, Elixir, or other actual inventory. The user's device may have newer unsynced local data; never automatically Load from GitHub or overwrite it.
+
+User priorities: choose Builder resource over 1k Capital Gold for B.O.B.; Rune of Builder Gold/Elixir over Shovel; Chests over surplus Resource Potions; use existing Books and Runes before collecting replacements; activate available perks now; use a free builder and walls for storage room; target completion October 30. Any gold pass hero/potion/book choices are recommendations subject to live item capacity and actual research queue. Manual claim only; app does not collect in-game. User has a scheduled October 28 reminder for final collection review. User Android acceptance pending.
