@@ -6,13 +6,29 @@ const helperDescription={93000000:'Speeds up one Home Village building or hero u
 93000001:'Speeds up one Laboratory research upgrade when assigned.',
 93000002:'Check Helper Hut to confirm its identity. A level-3 resource converter is likely the Alchemist.',
 93000003:'Gold Pass ore-conversion helper if your latest export confirms ownership.'};
+// All assignment and cooldown values come from the game's dated JSON snapshot.
+// Expired estimates do NOT prove the helper is available or still assigned.
+function helperCountdown(end,kind){
+ const left=Math.ceil((end-Date.now())/1000);
+ if(!Number.isFinite(left)||left<=0)return kind==='work'?'Session estimate elapsed · refresh JSON':'Cooldown estimate elapsed · verify in game';
+ const d=Math.floor(left/86400),hours=Math.floor((left%86400)/3600),mins=Math.floor((left%3600)/60),secs=left%60;
+ return (d?d+'d ':'')+(hours?hours+'h ':'')+(mins?mins+'m ':'')+(!d&&!hours?secs+'s ':'')+'left';
+}
 function helperTile(h){
- const date=h.snapshotEnd;
- const seconds=date?Math.ceil((date-Date.now())/1000):null;
- const cooldown=seconds===null?'Cooldown not included in export':seconds<=0?'Snapshot cooldown elapsed · verify in game':Math.ceil(seconds/3600)+'h remaining based on snapshot';
+ const a=h.assignment;
+ const target=a?'<div class="helper-assignment">Assigned in snapshot: <strong>'+safe(a.name)+'</strong> (Lv '+Number(a.level)+')</div>':
+  h.assignmentCount>1?'<small>Multiple possible assignments in JSON; target unclear. Check in game.</small>':
+  '<small>Assignment not reported in this JSON.</small>';
+ const work=a?.workEndsAt!==null&&Number.isFinite(a?.workEndsAt)?
+  '<small>Work session: <span class="helper-countdown" data-helper-session-end="'+a.workEndsAt+'">'+safe(helperCountdown(a.workEndsAt,'work'))+'</span></small>':
+  '<small>Work-session timer not included in JSON.</small>';
+ const repeat=a?'<small>Repeat assignment: '+(a.recurrent===true?'On':a.recurrent===false?'Off':'Not specified')+' (at export)</small>':'';
+ const cooldown=h.snapshotEnd!==null&&Number.isFinite(h.snapshotEnd)?
+  '<small>Cooldown: <span class="helper-countdown" data-helper-cooldown-end="'+h.snapshotEnd+'">'+safe(helperCountdown(h.snapshotEnd,'cooldown'))+'</span></small>':
+  '<small>Cooldown not included in JSON.</small>';
  return '<div class="helper-tile"><strong>'+safe(h.name)+'</strong><span>Level '+Number(h.level)+'</span>'+
- '<small>'+safe(helperDescription[h.id]||'Check this helper in your village.')+'</small>'+
- '<small>'+safe(cooldown)+'</small></div>';
+ target+(a?work+repeat:'')+cooldown+
+ '<small>'+safe(helperDescription[h.id]||'Check this helper in your village.')+'</small></div>';
 }
 export function renderHelperStrip(profile){
  const list=helperSummary(profile.export);
@@ -20,7 +36,7 @@ export function renderHelperStrip(profile){
  return '<section class="card helper-panel"><div class="panel-heading"><div><span class="kicker">HELPER HUT</span><h2>Your helpers</h2></div>'+
  '<button class="btn secondary small" data-action="go-insights">View all export data</button></div>'+
  (list.length?'<div class="helper-grid">'+list.map(helperTile).join('')+'</div>':'<p class="subtext">No helpers appear in this snapshot.</p>')+
- '<p class="smallmuted">Builder Apprentice → long Home Village upgrade; Lab Assistant → Laboratory research. Availability and assignments require confirmation inside Clash of Clans. Use no Gems.</p></section>';
+ '<p class="smallmuted">Helper assignments appear only when the game JSON reports a target. Work-session and cooldown estimates count down from the game snapshot date using your phone clock; once elapsed, refresh JSON to confirm actual status. Helpers are not controlled from this planner. No Gems spent.</p></section>';
 }
 function bobCard(b){
  if(!b)return '';
