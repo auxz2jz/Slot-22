@@ -83,7 +83,7 @@ try{
   input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));
   await new Promise(r=>setTimeout(r,220));
   const dialog=document.getElementById('builder-dialog');
-  const shown=dialog.open&&dialog.textContent.includes('Spell Factory 6 → 7');
+  const shown=dialog.open&&dialog.textContent.includes('Grand Warden 28 → 29');
   const homeLab=dialog.textContent.includes('Freeze Spell 4 → 5');
   const star=!!dialog.querySelector('[data-alert-queue="starLaboratory"]');
   const pet=dialog.textContent.includes('Electro Owl 2 → 3');
