@@ -32,3 +32,13 @@ All roadmap prices are estimates until game confirms them. User may edit every t
 - [ ] S22-016 — User test on actual Android phone with a second account; verify GitHub Load/Save across devices with explicit opt-in and do not leak tokens. Only implement fixes supported by actual evidence.
 
 Next task: user tests new account import. Recommended GPT-6 Medium for targeted browser UX improvements; escalate to High if real GitHub conflict or data migration evidence is contradictory. Checkpoint before edits.
+
+## v0.3.0 – Interactive Command Center (candidate)
+
+- [x] S22-017 – Game-themed command header showing TH/BH and roadmap progress.
+- [x] S22-018 – Editable per-account resource storage capacities with honest fill bars.
+- [x] S22-019 – Home and Builder Base queue countdowns, independent lab and pet timers, snapshot-based progress.
+- [x] S22-020 – Tappable upgrade quest trail and inventory card gallery/table toggle.
+- [x] S22-021 – Cost preview and confirmed tracker-only record-upgrade action; no automatic Gems spending.
+- [x] S22-022 – Automated browser and unit testing for new UI and multi-profile isolation.
+- [ ] S22-023 – User Android visual acceptance, fixes based on actual reports.
