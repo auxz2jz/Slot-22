@@ -2,13 +2,14 @@ import {names,categories,moneyKeys,itemGroups,labelFor} from './catalog.mjs';
 import {artworkUrl,artForResource} from './artwork.mjs';
 import {coverFor,gaugeDeck,builderBoard,questTrail,gallery,detailContent} from './dashboard.mjs';
 import {planPreview,snapshotCountdown,remainingTime} from './experience.mjs';
+import {renderPassRewards,updatePassState} from './pass-rewards.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
 const STORAGE='clash-slot22-state-v2',LEGACY_STORAGE='clash-slot22-state-v1',TESTS='clash-slot22-tests-v1';
 const el=id=>document.getElementById(id);
 const enc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let bundle=normalizeBundle(seedState()),state=bundle.profiles[bundle.activeProfileId],view='overview',filter='all',invGroup='buildings',ghSha=null;
-let inventoryMode='gallery',activeDialog=null;
+let inventoryMode='gallery',activeDialog=null,passFilter='unclaimed';
 let diagnostics=[],manualTests={};
 const testSteps=[
  'Overview lists current resource values.',
@@ -270,7 +271,7 @@ function trackUpgradeAction(action,encodedId){
  }catch(err){notify(err.message,'error');log('upgrade-action','FAILED',err.message);}
 }
 
-const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'Village inventory',items:'Magic Items & ores',sync:'GitHub & backups',testing:'Testing & diagnostics'};
+const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'Village inventory',items:'Magic Items & ores',pass:'Season Pass prizes',sync:'GitHub & backups',testing:'Testing & diagnostics'};
 function render() {
  for(const b of document.querySelectorAll('[data-tab]'))b.classList.toggle('active',b.dataset.tab===view);
  el('section-title').textContent=titles[view];el('player-tag').textContent=state.playerTag;
@@ -278,7 +279,7 @@ function render() {
  const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
  el('village-subtitle').textContent='TOWN HALL '+th+' · BUILDER HALL '+bh;
- el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,sync:renderSync,testing:renderTesting}[view])();
+ el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter),sync:renderSync,testing:renderTesting}[view])();
  updateVisualTimers();
 }
 function commaInput(e){
@@ -298,6 +299,7 @@ function commaInput(e){
 }
 function changeAction(e){
  const t=e.target;
+ if(t.dataset.passChoice){try{state=updatePassState(state,t.dataset.passChoice,'choose',t.value);saveLocal('pass-choice-selection');render();}catch(err){notify(err.message,'error');render();}return;}
  if(t.dataset.cap){state.storageCaps??={};state.storageCaps[t.dataset.cap]=integer(t.value);saveLocal('capacity-edit');render();return;}
  if(t.dataset.money){state.resources[t.dataset.money]=integer(t.value);t.value=format(state.resources[t.dataset.money]);saveLocal('resource-edit');return;}
  if(t.dataset.item){state.items[t.dataset.item]=integer(t.value);t.value=format(state.items[t.dataset.item]);saveLocal('item-edit');return;}
@@ -307,8 +309,10 @@ function changeAction(e){
  if(t.dataset.test!==undefined){manualTests[t.dataset.test]=t.checked;localStorage.setItem(TESTS,JSON.stringify(manualTests));log('guided-test','MANUAL',t.dataset.test+' '+(t.checked?'checked':'unchecked'));}
 }
 function clickAction(e){
- const target=e.target.closest('[data-action],[data-filter],[data-category],[data-open-task],[data-open-record],[data-open-inventory],[data-inventory-mode]');
+ const target=e.target.closest('[data-action],[data-filter],[data-category],[data-open-task],[data-open-record],[data-open-inventory],[data-inventory-mode],[data-pass-filter],[data-pass-toggle]');
  if(!target)return;
+ if(target.dataset.passFilter){passFilter=target.dataset.passFilter;render();return;}
+ if(target.dataset.passToggle){try{state=updatePassState(state,target.dataset.passToggle,'toggle');saveLocal('pass-claim-status');render();notify('Pass reward recorded in tracker only. Update actual balances and Magic Items after claiming in-game.');}catch(err){notify(err.message,'error');}return;}
  if(target.dataset.filter){filter=target.dataset.filter;render();return;}
  if(target.dataset.category){invGroup=target.dataset.category;render();return;}
  if(target.dataset.inventoryMode){inventoryMode=target.dataset.inventoryMode;render();return;}
