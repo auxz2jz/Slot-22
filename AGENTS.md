@@ -18,3 +18,6 @@ Never imply automatic Supercell account syncing. Timers are dated snapshots, and
 Code map: index.html app shell; app.js UI and GitHub sync; core.mjs pure helpers; catalog.mjs named IDs; styles.css responsive theme; data/player-state.json starting baseline. Tests: node --test tests/*.test.mjs. Diagnostics in docs/DIAGNOSTICS.md and guided testing in docs/GUIDED_TESTING.md.
 
 Do not claim GitHub Pages deployed until actually verified. Owner may need Settings > Pages > Deploy from a branch > main / (root).
+
+## Version 2 profile format
+The GitHub snapshot `data/player-state.json` is now **one v2 bundle** with fields `schemaVersion:2`, `activeProfileId`, and `profiles` keyed by each user's Clash player tag. Each nested profile remains `schemaVersion:1` with independent `resources`, `items`, `roadmap`, `export`, `history`, and `displayName`. The previous local v1 key and v1 JSON backups migrate through `normalizeBundle`, without overwriting manual amounts. Maintain compatibility and never silently overwrite/remove another profile when ChatGPT edits the upgrade plan. For account-specific requests, update only the matching `profiles['#TAG']` object; never reset `activeProfileId` or other accounts unless explicitly asked. GitHub sync publishes the complete bundle publicly, so warn if user adds accounts.
