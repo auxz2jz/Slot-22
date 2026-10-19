@@ -70,3 +70,6 @@ Editable numerical balances (including resources, ores and Magic Items) use grou
 **Privacy:** GitHub sync publishes **every account** in the saved bundle together to your PUBLIC Slot-22 repository. Local changes on each browser remain local until you explicitly choose **Save to GitHub**. **Load from GitHub** replaces the full set of local profiles only after confirmation; download a local all-profiles backup first if you have unpublished changes.
 
 **Verification:** GitHub Actions browser startup smoke run 39190994116 verified entering 1,200,000, creating a second account, zero starting balances, original-account balance preservation, switching back, and no JavaScript errors. Android user confirmation is still needed.
+
+### Paste directly from the game
+If Clash of Clans copied its village export to your Android clipboard instead of making a file, press **Paste game JSON** in the account toolbar. In **GitHub & backups**, paste the complete exported JSON into the text box and tap **Import pasted game JSON**. The app selects the matching player account or asks to add a new account. You do not need to upload any screenshots or manually create a JSON file. Actual game currency and Magic Items still need manual editing.
