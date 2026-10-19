@@ -5,8 +5,8 @@
     "#QVLP9RVV": {
       "schemaVersion": 1,
       "playerTag": "#QVLP9RVV",
-      "revision": 19,
-      "savedAt": "2026-10-19T20:32:35.943Z",
+      "revision": 23,
+      "savedAt": "2026-10-19T22:33:25.100Z",
       "resources": {
         "gold": 19000000,
         "elixir": 17504427,
@@ -493,17 +493,17 @@
       ],
       "export": {
         "tag": "#QVLP9RVV",
-        "timestamp": 1792441915,
+        "timestamp": 1792449167,
         "helpers": [
           {
             "data": 93000000,
             "lvl": 7,
-            "helper_cooldown": 42583
+            "helper_cooldown": 35343
           },
           {
             "data": 93000001,
             "lvl": 8,
-            "helper_cooldown": 42583
+            "helper_cooldown": 35343
           },
           {
             "data": 93000002,
@@ -523,7 +523,7 @@
           {
             "data": 1000014,
             "lvl": 9,
-            "timer": 180649
+            "timer": 173397
           },
           {
             "data": 1000008,
@@ -538,7 +538,7 @@
           {
             "data": 1000000,
             "lvl": 10,
-            "timer": 94275
+            "timer": 87023
           },
           {
             "data": 1000013,
@@ -548,17 +548,17 @@
           {
             "data": 1000020,
             "lvl": 6,
-            "timer": 236082
+            "timer": 228830
           },
           {
             "data": 1000027,
             "lvl": 7,
-            "timer": 137490
+            "timer": 130238
           },
           {
             "data": 1000068,
             "lvl": 3,
-            "timer": 29412
+            "timer": 22160
           },
           {
             "data": 1000000,
@@ -1065,8 +1065,7 @@
           {
             "data": 26000005,
             "lvl": 4,
-            "timer": 63683,
-            "helper_timer": 1248,
+            "timer": 46449,
             "helper_recurrent": true
           },
           {
@@ -1113,8 +1112,7 @@
           },
           {
             "data": 73000002,
-            "lvl": 2,
-            "timer": 68802
+            "lvl": 3
           }
         ],
         "equipment": [
@@ -1301,12 +1299,12 @@
           {
             "data": 1000044,
             "lvl": 7,
-            "timer": 123895
+            "timer": 114168
           },
           {
             "data": 1000046,
             "lvl": 7,
-            "timer": 123490
+            "timer": 113763
           },
           {
             "data": 1000033,
@@ -1626,9 +1624,12 @@
         ],
         "skins2": [],
         "sceneries2": [],
-        "boosts": {}
+        "boosts": {
+          "clocktower_boost": 1525,
+          "clocktower_cooldown": 80725
+        }
       },
-      "importedAt": "2026-10-19T20:32:19.473Z",
+      "importedAt": "2026-10-19T22:33:17.207Z",
       "history": [
         {
           "at": "2026-10-18T18:25:23-07:00",
@@ -1689,6 +1690,11 @@
           "at": "2026-10-19T20:32:19.473Z",
           "kind": "import",
           "note": "Imported village snapshot dated 1792441915"
+        },
+        {
+          "at": "2026-10-19T22:33:17.207Z",
+          "kind": "import",
+          "note": "Imported village snapshot dated 1792449167"
         }
       ],
       "notes": "Goal: use 50% Home Village builder/research returning boost, avoid Gem spending and Rune waste; open event rewards before expiry and only when storage permits; unlock B.O.B. sixth builder.",
@@ -1931,17 +1937,6 @@
       "snapshotChanges": [
         {
           "tag": "#QVLP9RVV",
-          "beforeTimestamp": 1792400955,
-          "afterTimestamp": 1792401610,
-          "changes": [],
-          "other": [
-            "helpers",
-            "boosts"
-          ],
-          "recordedAt": "2026-10-19T09:20:30.660Z"
-        },
-        {
-          "tag": "#QVLP9RVV",
           "beforeTimestamp": 1792401610,
           "afterTimestamp": 1792435596,
           "changes": [
@@ -2019,6 +2014,29 @@
             "helpers"
           ],
           "recordedAt": "2026-10-19T20:32:19.479Z"
+        },
+        {
+          "tag": "#QVLP9RVV",
+          "beforeTimestamp": 1792441915,
+          "afterTimestamp": 1792449167,
+          "changes": [
+            {
+              "key": "pets",
+              "id": 73000002,
+              "name": "Electro Owl",
+              "beforeCount": 1,
+              "afterCount": 1,
+              "beforeLevelPoints": 2,
+              "afterLevelPoints": 3,
+              "inferredLevels": 1,
+              "quantityChange": 0
+            }
+          ],
+          "other": [
+            "helpers",
+            "boosts"
+          ],
+          "recordedAt": "2026-10-19T22:33:17.210Z"
         }
       ],
       "upgradeTracking": [
@@ -2028,7 +2046,7 @@
           "level": 9,
           "firstSeenAt": 1792398410000,
           "endAt": 1792622564000,
-          "lastSeenAt": 1792441915000
+          "lastSeenAt": 1792449167000
         },
         {
           "category": "buildings",
@@ -2036,7 +2054,7 @@
           "level": 10,
           "firstSeenAt": 1792398410000,
           "endAt": 1792536190000,
-          "lastSeenAt": 1792441915000
+          "lastSeenAt": 1792449167000
         },
         {
           "category": "buildings",
@@ -2044,7 +2062,7 @@
           "level": 6,
           "firstSeenAt": 1792438344000,
           "endAt": 1792677997000,
-          "lastSeenAt": 1792441915000
+          "lastSeenAt": 1792449167000
         },
         {
           "category": "buildings",
@@ -2052,7 +2070,7 @@
           "level": 7,
           "firstSeenAt": 1792398410000,
           "endAt": 1792579405000,
-          "lastSeenAt": 1792441915000
+          "lastSeenAt": 1792449167000
         },
         {
           "category": "buildings",
@@ -2060,45 +2078,361 @@
           "level": 3,
           "firstSeenAt": 1792398410000,
           "endAt": 1792471327000,
-          "lastSeenAt": 1792441915000
+          "lastSeenAt": 1792449167000
         },
         {
           "category": "spells",
           "id": 26000005,
           "level": 4,
           "firstSeenAt": 1792438344000,
-          "endAt": 1792505598000,
-          "lastSeenAt": 1792441915000
-        },
-        {
-          "category": "pets",
-          "id": 73000002,
-          "level": 2,
-          "firstSeenAt": 1792441915000,
-          "endAt": 1792510717000,
-          "lastSeenAt": 1792441915000
+          "endAt": 1792495616000,
+          "lastSeenAt": 1792449167000
         },
         {
           "category": "buildings2",
           "id": 1000044,
           "level": 7,
           "firstSeenAt": 1792398410000,
-          "endAt": 1792565810000,
-          "lastSeenAt": 1792441915000
+          "endAt": 1792563335000,
+          "lastSeenAt": 1792449167000
         },
         {
           "category": "buildings2",
           "id": 1000046,
           "level": 7,
           "firstSeenAt": 1792398410000,
-          "endAt": 1792565405000,
-          "lastSeenAt": 1792441915000
+          "endAt": 1792562930000,
+          "lastSeenAt": 1792449167000
         }
       ],
-      "builderPromptLastShownAt": 1792441915,
-      "builderPromptDismissedAt": 1792441915
+      "builderPromptLastShownAt": 1792449167,
+      "builderPromptDismissedAt": 1792449167
+    },
+    "#GVPCRLJQ8": {
+      "schemaVersion": 1,
+      "playerTag": "#GVPCRLJQ8",
+      "revision": 12,
+      "resources": {
+        "gold": 425000,
+        "elixir": 264854,
+        "dark": 0,
+        "gems": 296,
+        "builderGold": 0,
+        "builderElixir": 0,
+        "cartGold": 1000000,
+        "cartElixir": 1000000,
+        "cartDark": 0,
+        "shiny": 0,
+        "glowy": 0,
+        "starry": 0
+      },
+      "resourceNotes": "Enter the balances for this account. The game export does not contain resource or Magic Item amounts.",
+      "items": {},
+      "roadmap": [],
+      "export": {
+        "tag": "#GVPCRLJQ8",
+        "timestamp": 1792448644,
+        "buildings": [
+          {
+            "data": 1000001,
+            "lvl": 4,
+            "timer": 10687
+          },
+          {
+            "data": 1000071,
+            "lvl": 0,
+            "timer": 1675
+          },
+          {
+            "data": 1000000,
+            "lvl": 4,
+            "cnt": 2
+          },
+          {
+            "data": 1000002,
+            "lvl": 8,
+            "cnt": 4
+          },
+          {
+            "data": 1000003,
+            "lvl": 8,
+            "cnt": 2
+          },
+          {
+            "data": 1000004,
+            "lvl": 8,
+            "cnt": 4
+          },
+          {
+            "data": 1000005,
+            "lvl": 8,
+            "cnt": 2
+          },
+          {
+            "data": 1000006,
+            "lvl": 6,
+            "cnt": 1
+          },
+          {
+            "data": 1000007,
+            "lvl": 2,
+            "cnt": 1
+          },
+          {
+            "data": 1000008,
+            "lvl": 5,
+            "cnt": 2
+          },
+          {
+            "data": 1000009,
+            "lvl": 4,
+            "cnt": 2
+          },
+          {
+            "data": 1000010,
+            "lvl": 4,
+            "cnt": 75
+          },
+          {
+            "data": 1000012,
+            "lvl": 2,
+            "cnt": 1
+          },
+          {
+            "data": 1000013,
+            "lvl": 2,
+            "cnt": 1
+          },
+          {
+            "data": 1000014,
+            "lvl": 2,
+            "cnt": 1
+          },
+          {
+            "data": 1000015,
+            "lvl": 1,
+            "cnt": 3
+          }
+        ],
+        "traps": [
+          {
+            "data": 12000000,
+            "lvl": 2,
+            "cnt": 2
+          },
+          {
+            "data": 12000001,
+            "lvl": 1,
+            "cnt": 2
+          }
+        ],
+        "decos": [],
+        "obstacles": [],
+        "units": [
+          {
+            "data": 4000000,
+            "lvl": 2
+          },
+          {
+            "data": 4000001,
+            "lvl": 2
+          },
+          {
+            "data": 4000002,
+            "lvl": 2
+          },
+          {
+            "data": 4000003,
+            "lvl": 2
+          },
+          {
+            "data": 4000004,
+            "lvl": 2
+          },
+          {
+            "data": 4000005,
+            "lvl": 2
+          }
+        ],
+        "siege_machines": [],
+        "heroes": [],
+        "spells": [],
+        "pets": [],
+        "equipment": [],
+        "house_parts": [],
+        "skins": [],
+        "sceneries": [],
+        "buildings2": [
+          {
+            "data": 1000033,
+            "lvl": 1,
+            "cnt": 10
+          },
+          {
+            "data": 1000034,
+            "lvl": 1,
+            "cnt": 1
+          }
+        ],
+        "traps2": [],
+        "decos2": [],
+        "obstacles2": [
+          {
+            "data": 8000041,
+            "cnt": 11
+          },
+          {
+            "data": 8000042,
+            "cnt": 1
+          },
+          {
+            "data": 8000044,
+            "cnt": 1
+          },
+          {
+            "data": 8000047,
+            "cnt": 4
+          },
+          {
+            "data": 8000048,
+            "cnt": 7
+          },
+          {
+            "data": 8000049,
+            "cnt": 3
+          },
+          {
+            "data": 8000050,
+            "cnt": 5
+          },
+          {
+            "data": 8000051,
+            "cnt": 3
+          },
+          {
+            "data": 8000053,
+            "cnt": 2
+          },
+          {
+            "data": 8000055,
+            "cnt": 1
+          },
+          {
+            "data": 8000056,
+            "cnt": 5
+          },
+          {
+            "data": 8000057,
+            "cnt": 7
+          },
+          {
+            "data": 8000058,
+            "cnt": 3
+          },
+          {
+            "data": 8000059,
+            "cnt": 6
+          },
+          {
+            "data": 8000060,
+            "cnt": 5
+          },
+          {
+            "data": 8000061,
+            "cnt": 2
+          },
+          {
+            "data": 8000062,
+            "cnt": 2
+          },
+          {
+            "data": 8000063,
+            "cnt": 4
+          },
+          {
+            "data": 8000064,
+            "cnt": 6
+          }
+        ],
+        "units2": [],
+        "heroes2": [],
+        "skins2": [],
+        "sceneries2": [],
+        "boosts": {}
+      },
+      "importedAt": "2026-10-19T22:24:24.567Z",
+      "history": [
+        {
+          "at": "2026-10-19T22:15:57.034Z",
+          "kind": "import",
+          "note": "Imported village snapshot dated 1792447809"
+        },
+        {
+          "at": "2026-10-19T22:16:19.013Z",
+          "kind": "import",
+          "note": "Imported village snapshot dated 1792447809"
+        },
+        {
+          "at": "2026-10-19T22:18:39.709Z",
+          "kind": "import",
+          "note": "Imported village snapshot dated 1792448285"
+        },
+        {
+          "at": "2026-10-19T22:24:24.567Z",
+          "kind": "import",
+          "note": "Imported village snapshot dated 1792448644"
+        }
+      ],
+      "notes": "New village profile. Add a custom upgrade roadmap after reviewing the game export.",
+      "boostEnd": null,
+      "displayName": "#GVPCRLJQ8",
+      "savedAt": "2026-10-19T22:26:40.834Z",
+      "upgradeTracking": [
+        {
+          "category": "buildings",
+          "id": 1000001,
+          "level": 4,
+          "firstSeenAt": 1792448644000,
+          "endAt": 1792459331000,
+          "lastSeenAt": 1792448644000
+        },
+        {
+          "category": "buildings",
+          "id": 1000071,
+          "level": 0,
+          "firstSeenAt": 1792448644000,
+          "endAt": 1792450319000,
+          "lastSeenAt": 1792448644000
+        }
+      ],
+      "builderPromptLastShownAt": 1792448644,
+      "builderPromptDismissedAt": 1792448644,
+      "snapshotChanges": [
+        {
+          "tag": "#GVPCRLJQ8",
+          "beforeTimestamp": 1792448285,
+          "afterTimestamp": 1792448644,
+          "changes": [
+            {
+              "key": "buildings",
+              "id": 1000071,
+              "name": "Hero Hall",
+              "beforeCount": 0,
+              "afterCount": 1,
+              "beforeLevelPoints": 0,
+              "afterLevelPoints": 0,
+              "inferredLevels": null,
+              "quantityChange": 1
+            }
+          ],
+          "other": [
+            "obstacles"
+          ],
+          "recordedAt": "2026-10-19T22:24:24.570Z"
+        }
+      ]
     }
   },
-  "revision": 19,
-  "savedAt": "2026-10-19T20:32:35.943Z"
+  "revision": 35,
+  "savedAt": "2026-10-19T22:33:25.100Z"
 }
