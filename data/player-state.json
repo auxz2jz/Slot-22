@@ -5,15 +5,15 @@
     "#QVLP9RVV": {
       "schemaVersion": 1,
       "playerTag": "#QVLP9RVV",
-      "revision": 6,
-      "savedAt": "2026-10-19T09:33:59.207Z",
+      "revision": 13,
+      "savedAt": "2026-10-19T18:47:47.500Z",
       "resources": {
         "gold": 19000000,
-        "elixir": 12608735,
-        "dark": 207783,
-        "gems": 4023,
-        "builderGold": 1605931,
-        "builderElixir": 360800,
+        "elixir": 17504427,
+        "dark": 408530,
+        "gems": 4049,
+        "builderGold": 3055184,
+        "builderElixir": 1352108,
         "cartGold": 17000000,
         "cartElixir": 17000000,
         "cartDark": 170000,
@@ -493,12 +493,12 @@
       ],
       "export": {
         "tag": "#QVLP9RVV",
-        "timestamp": 1792401610,
+        "timestamp": 1792435596,
         "helpers": [
           {
             "data": 93000000,
             "lvl": 7,
-            "helper_cooldown": 82787
+            "helper_cooldown": 48827
           },
           {
             "data": 93000001,
@@ -522,7 +522,7 @@
           {
             "data": 1000014,
             "lvl": 9,
-            "timer": 220954
+            "timer": 186968
           },
           {
             "data": 1000008,
@@ -537,7 +537,7 @@
           {
             "data": 1000000,
             "lvl": 10,
-            "timer": 134580
+            "timer": 100594
           },
           {
             "data": 1000013,
@@ -547,12 +547,12 @@
           {
             "data": 1000027,
             "lvl": 7,
-            "timer": 177795
+            "timer": 143809
           },
           {
             "data": 1000068,
             "lvl": 3,
-            "timer": 69717
+            "timer": 35731
           },
           {
             "data": 1000000,
@@ -886,12 +886,24 @@
         ],
         "obstacles": [
           {
+            "data": 8000000,
+            "cnt": 1
+          },
+          {
             "data": 8000004,
             "cnt": 1
           },
           {
+            "data": 8000009,
+            "cnt": 10
+          },
+          {
             "data": 8000010,
             "cnt": 1
+          },
+          {
+            "data": 8000023,
+            "cnt": 10
           },
           {
             "data": 8000137,
@@ -1025,10 +1037,7 @@
           },
           {
             "data": 28000001,
-            "lvl": 47,
-            "timer": 48152,
-            "helper_timer": 3587,
-            "helper_recurrent": true
+            "lvl": 48
           },
           {
             "data": 28000002,
@@ -1062,8 +1071,7 @@
           },
           {
             "data": 26000005,
-            "lvl": 3,
-            "timer": 5845
+            "lvl": 4
           },
           {
             "data": 26000009,
@@ -1296,12 +1304,12 @@
           {
             "data": 1000044,
             "lvl": 7,
-            "timer": 164200
+            "timer": 130214
           },
           {
             "data": 1000046,
             "lvl": 7,
-            "timer": 163795
+            "timer": 129809
           },
           {
             "data": 1000033,
@@ -1536,7 +1544,7 @@
           },
           {
             "data": 8000091,
-            "cnt": 3
+            "cnt": 4
           },
           {
             "data": 8000092,
@@ -1621,11 +1629,9 @@
         ],
         "skins2": [],
         "sceneries2": [],
-        "boosts": {
-          "clocktower_cooldown": 2496
-        }
+        "boosts": {}
       },
-      "importedAt": "2026-10-19T09:33:59.194Z",
+      "importedAt": "2026-10-19T18:47:47.492Z",
       "history": [
         {
           "at": "2026-10-18T18:25:23-07:00",
@@ -1666,6 +1672,11 @@
           "at": "2026-10-19T09:33:59.194Z",
           "kind": "import",
           "note": "Imported village snapshot dated 1792401610"
+        },
+        {
+          "at": "2026-10-19T18:47:47.492Z",
+          "kind": "import",
+          "note": "Imported village snapshot dated 1792435596"
         }
       ],
       "notes": "Goal: use 50% Home Village builder/research returning boost, avoid Gem spending and Rune waste; open event rewards before expiry and only when storage permits; unlock B.O.B. sixth builder.",
@@ -1685,7 +1696,205 @@
         "reportedGold": 19,
         "reportedChoicePositions": 22,
         "claimSource": "User dictated exact remaining rewards October 18, 2026. See pass-rewards.mjs. Current real game claim counts require user confirmation.",
-        "claims": {}
+        "claims": {
+          "S01": {
+            "claimed": false,
+            "selected": null
+          },
+          "S02": {
+            "claimed": false,
+            "selected": null
+          },
+          "S03": {
+            "claimed": false,
+            "selected": null
+          },
+          "S04": {
+            "claimed": false,
+            "selected": null
+          },
+          "S05": {
+            "claimed": false,
+            "selected": null
+          },
+          "S06": {
+            "claimed": false,
+            "selected": "Pet Potion"
+          },
+          "S07": {
+            "claimed": false,
+            "selected": null
+          },
+          "S08": {
+            "claimed": false,
+            "selected": null
+          },
+          "S09": {
+            "claimed": false,
+            "selected": null
+          },
+          "S10": {
+            "claimed": false,
+            "selected": null
+          },
+          "S11": {
+            "claimed": false,
+            "selected": null
+          },
+          "S12": {
+            "claimed": false,
+            "selected": null
+          },
+          "S13": {
+            "claimed": false,
+            "selected": null
+          },
+          "S14": {
+            "claimed": false,
+            "selected": null
+          },
+          "S15": {
+            "claimed": false,
+            "selected": null
+          },
+          "S16": {
+            "claimed": false,
+            "selected": null
+          },
+          "S17": {
+            "claimed": false,
+            "selected": null
+          },
+          "S18": {
+            "claimed": false,
+            "selected": null
+          },
+          "S19": {
+            "claimed": false,
+            "selected": null
+          },
+          "S20": {
+            "claimed": false,
+            "selected": null
+          },
+          "S21": {
+            "claimed": false,
+            "selected": null
+          },
+          "S22": {
+            "claimed": false,
+            "selected": null
+          },
+          "S23": {
+            "claimed": false,
+            "selected": null
+          },
+          "S24": {
+            "claimed": false,
+            "selected": null
+          },
+          "S25": {
+            "claimed": false,
+            "selected": null
+          },
+          "S26": {
+            "claimed": false,
+            "selected": null
+          },
+          "S27": {
+            "claimed": false,
+            "selected": null
+          },
+          "S28": {
+            "claimed": false,
+            "selected": null
+          },
+          "S29": {
+            "claimed": false,
+            "selected": null
+          },
+          "S30": {
+            "claimed": false,
+            "selected": null
+          },
+          "G01": {
+            "claimed": false,
+            "selected": null
+          },
+          "G02": {
+            "claimed": false,
+            "selected": null
+          },
+          "G03": {
+            "claimed": false,
+            "selected": null
+          },
+          "G04": {
+            "claimed": false,
+            "selected": null
+          },
+          "G05": {
+            "claimed": false,
+            "selected": null
+          },
+          "G06": {
+            "claimed": false,
+            "selected": null
+          },
+          "G07": {
+            "claimed": false,
+            "selected": null
+          },
+          "G08": {
+            "claimed": false,
+            "selected": null
+          },
+          "G09": {
+            "claimed": false,
+            "selected": null
+          },
+          "G10": {
+            "claimed": false,
+            "selected": null
+          },
+          "G11": {
+            "claimed": false,
+            "selected": null
+          },
+          "G12": {
+            "claimed": false,
+            "selected": null
+          },
+          "G13": {
+            "claimed": false,
+            "selected": null
+          },
+          "G14": {
+            "claimed": false,
+            "selected": null
+          },
+          "G15": {
+            "claimed": false,
+            "selected": null
+          },
+          "G16": {
+            "claimed": false,
+            "selected": null
+          },
+          "G17": {
+            "claimed": false,
+            "selected": null
+          },
+          "G18": {
+            "claimed": false,
+            "selected": null
+          },
+          "G19": {
+            "claimed": false,
+            "selected": null
+          }
+        },
+        "lastRecordedAt": "2026-10-19T09:53:37.376Z"
       },
       "helperPlan": {
         "version": 1,
@@ -1809,6 +2018,42 @@
             "boosts"
           ],
           "recordedAt": "2026-10-19T09:20:30.660Z"
+        },
+        {
+          "tag": "#QVLP9RVV",
+          "beforeTimestamp": 1792401610,
+          "afterTimestamp": 1792435596,
+          "changes": [
+            {
+              "key": "heroes",
+              "id": 28000001,
+              "name": "Archer Queen",
+              "beforeCount": 1,
+              "afterCount": 1,
+              "beforeLevelPoints": 47,
+              "afterLevelPoints": 48,
+              "inferredLevels": 1,
+              "quantityChange": 0
+            },
+            {
+              "key": "spells",
+              "id": 26000005,
+              "name": "Freeze Spell",
+              "beforeCount": 1,
+              "afterCount": 1,
+              "beforeLevelPoints": 3,
+              "afterLevelPoints": 4,
+              "inferredLevels": 1,
+              "quantityChange": 0
+            }
+          ],
+          "other": [
+            "helpers",
+            "obstacles",
+            "obstacles2",
+            "boosts"
+          ],
+          "recordedAt": "2026-10-19T18:47:47.497Z"
         }
       ],
       "upgradeTracking": [
@@ -1818,7 +2063,7 @@
           "level": 9,
           "firstSeenAt": 1792398410000,
           "endAt": 1792622564000,
-          "lastSeenAt": 1792401610000
+          "lastSeenAt": 1792435596000
         },
         {
           "category": "buildings",
@@ -1826,7 +2071,7 @@
           "level": 10,
           "firstSeenAt": 1792398410000,
           "endAt": 1792536190000,
-          "lastSeenAt": 1792401610000
+          "lastSeenAt": 1792435596000
         },
         {
           "category": "buildings",
@@ -1834,7 +2079,7 @@
           "level": 7,
           "firstSeenAt": 1792398410000,
           "endAt": 1792579405000,
-          "lastSeenAt": 1792401610000
+          "lastSeenAt": 1792435596000
         },
         {
           "category": "buildings",
@@ -1842,23 +2087,7 @@
           "level": 3,
           "firstSeenAt": 1792398410000,
           "endAt": 1792471327000,
-          "lastSeenAt": 1792401610000
-        },
-        {
-          "category": "heroes",
-          "id": 28000001,
-          "level": 47,
-          "firstSeenAt": 1792398410000,
-          "endAt": 1792449762000,
-          "lastSeenAt": 1792401610000
-        },
-        {
-          "category": "spells",
-          "id": 26000005,
-          "level": 3,
-          "firstSeenAt": 1792398410000,
-          "endAt": 1792407455000,
-          "lastSeenAt": 1792401610000
+          "lastSeenAt": 1792435596000
         },
         {
           "category": "buildings2",
@@ -1866,7 +2095,7 @@
           "level": 7,
           "firstSeenAt": 1792398410000,
           "endAt": 1792565810000,
-          "lastSeenAt": 1792401610000
+          "lastSeenAt": 1792435596000
         },
         {
           "category": "buildings2",
@@ -1874,11 +2103,11 @@
           "level": 7,
           "firstSeenAt": 1792398410000,
           "endAt": 1792565405000,
-          "lastSeenAt": 1792401610000
+          "lastSeenAt": 1792435596000
         }
       ]
     }
   },
-  "revision": 6,
-  "savedAt": "2026-10-19T09:33:59.207Z"
+  "revision": 13,
+  "savedAt": "2026-10-19T18:47:47.500Z"
 }
