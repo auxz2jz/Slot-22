@@ -123,8 +123,10 @@ export function renderCommandCenter(profile){
  '<span class="command-more">Open details and following upgrades →</span></button>').join('')+'</div>'+
  '<details class="command-structures"><summary>Find any building, Hero, trap or factory</summary>'+
  '<p class="smallmuted">Tap a structure to see its building upgrade and any separate research, pets, equipment or Helper Hut work it controls.</p>'+
- [['Home Village','buildings'],['Home Heroes','heroes'],['Builder Base','buildings2'],['Builder Heroes','heroes2'],
- ['Home traps','traps'],['Builder traps','traps2']].map(([name,group])=>'<details><summary>'+name+'</summary><div class="command-structure-grid">'+
+ [['Home Village buildings','buildings'],['Home Heroes','heroes'],['Builder Base buildings','buildings2'],
+ ['Builder Heroes','heroes2'],['Home traps','traps'],['Builder traps','traps2'],
+ ['Home Laboratory spells','spells'],['Home Laboratory troops','units'],['Siege research','siege_machines'],
+ ['Hero Pets','pets'],['Hero Equipment','equipment'],['Star Laboratory troops','units2']].map(([name,group])=>'<details><summary>'+name+'</summary><div class="command-structure-grid">'+
  idsInGroup(profile.export,group).sort((a,b)=>a.name.localeCompare(b.name)).map(r=>
  '<button type="button" data-command-structure="'+esc(group+':'+r.data)+'">'+esc(r.name)+' · Lv'+esc(r.lvl)+
  (timed(r)?' · upgrading':'')+(r.count>1?' ×'+r.count:'')+'</button>').join('')+'</div></details>').join('')+'</details>'+
@@ -156,8 +158,9 @@ function quoteForm(profile,group,row){
 function candidateList(profile,list,max=7){
  if(!list?.length)return '<p class="smallmuted">No verified next upgrade from the current JSON. Check the game for available levels.</p>';
  return '<ol class="command-choices">'+list.slice(0,max).map(t=>{
-  const group=t.location?.includes('Builder Base')?'buildings2':t.location?.includes('Hero Pets')?'pets':
-    t.location?.includes('Hero Equipment')?'equipment':t.location?.includes('Army Upgrades')?'spells':'buildings';
+  const group=['spells','units','siege_machines','pets','equipment','units2','buildings','heroes','buildings2','heroes2','traps','traps2']
+    .find(group=>rows(profile.export,group).some(r=>r.data===t.id))||
+    (t.location?.includes('Builder Base')?'buildings2':'buildings');
   const cost=Number.isFinite(t.id)&&Number.isInteger(t.targetLevel)?costDisplay(profile,group,t.id,t.targetLevel):null;
   return '<li><strong>'+esc(t.title)+'</strong><small>'+esc(t.reason||t.note||'Verify in game')+'</small>'+
   (cost?'<small>'+esc(cost.line)+'</small>':'')+'<small>Where: '+esc(t.location||'Check in game')+'</small>'+
@@ -172,7 +175,10 @@ export function renderCommandDetail(profile,selection){
   const [,group,idString]=selection.split(':');const id=Number(idString);
   const row=rows(e,group).find(r=>r.data===id);
   if(!row)return '<h2>Structure not in latest snapshot</h2>';
-  const name=labelFor(id),lane=overview.queues.find(q=>q.id==='homeLab');
+  const name=labelFor(id);
+  const labGroup=['spells','units','siege_machines'].includes(group);
+  const associatedLane=labGroup?'homeLab':group==='pets'?'pets':group==='equipment'?'equipment':
+   group==='units2'?'starLab':group==='heroes'?'homeBuilders':group==='heroes2'?'builderBuilders':null;
   const relations={
    1000007:['homeLab','Laboratory research · one slot shared by troops, spells and siege machines'],
    1000020:['homeLab','Spell Factory creates normal spells. Spell level upgrades use Home Laboratory.'],
@@ -187,10 +193,12 @@ export function renderCommandDetail(profile,selection){
    1000046:['starLab','Star Laboratory researches Builder Base troops using its current unlocked level.'],
    1000040:['starLab','Builder Barracks unlocks troops, their upgrades use Star Laboratory.']
   };
-  const relation=relations[id],mapped=relation?.[0];
+  const relation=relations[id]||(associatedLane?[associatedLane,
+    'This unit, spell, pet, Hero or equipment has its own level but shares the associated upgrade queue.']:null);
+  const mapped=relation?.[0];
   const sub=mapped?overview.queues.find(q=>q.id===mapped):null;
   const near=overview.queueStates.find(q=>q.id===(group==='buildings2'||group==='heroes2'?'builderBuilders':'homeBuilders'));
-  const groupName=group==='buildings2'||group==='heroes2'?'Builder Base':'Home Village';
+  const groupName=['buildings2','heroes2','traps2','units2'].includes(group)?'Builder Base':'Home Village';
   const nextLevel=row.lvl+1,quote=costDisplay(profile,group,id,nextLevel);
   const relatedActive=mapped?workRows(mapped,e):[];
   const filterRelated=t=>id===1000020?['Lightning Spell','Healing Spell','Rage Spell','Jump Spell','Freeze Spell','Clone Spell','Invisibility Spell','Overgrowth Spell'].some(n=>(t.title||'').startsWith(n)):
