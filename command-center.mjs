@@ -116,6 +116,7 @@ export function commandOverview(profile){
  ];
  const assistants=plan.helperActions||[];
  return {...plan,queueStates:queueStates.map(q=>{
+   q.next=rankCandidates(profile,q.next);
    const row=categories.find(c=>c[0]===q.id);
    const first=q.active.length===1?q.active[0]:null;
    const top=q.id==='assistants'?(assistants.find(h=>h.id===93000001)?.action||'Check all four assistants'):q.next[0]?.title||'Review in game';
@@ -252,7 +253,7 @@ export function renderCommandDetail(profile,selection){
    id===1000059?['Wall Wrecker','Battle Blimp','Stone Slammer','Siege Barracks','Log Launcher'].some(n=>(t.title||'').startsWith(n)):
    (id===1000006||id===1000026)?(t.location||'').includes('Army Upgrades')&&!/Spell/.test(t.title||''):
    true;
-  const relatedNext=(sub?.next||[]).filter(filterRelated);
+  const relatedNext=rankCandidates(profile,(sub?.next||[]).filter(filterRelated));
   const relatedPreview=relation&&sub?
    '<h4>Working in its linked queue</h4>'+
    (relatedActive.length?relatedActive.map(t=>'<p>'+esc(snapshotFinish(e,t))+' · '+esc(labelFor(t.data))+'</p>').join(''):
@@ -275,6 +276,7 @@ export function renderCommandDetail(profile,selection){
  }
  const id=selection?.replace('lane:','');
  const lane=overview.queues.find(q=>q.id===id);
+ if(lane)lane.next=rankCandidates(profile,lane.next);
  if(id==='assistants'){
   return '<div class="command-detail"><h2>Helper Hut · four assistants</h2>'+
   overview.helperActions.map(h=>'<article class="command-helper"><h3>'+esc(h.name)+' Lv'+h.level+'</h3>'+
