@@ -24,3 +24,8 @@ Next atomic task S22-007: enable GitHub Pages from main root; user opens app on 
 - Fixed upgrade category labels via distinct block elements and added comma-formatting for numeric inputs using text/inputmode=numeric with digit-aware cursor positioning. Removed hardcoded TH14/BH9 labels for switched accounts.
 - Automated evidence: Github Actions run 39190994104 passed unit and syntax checks; browser smoke run 39190994116 passed with **initiallyGrouped=true, commaGrouped=true, added=true, altEmpty=true, preserved=true, switchedBack=true**, and zero browser errors. Pages deployment run 39190993443 succeeded.
 - User has **not yet visually verified on Android**. Next atomic task S22-016: user imports a second account on phone, tests selection/number editing, optionally tests deliberate public GitHub sync. Diagnose only failed steps. Recommended GPT-6 Medium for routine UI changes, High for complex conflicting saved data; save checkpoint and verify each fix.
+
+## Final v0.2.0 verification — 2026-10-18
+- Added direct pasted JSON import (for Android clipboard exports) alongside the original file upload.
+- Last code/test commit `401d7d70b7c65db7d87ae750534841c13557d334`. Automated verify run **39191272456** PASS; Chrome browser interaction run **39191272459** PASS: comma formatting, migration/isolation, file import, pasted third account, label spacing, no browser errors; Pages deployment run **39191272395** PASS.
+- User still needs visual acceptance on Android and may have browser-local edits not synchronized to public GitHub yet. Ensure user backs up before loading from GitHub. Next: targeted Android testing of switching and pasting; recommendation GPT-6 Medium, with checkpoint if a bug is observed.
