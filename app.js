@@ -4,6 +4,7 @@ import {coverFor,gaugeDeck,builderBoard,questTrail,gallery,detailContent} from '
 import {planPreview,snapshotCountdown,remainingTime} from './experience.mjs';
 import {renderPassRewards,updatePassState,saveRewardDefinition,removeCustomReward} from './pass-rewards.mjs';
 import {renderInsights,renderHelperStrip} from './insights-view.mjs';
+import {ensureHelperRoadmap} from './helper-plan.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
 const STORAGE='clash-slot22-state-v2',LEGACY_STORAGE='clash-slot22-state-v1',TESTS='clash-slot22-tests-v1';
@@ -68,6 +69,9 @@ async function initialize(){
     }catch(e){log('baseline-load','FAILED','Could not fetch default profile');}
     try{localStorage.setItem(STORAGE,JSON.stringify(bundle));}catch{}
   }
+  const account=bundle.profiles[bundle.activeProfileId];
+  const improved=ensureHelperRoadmap(account);
+  if(improved.added){state=improved.profile;saveLocal('helper-routine-additive-migration');}
   for(const nav of document.querySelectorAll('[data-tab]')) nav.addEventListener('click',()=>{view=nav.dataset.tab;render();});
   el('download-backup').addEventListener('click',()=>download('clash-all-profiles-backup.json',bundle));
   el('game-file').addEventListener('change', async e=>readFile(e,'game'));
@@ -94,7 +98,9 @@ function applyGameExport(raw){
  if(!bundle.profiles[x.tag]&&!confirm('Add a new village profile for '+x.tag+'? Its currencies, Magic Items and roadmap will start empty.'))return false;
  bundle.profiles[bundle.activeProfileId]=state;
  useBundle(importIntoBundle(bundle,x));
- notify('Imported '+x.tag+'. Each account keeps its own resources, Magic Items and roadmap.');
+ const improved=ensureHelperRoadmap(state);
+ if(improved.added){state=improved.profile;bundle.profiles[bundle.activeProfileId]=state;}
+ notify('Imported '+x.tag+'. Each account keeps its own resources, Magic Items and roadmap. Helper routines are added only when missing.');
  return true;
 }
 async function readFile(e,kind){
@@ -168,7 +174,7 @@ function recommendations(){
 function renderRoadmap(){
  const data=state.roadmap.filter(x=>filter==='all'||x.village===filter||x.status===filter);
  const progress=state.roadmap.filter(t=>t.status==='done').length;
- return '<section class="card quest-panel"><div class="panel-heading"><div><span class="kicker">YOUR UPGRADE PATH</span><h2>Quest progression</h2></div></div>'+questTrail(state.roadmap,filter==='Home'||filter==='Builder'?filter:'all')+'</section><div class="grid three">'+card('Completed',progress+' / '+state.roadmap.length,'green','Manually recorded')+
+ return renderHelperStrip(state)+'<section class="card quest-panel"><div class="panel-heading"><div><span class="kicker">YOUR UPGRADE PATH</span><h2>Quest progression</h2></div></div>'+questTrail(state.roadmap,filter==='Home'||filter==='Builder'?filter:'all')+'</section><div class="grid three">'+card('Completed',progress+' / '+state.roadmap.length,'green','Manually recorded')+
  card('Active',state.roadmap.filter(t=>t.status==='active').length,'gold','Review when timers finish')+
  card('Remaining boost',state.boostEnd?timeLeft(state.boostEnd):'Set end date','','50% returning boost; dates are manual')+'</div>'+
  '<div class="grid two space"><section class="card"><h2>Your upgrade timeline</h2><div class="filters">'+
