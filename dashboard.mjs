@@ -53,6 +53,7 @@ export function gaugeDeck(profile){
 export function builderBoard(profile,now=Date.now()){
   const ex=profile.export;
   if(!ex)return '<section class="card"><h2>Builder queues</h2><div class="empty">Import this account’s village JSON to see builder and research queues.</div></section>';
+  const snapshotLabel=Number.isFinite(ex.timestamp)?new Date(ex.timestamp*1000).toLocaleString():'Timestamp unavailable';
   const original=ongoingFromExport(ex);
   const mapped=original.map((r,i)=>({...r,index:i,categoryId:({
     'Home buildings':'buildings','Builder buildings':'buildings2','Heroes':'heroes','Builder heroes':'heroes2',
@@ -87,7 +88,7 @@ export function builderBoard(profile,now=Date.now()){
   }).join('');
   return '<section class="card queue-board"><div class="panel-heading"><div><span class="kicker">BUILD STATUS</span><h2>Live countdown board</h2></div>'+
     '<button class="btn secondary small" data-action="paste-shortcut">Update snapshot</button></div>'+
-    '<p class="subtext">Each countdown and estimated finish use the game JSON timestamp plus its remaining upgrade seconds, compared with your phone clock. Bars fill from the first time the planner observed that upgrade through its latest estimated finish, even after another import. Tracked percentages are not full construction percentages. Expired timers need in-game confirmation.</p>'+
+    '<p class="subtext"><strong>Game snapshot generated:</strong> '+esc(snapshotLabel)+'. Each countdown and estimated finish use that JSON timestamp plus the upgrade’s remaining seconds, compared with your phone clock. Bars retain their first-observed start through newer imports. Tracked percentages are not full construction percentages; expired timers need in-game confirmation.</p>'+
     (content||'<div class="empty">No upgrade timers in this snapshot. Import newer game data to refresh.</div>')+'</section>';
 }
 export function questTrail(tasks,mode='all'){
