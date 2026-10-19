@@ -5,6 +5,7 @@ import {planPreview,snapshotCountdown,remainingTime,nextHomeBuilderRecommendatio
 import {renderPassRewards,updatePassState,saveRewardDefinition,removeCustomReward} from './pass-rewards.mjs';
 import {renderInsights,renderHelperStrip,helperCountdown} from './insights-view.mjs';
 import {ensureHelperRoadmap} from './helper-plan.mjs';
+import {helperActionRecommendations} from './helper-advice.mjs';
 import {helperSummary} from './snapshot-insights.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
