@@ -66,3 +66,10 @@ All positions and recommendations are defined in pass-rewards.mjs and claim reco
 - [x] S22-037 — Provide per-section counts plus read-only full export in a new JSON insights & helpers tab, and helper overview cards.
 - [x] S22-038 — Automated helper/BOB tests and Chrome regression; user Android verification pending.
 - [ ] S22-039 — Consider secure official API synchronization of public player stats with a backend/GitHub Actions secret; do not require in-game verification token or expose developer API key. Manual village JSON remains needed for precise structures and timers.
+
+## 2026-10-18 Comprehensive imported-JSON intelligence
+- [x] S22-040 Parse ALL available game JSON sections without dropping raw records; display category counts and unknown IDs rather than guessing item names.
+- [x] S22-041 Derive actionable Home/Builder wall distributions, Hero and equipment levels, spell and Builder Base troop research, timers, cosmetic/obstacle counts, and clock tower cooldown.
+- [x] S22-042 Compare consecutive exports of the same account by game ID, item count, and total levels; show uncertain aggregate changes honestly and preserve at most five concise summaries per profile.
+- [x] S22-043 Preserve imported original raw JSON, manually entered currency/Magic Items, event reward choices, and account separation. Auto-import does not spend, start, or mark upgrades completed.
+- [ ] S22-044 User Android acceptance with a fresh game JSON and verification of timer/cooldown accuracy and unknown game IDs.
