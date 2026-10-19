@@ -5,8 +5,8 @@
     "#QVLP9RVV": {
       "schemaVersion": 1,
       "playerTag": "#QVLP9RVV",
-      "revision": 15,
-      "savedAt": "2026-10-19T19:33:28.382Z",
+      "revision": 17,
+      "savedAt": "2026-10-19T19:53:34.452Z",
       "resources": {
         "gold": 19000000,
         "elixir": 17504427,
@@ -493,16 +493,17 @@
       ],
       "export": {
         "tag": "#QVLP9RVV",
-        "timestamp": 1792438344,
+        "timestamp": 1792439555,
         "helpers": [
           {
             "data": 93000000,
             "lvl": 7,
-            "helper_cooldown": 46115
+            "helper_cooldown": 44920
           },
           {
             "data": 93000001,
-            "lvl": 8
+            "lvl": 8,
+            "helper_cooldown": 44920
           },
           {
             "data": 93000002,
@@ -522,7 +523,7 @@
           {
             "data": 1000014,
             "lvl": 9,
-            "timer": 184220
+            "timer": 183009
           },
           {
             "data": 1000008,
@@ -537,7 +538,7 @@
           {
             "data": 1000000,
             "lvl": 10,
-            "timer": 97846
+            "timer": 96635
           },
           {
             "data": 1000013,
@@ -547,17 +548,17 @@
           {
             "data": 1000020,
             "lvl": 6,
-            "timer": 239653
+            "timer": 238442
           },
           {
             "data": 1000027,
             "lvl": 7,
-            "timer": 141061
+            "timer": 139850
           },
           {
             "data": 1000068,
             "lvl": 3,
-            "timer": 32983
+            "timer": 31772
           },
           {
             "data": 1000000,
@@ -894,16 +895,8 @@
             "cnt": 1
           },
           {
-            "data": 8000009,
-            "cnt": 10
-          },
-          {
             "data": 8000010,
             "cnt": 1
-          },
-          {
-            "data": 8000023,
-            "cnt": 10
           },
           {
             "data": 8000137,
@@ -1072,7 +1065,9 @@
           {
             "data": 26000005,
             "lvl": 4,
-            "timer": 86096
+            "timer": 84755,
+            "helper_timer": 3584,
+            "helper_recurrent": true
           },
           {
             "data": 26000009,
@@ -1305,12 +1300,12 @@
           {
             "data": 1000044,
             "lvl": 7,
-            "timer": 127466
+            "timer": 126255
           },
           {
             "data": 1000046,
             "lvl": 7,
-            "timer": 127061
+            "timer": 125850
           },
           {
             "data": 1000033,
@@ -1537,11 +1532,11 @@
           },
           {
             "data": 8000063,
-            "cnt": 12
+            "cnt": 14
           },
           {
             "data": 8000064,
-            "cnt": 7
+            "cnt": 9
           },
           {
             "data": 8000091,
@@ -1632,7 +1627,7 @@
         "sceneries2": [],
         "boosts": {}
       },
-      "importedAt": "2026-10-19T19:32:54.966Z",
+      "importedAt": "2026-10-19T19:53:14.664Z",
       "history": [
         {
           "at": "2026-10-18T18:25:23-07:00",
@@ -1683,6 +1678,11 @@
           "at": "2026-10-19T19:32:54.966Z",
           "kind": "import",
           "note": "Imported village snapshot dated 1792438344"
+        },
+        {
+          "at": "2026-10-19T19:53:14.664Z",
+          "kind": "import",
+          "note": "Imported village snapshot dated 1792439555"
         }
       ],
       "notes": "Goal: use 50% Home Village builder/research returning boost, avoid Gem spending and Rune waste; open event rewards before expiry and only when storage permits; unlock B.O.B. sixth builder.",
@@ -1925,87 +1925,6 @@
       "snapshotChanges": [
         {
           "tag": "#QVLP9RVV",
-          "beforeTimestamp": 1792373123,
-          "afterTimestamp": 1792398410,
-          "changes": [
-            {
-              "key": "pets",
-              "id": 73000002,
-              "name": "Electro Owl",
-              "beforeCount": 1,
-              "afterCount": 1,
-              "beforeLevelPoints": 1,
-              "afterLevelPoints": 2,
-              "inferredLevels": 1,
-              "quantityChange": 0
-            },
-            {
-              "key": "equipment",
-              "id": 90000010,
-              "name": "Unknown ID 90000010",
-              "beforeCount": 1,
-              "afterCount": 1,
-              "beforeLevelPoints": 1,
-              "afterLevelPoints": 12,
-              "inferredLevels": 11,
-              "quantityChange": 0
-            },
-            {
-              "key": "equipment",
-              "id": 90000014,
-              "name": "Unknown ID 90000014",
-              "beforeCount": 1,
-              "afterCount": 1,
-              "beforeLevelPoints": 1,
-              "afterLevelPoints": 12,
-              "inferredLevels": 11,
-              "quantityChange": 0
-            },
-            {
-              "key": "equipment",
-              "id": 90000015,
-              "name": "Unknown ID 90000015",
-              "beforeCount": 1,
-              "afterCount": 1,
-              "beforeLevelPoints": 1,
-              "afterLevelPoints": 12,
-              "inferredLevels": 11,
-              "quantityChange": 0
-            },
-            {
-              "key": "equipment",
-              "id": 90000022,
-              "name": "Unknown ID 90000022",
-              "beforeCount": 1,
-              "afterCount": 1,
-              "beforeLevelPoints": 1,
-              "afterLevelPoints": 12,
-              "inferredLevels": 11,
-              "quantityChange": 0
-            },
-            {
-              "key": "equipment",
-              "id": 90000035,
-              "name": "Unknown ID 90000035",
-              "beforeCount": 1,
-              "afterCount": 1,
-              "beforeLevelPoints": 1,
-              "afterLevelPoints": 12,
-              "inferredLevels": 11,
-              "quantityChange": 0
-            }
-          ],
-          "other": [
-            "helpers",
-            "obstacles",
-            "obstacles2",
-            "skins",
-            "boosts"
-          ],
-          "recordedAt": "2026-10-19T08:27:16.883Z"
-        },
-        {
-          "tag": "#QVLP9RVV",
           "beforeTimestamp": 1792398410,
           "afterTimestamp": 1792400955,
           "changes": [],
@@ -2070,6 +1989,18 @@
             "helpers"
           ],
           "recordedAt": "2026-10-19T19:32:54.969Z"
+        },
+        {
+          "tag": "#QVLP9RVV",
+          "beforeTimestamp": 1792438344,
+          "afterTimestamp": 1792439555,
+          "changes": [],
+          "other": [
+            "helpers",
+            "obstacles",
+            "obstacles2"
+          ],
+          "recordedAt": "2026-10-19T19:53:14.669Z"
         }
       ],
       "upgradeTracking": [
@@ -2079,7 +2010,7 @@
           "level": 9,
           "firstSeenAt": 1792398410000,
           "endAt": 1792622564000,
-          "lastSeenAt": 1792438344000
+          "lastSeenAt": 1792439555000
         },
         {
           "category": "buildings",
@@ -2087,7 +2018,7 @@
           "level": 10,
           "firstSeenAt": 1792398410000,
           "endAt": 1792536190000,
-          "lastSeenAt": 1792438344000
+          "lastSeenAt": 1792439555000
         },
         {
           "category": "buildings",
@@ -2095,7 +2026,7 @@
           "level": 6,
           "firstSeenAt": 1792438344000,
           "endAt": 1792677997000,
-          "lastSeenAt": 1792438344000
+          "lastSeenAt": 1792439555000
         },
         {
           "category": "buildings",
@@ -2103,7 +2034,7 @@
           "level": 7,
           "firstSeenAt": 1792398410000,
           "endAt": 1792579405000,
-          "lastSeenAt": 1792438344000
+          "lastSeenAt": 1792439555000
         },
         {
           "category": "buildings",
@@ -2111,15 +2042,15 @@
           "level": 3,
           "firstSeenAt": 1792398410000,
           "endAt": 1792471327000,
-          "lastSeenAt": 1792438344000
+          "lastSeenAt": 1792439555000
         },
         {
           "category": "spells",
           "id": 26000005,
           "level": 4,
           "firstSeenAt": 1792438344000,
-          "endAt": 1792524440000,
-          "lastSeenAt": 1792438344000
+          "endAt": 1792524310000,
+          "lastSeenAt": 1792439555000
         },
         {
           "category": "buildings2",
@@ -2127,7 +2058,7 @@
           "level": 7,
           "firstSeenAt": 1792398410000,
           "endAt": 1792565810000,
-          "lastSeenAt": 1792438344000
+          "lastSeenAt": 1792439555000
         },
         {
           "category": "buildings2",
@@ -2135,13 +2066,13 @@
           "level": 7,
           "firstSeenAt": 1792398410000,
           "endAt": 1792565405000,
-          "lastSeenAt": 1792438344000
+          "lastSeenAt": 1792439555000
         }
       ],
-      "builderPromptLastShownAt": 1792438344,
-      "builderPromptDismissedAt": 1792438344
+      "builderPromptLastShownAt": 1792439555,
+      "builderPromptDismissedAt": 1792439555
     }
   },
-  "revision": 15,
-  "savedAt": "2026-10-19T19:33:28.382Z"
+  "revision": 17,
+  "savedAt": "2026-10-19T19:53:34.452Z"
 }
