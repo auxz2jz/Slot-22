@@ -108,15 +108,21 @@ function researchQueue(x){
 function petRecommendations(x){
  const active=rows(x,'pets').find(timed);
  const petHouse=rows(x,'buildings').find(r=>r.data===1000068);
- const rank=petRanks.flatMap(id=>{
+ const ids=petHouse?.lvl>=4?[73000003,...petRanks.filter(id=>id!==73000003)]:petRanks;
+ const rank=ids.flatMap(id=>{
   const r=rows(x,'pets').find(t=>t.data===id&&Number.isInteger(t.lvl)&&!timed(t));
   return r?[{...task(r,'Pet upgrades run independently of Home builders and Laboratory research. Electro Owl is a versatile current investment.',
    'Home Village → Build → Hero Pets'),state:'candidate'}]:[];
  });
+ const hasUnicorn=rows(x,'pets').some(r=>r.data===73000003);
  const whenUnlocked=petHouse&&petHouse.lvl<4?{
   title:'Unicorn unlocks at Pet House Level 4',
   reason:'After Pet House 3 → 4 completes, consider Unicorn upgrades for Archer Queen support.',
-  location:'Home Village → Build → Hero Pets',state:'locked'}:null;
+  location:'Home Village → Build → Hero Pets',state:'locked'}:
+  petHouse?.lvl>=4&&!hasUnicorn?{
+   title:'Check newly unlocked Unicorn in Pet House',
+   reason:'Pet House is Level 4, but this JSON did not show Unicorn. Confirm unlocking it in the game.',
+   location:'Home Village → Build → Hero Pets',state:'verify'}:null;
  return {active:active?{name:rowLabel(active),level:active.lvl,seconds:active.timer}:null,
   next:rank.slice(0,5),future:whenUnlocked};
 }
