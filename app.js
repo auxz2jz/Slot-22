@@ -233,6 +233,7 @@ function openDetail({taskId=null,recordIndex=null,category=null,fromQueue=false}
 }
 function updateVisualTimers(){
  const now=Date.now();
+ document.querySelectorAll('[data-fill]').forEach(node=>{const pct=Number(node.dataset.fill);if(Number.isFinite(pct))node.style.width=Math.max(0,Math.min(100,pct))+'%';});
  document.querySelectorAll('[data-timer-end]').forEach(node=>{
    const end=Number(node.dataset.timerEnd);
    node.textContent=end?remainingTime(end,now).text:'Timer unavailable';
