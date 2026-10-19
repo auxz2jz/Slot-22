@@ -42,3 +42,11 @@ Next task: user tests new account import. Recommended GPT-6 Medium for targeted 
 - [x] S22-021 – Cost preview and confirmed tracker-only record-upgrade action; no automatic Gems spending.
 - [x] S22-022 – Automated browser and unit testing for new UI and multi-profile isolation.
 - [ ] S22-023 – User Android visual acceptance, fixes based on actual reports.
+
+## October 2026 Gold Pass tracker
+
+- [x] S22-024: Transcribe 30 Silver plus 19 Gold remaining reward positions, including 22 exclusive choices. No screenshot overlap double-counting.
+- [x] S22-025: New Season Pass prizes tab, claimed/remaining counts, optional selection, user-driven claim toggle, and claim guidance. No automatic inventory changes.
+- [x] S22-026: Tests for complete reward catalog, choice validation, profile separation and zero currency changes.
+- [ ] S22-027: User test on Android, reconcile actual reward collection by October 30 (October 31 season rollover).
+All positions and recommendations are defined in pass-rewards.mjs and claim records are per-profile seasonalPlan.claims.
