@@ -1,14 +1,17 @@
 import {spawn} from 'node:child_process';
 import {setTimeout as wait} from 'node:timers/promises';
-const chrome=spawn('/usr/bin/google-chrome',['--headless=new','--no-sandbox','--disable-dev-shm-usage','--remote-debugging-port=9452','--user-data-dir=/tmp/clash-ui-'+process.pid,'about:blank'],{stdio:'ignore'});
+const chrome=spawn('/usr/bin/google-chrome',['--headless=new','--no-sandbox','--disable-dev-shm-usage','--remote-debugging-port=9452','--user-data-dir=/tmp/clash-ui-'+process.pid,'about:blank'],{stdio:['ignore','ignore','pipe']});
+let chromeStartupLog='';
+chrome.stderr?.on('data',chunk=>{chromeStartupLog=(chromeStartupLog+String(chunk)).slice(-2400)});
+chrome.on('error',e=>{chromeStartupLog=(chromeStartupLog+' Spawn error: '+e.message).slice(-2400)});
 let ws,id=0;const pending=new Map(),problems=[];
 try{
  let page;
- for(let i=0;i<40;i++){
+ for(let i=0;i<120;i++){
   try{page=(await(await fetch('http://127.0.0.1:9452/json')).json()).find(p=>p.type==='page');if(page)break}catch{}
   await wait(250);
  }
- if(!page)throw Error('Chrome debugger never appeared');
+ if(!page)throw Error('Chrome debugger never appeared after 30s; exit code '+chrome.exitCode+'; '+chromeStartupLog);
  ws=new WebSocket(page.webSocketDebuggerUrl);
  await new Promise((resolve,reject)=>{ws.addEventListener('open',resolve,{once:true});ws.addEventListener('error',reject,{once:true})});
  ws.addEventListener('message',e=>{
