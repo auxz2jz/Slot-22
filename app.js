@@ -480,6 +480,7 @@ function clickAction(e){
  if(target.dataset.openRecord!==undefined){openDetail({recordIndex:Number(target.dataset.openRecord),fromQueue:true});return;}
  if(target.dataset.openInventory!==undefined){openDetail({recordIndex:Number(target.dataset.openInventory),category:invGroup});return;}
  const action=target.dataset.action;
+ if(action==='jump-full-plan'){view='overview';render();document.querySelector('.full-plan-panel')?.scrollIntoView({block:'start',behavior:'smooth'});return;}
  if(action==='builder-dismiss'){el('builder-dialog')?.close();return;}
  if(action==='view-pets'){el('builder-dialog')?.close();view='inventory';invGroup='pets';render();return;}
  if(action==='builder-view-task'){
