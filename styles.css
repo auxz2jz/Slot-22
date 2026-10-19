@@ -162,3 +162,18 @@ body{background:radial-gradient(circle at 80% 0%,#253351 0,transparent 40%),radi
 .pass-choice select{color:#f3f6ff;background:#0d1c30;border:1px solid #53647b;border-radius:9px;padding:9px;max-width:100%;min-width:0}
 .pass-reward>.btn{align-self:flex-start;margin-top:auto}
 @media(max-width:650px){.pass-grid{grid-template-columns:1fr}.pass-banner h2{font-size:20px}.pass-stats{gap:12px}.pass-stats strong{font-size:15px}}
+
+.magic-lead{margin-top:18px;border-color:#ae8950;background:linear-gradient(130deg,#372e36,#1c3044)}
+.magic-lead h2{font-size:22px;color:#fff1d5}
+.magic-lead p{line-height:1.6;color:#c9d7e8;font-size:13px}
+.magic-lead .row{margin:14px 0}
+.pass-editor{margin:18px 0;border:1px solid #a88659;background:#26334b}
+.pass-editor h2{color:#f6dcab}
+.pass-editor form{margin-top:14px}
+.pass-editor select,.pass-editor textarea,.pass-editor input{background:#11213b;color:#f2f5ff;border:1px solid #526686;border-radius:9px;padding:10px;max-width:100%}
+.pass-editor .field{flex:1 1 190px}
+.pass-reward .row .btn{white-space:normal}
+#extra-item-form{align-items:end;margin-top:14px}
+#extra-item-form .field{flex:1 1 130px}
+#extra-item-form #extra-item-count{width:150px;max-width:100%}
+@media(max-width:600px){.pass-editor .grid.two{grid-template-columns:1fr}}
