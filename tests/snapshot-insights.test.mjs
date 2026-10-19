@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {helperSummary,bobSummary,snapshotCoverage} from '../snapshot-insights.mjs';
+import {renderHelperStrip,helperCountdown} from '../insights-view.mjs';
 test('helper levels are imported, not inferred from TH level',()=>{
  const x={timestamp:1792373123,helpers:[{data:93000000,lvl:7},{data:93000001,lvl:8},{data:93000002,lvl:3}]};
  const h=helperSummary(x);assert.equal(h.length,3);assert.equal(h[0].level,7);
@@ -64,4 +65,26 @@ test('ambiguous helper targets and unrelated timers are never assigned to a gues
  assert.equal(lab.assignment,null);
  assert.equal(lab.assignmentCount,0);
  assert.equal(third.assignment,null);
+});
+
+test('Helper Hut renders confirmed assignment and dated work/cooldown timers',()=>{
+ const x={timestamp:1792401610,helpers:[{data:93000000,lvl:7,helper_cooldown:82787}],
+  heroes:[{data:28000001,lvl:47,timer:48152,helper_timer:3587,helper_recurrent:true}]};
+ const html=renderHelperStrip({export:x});
+ assert.match(html,/Assigned in snapshot: <strong>Archer Queen<\/strong>/);
+ assert.match(html,/Repeat assignment: On/);
+ assert.match(html,/data-helper-session-end="1792405197000"/);
+ assert.match(html,/data-helper-cooldown-end="1792484397000"/);
+ assert.match(html,/Work session:/);
+ assert.match(html,/Cooldown:/);
+ assert.equal(helperCountdown(120000,'work',60000),'1m 0s left');
+ assert.equal(helperCountdown(120000,'work',120000),'Session estimate elapsed · refresh JSON');
+ assert.equal(helperCountdown(120000,'cooldown',120000),'Cooldown estimate elapsed · verify in game');
+});
+test('unknown helper assignment is labeled unknown rather than inactive',()=>{
+ const x={timestamp:1000,helpers:[{data:93000000,lvl:7}]};
+ const html=renderHelperStrip({export:x});
+ assert.match(html,/Assignment not reported in this JSON/);
+ assert.match(html,/Cooldown not included in JSON/);
+ assert.doesNotMatch(html,/Archer Queen/);
 });
