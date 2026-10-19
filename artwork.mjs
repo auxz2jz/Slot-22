@@ -5,6 +5,8 @@
 const BASE='https://assets.clashk.ing/';
 const ALLOWED={
   home:new Set(`air_defense air_sweeper archer_tower army_camp barracks blacksmith bomb_tower builder's_hut cannon clan_castle dark_barracks dark_elixir_drill dark_elixir_storage dark_spell_factory eagle_artillery elixir_collector elixir_storage firespitter gold_mine gold_storage hero_hall hidden_tesla inferno_tower laboratory monolith mortar multi-archer_tower multi-gear_tower pet_house revenge_tower ricochet_cannon scattershot spell_factory spell_tower super_wizard_tower town_hall wall wizard_tower workshop x-bow`.split(' ')),
+  homeTraps:new Set('air_bomb bomb giant_bomb giga_bomb seeking_air_mine skeleton_trap spring_trap tornado_trap'.split(' ')),
+  builderTraps:new Set('mega_mine mine push_trap spring_trap'.split(' ')),
   builder:new Set(`air_bombs archer_tower bob_control builder_barracks builder_hall cannon clock_tower crusher double_cannon elixir_collector elixir_storage firecrackers gem_mine giant_cannon gold_mine gold_storage guard_post healing_hut hidden_tesla lava_launcher mega_tesla multi_mortar otto's_outpost roaster star_laboratory wall x-bow`.split(' ')),
   spells:new Set(`angry_spell bag_of_frostmites bat_spell birthday_boom clone_spell earthquake_spell freeze_spell haste_spell healing_spell ice_block_spell invisibility_spell jump_spell lightning_spell overgrowth_spell poison_spell rage_spell recall_spell revive_spell santa's_surprise skeleton_spell totem_spell yellow_card`.split(' ')),
   equipment:new Set(`action_figure archer_puppet barbarian_puppet dark_crown dark_orb earthquake_boots electro_boots electro_fangs eternal_tome fire_heart fireball flame_blower frost_flake frozen_arrow giant_arrow giant_gauntlet haste_vial healer_puppet healing_tome henchmen_puppet heroic_torch hog_rider_puppet invisibility_vial lavaloon_puppet life_gem magic_mirror metal_pants meteor_staff monolith_arrow noble_iron rage_gem rage_vial revenge_deck rocket_backpack rocket_spear royal_gem seeking_shield snake_bracelet spiky_ball stick_horse stun_blaster vampstache`.split(' ')),
@@ -45,7 +47,10 @@ export function artworkUrl(category,name,level){
     if(!validLevel(level)||!ALLOWED[kind].has(key))return null;
     return BASE+'buildings/'+(kind==='home'?'home-village':'builder-base')+'/'+key+'/level_'+Number(level)+'.webp';
   }
-  if(kind==='homeTraps'||kind==='builderTraps')return null; // Trap IDs not yet verified; avoid incorrectly assigned art.
+  if(kind==='homeTraps'||kind==='builderTraps'){
+    if(!validLevel(level)||!ALLOWED[kind].has(key))return null;
+    return BASE+'traps/'+(kind==='homeTraps'?'home-village':'builder-base')+'/'+key+'/level_'+Number(level)+'.webp';
+  }
   if(kind==='troops'||kind==='heroes'||kind==='pets'){
     if(!ALLOWED[kind].has(key))return null;
     return BASE+kind+'/'+key+'/icon.webp';
