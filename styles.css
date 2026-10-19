@@ -205,3 +205,19 @@ summary{cursor:pointer;font-weight:750}
 .snapshot-details{margin:10px 0}
 .snapshot-details .scroll-table{max-height:350px;overflow:auto}
 .snapshot-details table td{overflow-wrap:anywhere}
+
+/* Import-triggered Home Village builder recommendation. No in-game actions. */
+.builder-nudge{margin:15px 0;border:1px solid #b99c54;background:linear-gradient(135deg,#3b3540,#263148)}
+.builder-nudge .kicker{color:#ffdd9f;font-size:11px;letter-spacing:.06em}
+.builder-nudge h2{margin:7px 0 9px}
+.builder-nudge p{font-size:13px;line-height:1.55;color:#dde5ed}
+.builder-alert-dialog{max-width:520px}
+.builder-alert-dialog .kicker{color:#ffdda0;font-weight:800;font-size:11px;letter-spacing:.06em}
+.builder-alert-dialog h2{margin:9px 0}
+.builder-alert-dialog p{font-size:13px;line-height:1.6}
+.builder-choice-list{display:grid;gap:10px;margin:14px 0}
+.builder-choice{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:13px;border:1px solid #4b5f79;background:#13223a;border-radius:10px}
+.builder-choice strong{font-size:14px;color:#ffe0a1}
+.builder-choice span,.builder-choice small{font-size:12px;line-height:1.4;color:#c9d7e8}
+.builder-choice .btn{margin-top:4px;white-space:normal;text-align:left}
+@media(max-width:600px){.builder-alert-dialog .detail-dialog-inner{padding:16px}.builder-choice{padding:11px}}
