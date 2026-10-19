@@ -91,3 +91,13 @@ test('reference game costs and durations apply only confirmed discounts',()=>{
  assert.match(tome,/Shiny 1,800/);
  assert.match(tome,/Glowy 200/);
 });
+
+test('separate reported 50% returning boost does not stack on Gold Pass twice',()=>{
+ const profile=p();
+ profile.upgradePreferences={builderBoost:20,researchBoost:15,returningBoost:50};
+ const camp=renderCommandDetail(profile,'structure:buildings:1000020');
+ const spell=renderCommandDetail(profile,'structure:spells:26000005');
+ assert.match(camp,/4,500,000 Elixir/);
+ assert.match(spell,/2,100,000 Elixir/);
+ assert.doesNotMatch(camp,/3,600,000 Elixir/);
+});
