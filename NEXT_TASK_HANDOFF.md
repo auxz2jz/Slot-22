@@ -42,3 +42,19 @@ Latest commit 710e5e50e233cd716b7b02de84b0736233458857 (v21 code plus newer user
 
 ## Stop state
 The current assistant halted active work after writing this handoff. No new application changes, saved profile edits, game commands, Gems spending, or discount changes should be performed as part of this checkpoint.
+
+
+## UPDATED POST-RESUMPTION CHECKPOINT — v22 verified developer release
+This section supersedes the prior STOP/PAUSE state from 2026-10-19: the user explicitly resumed, approved tasks S22-093–S22-096, and requested a completed, usable application. The app is now version 22, not v21. The earlier detailed data snapshot can still be used as a dated checkpoint; re-fetch any current game state before making recommendations.
+
+**What is complete:** S22-093 diagnosed outdated absolute account-count browser assertions; S22-094 changed only the browser test to relative +1 per new profile and got all CI green; S22-095 identified redundant six-queue Whole Village Plan display under Advanced; S22-096 removed the duplicate render call/import, redirected the free-builder advanced button to the working Home Builder Command Center drill-in, removed the obsolete scroll handler, updated Chrome smoke assertions for the seven lane cards and drill-ins, and released the PWA assets/cache as v22.
+
+**Main modules now:** app.js uses renderCommandCenter(state) on Overview, with Advanced panels still collapsed and available (helper cards, resource editor, builder timeline, factory audit and full roadmap). full-plan.mjs remains the shared pure queue strategy engine; full-plan-view.mjs is no longer loaded or precached, but its source file was not deleted. command-center.mjs renders seven interactive stations and all per-building drill-ins, with saved costs/discount confirmation and subsequent upgrade suggestions.
+
+**Verified at v22 code commit d2fe0363b7e6245a9ac991eea8680dfdd223af92:** GitHub static/unit tests SUCCESS; browser startup smoke SUCCESS with all seven stations, no duplicate panel, ranked Grand Warden, Freeze Spell and pet suggestions verified, no JS errors; reward-editor browser acceptance SUCCESS after its Chrome-debugger startup failed once then succeeded on retry; GitHub Pages deployment SUCCESS. Chrome debugger intermittent CI startup is a separate environment reliability issue, not evidence of a UI defect.
+
+**Protected user data:** data/player-state.json remained unmodified: SHA 42f60b9a5a6e97191cc8f6ce0e87ed41ff0b4370, bundle revision 37, two saved profiles #QVLP9RVV and #GVPCRLJQ8, snapshot main profile dated Oct 19, 2026 3:35:21 PM Pacific. Your phone can have fresher unsynced data: never force GitHub Load for a code update. Never invent or double-apply Gold Pass/returning boosts. Confirm exact in-game prices/times where catalog coverage is missing; upgrade-reference.mjs has 21 partial categories.
+
+**Only remaining acceptance check for v22:** user opens https://auxz2jz.github.io/Slot-22/?v=22 on Android, validates resources and the seven station taps, building/factory detail and following recommendations, and reports a specific issue if one exists. CI success does not establish phone visual acceptance. Broader coverage of every price/time is OPTIONAL follow-on data work, not proof v22 UI is unusable. No future changes should be made without a concrete task and checkpoint.
+
+**Smallest next task if user requests:** S22-097 guided Android acceptance, asking which station is missing a recommended upgrade or which element remains cluttered; reproduce one issue, then implement one atomic fix at a time. Do not restart design work or re-read the entire past chat.
