@@ -111,50 +111,74 @@ export function nextHomeBuilderRecommendations(profile){
 }
 
 
-// Separate research queues: the regular Laboratory researches Home troops/spells,
-// the Star Laboratory researches Builder Base troops, and Pet House levels pets.
-// Helper cooldowns are distinct: an available Lab Assistant does not create a
-// second Laboratory slot. An absent timer means no research in the dated export,
-// never proof that the live game remains idle.
+// Home and Builder Base research are independent of construction builder count.
+// Spell and Dark Spell Factories produce spells, but DO NOT each have a research queue.
 const RESEARCH_DEFINITIONS=[
  {key:'laboratory',name:'Home Laboratory',village:'Home',queue:'Laboratory',buildingId:1000007,buildingSection:'buildings',
   timerSections:['units','spells','siege_machines'],recordSections:['units','spells','siege_machines']},
- {key:'starLaboratory',name:'Star Laboratory',village:'Builder',queue:'Star Laboratory',buildingId:1000034,buildingSection:'buildings2',
+ {key:'starLaboratory',name:'Star Laboratory',village:'Builder',queue:'Star Laboratory',buildingId:1000046,buildingSection:'buildings2',
   timerSections:['units2'],recordSections:['units2']},
  {key:'petHouse',name:'Pet House research',village:'Home',queue:'Pet House',buildingId:1000068,buildingSection:'buildings',
   timerSections:['pets'],recordSections:['pets']}
 ];
 const parseUpgradeTitle=title=>String(title||'').match(/^(?:(?:First|Second|Third|Fourth|Fifth)\s+)?(.+?)\s+(\d+)\s*→\s*(\d+)\s*$/i);
-const nextResearchTasks=(profile,def)=>{
+// Conservative Builder Base troop research caps from known Star Laboratory unlocks.
+// A level-15 Hog Glider exists in the player JSON at Builder Barracks 11, but
+// cannot research 15->16 until the STAR LABORATORY itself reaches level 9.
+const EARLY_BUILDER_TROOPS=new Set([4000031,4000032,4000033,4000034,4000035,4000037,4000038,4000041,4000042]);
+export function builderTroopResearchCap(id,starLevel){
+ if(!Number.isInteger(starLevel)||starLevel<7||starLevel>10)return null;
+ if(id===4000070)return starLevel>=9?(starLevel===9?18:20):15;
+ if(id===4000036)return starLevel>=8?({8:16,9:18,10:20})[starLevel]:13;
+ if(!EARLY_BUILDER_TROOPS.has(id))return null;
+ return ({7:14,8:16,9:18,10:20})[starLevel];
+}
+const researchCandidate=(profile,t,index)=>{
+ const amount=Number(t.cost),balance=profile.resources?.[t.costType];
+ return {taskId:t.id,title:t.title,note:t.note||'',currency:t.costType,
+  cost:Number.isFinite(amount)&&amount>0?amount:null,
+  affordableFromSaved:Number.isFinite(amount)&&amount>0&&Number.isFinite(balance)&&balance>=amount,sourceIndex:index};
+};
+const nextResearchTasks=(profile,def,structure)=>{
  const ex=profile.export;
  const result=(profile.roadmap||[]).flatMap((t,index)=>{
   if(t.status!=='planned'||t.village!==def.village||t.queue!==def.queue)return [];
   const matched=parseUpgradeTitle(t.title);
   if(!matched)return [];
-  const [,name,levelText,nextText]=matched;
-  const ids=buildIds.get(normalizedName(name))||[];
+  const [,name,levelText,nextText]=matched,ids=buildIds.get(normalizedName(name))||[];
   const level=Number(levelText),next=Number(nextText);
   if(next!==level+1)return [];
   const eligible=def.recordSections.some(section=>(ex[section]||[]).some(r=>
-   ids.includes(r.data)&&r.lvl===level&&!Number.isFinite(r.timer)));
-  if(!eligible)return [];
-  const cost=Number(t.cost),balance=profile.resources?.[t.costType];
-  return [{taskId:t.id,title:t.title,note:t.note||'',currency:t.costType,
-   cost:Number.isFinite(cost)&&cost>0?cost:null,
-   affordableFromSaved:Number.isFinite(cost)&&cost>0&&Number.isFinite(balance)&&balance>=cost,
-   sourceIndex:index}];
+   ids.includes(r.data)&&r.lvl===level&&!Number.isFinite(r.timer)&&
+   (def.key!=='starLaboratory'||builderTroopResearchCap(r.data,structure.lvl)>=next)));
+  return eligible?[researchCandidate(profile,t,index)]:[];
  });
- // The Builder Base roadmap contains a goal rather than a specific next level.
- // Resolve only the verified level-15 candidate into a single concrete next step.
  if(def.key==='starLaboratory' && !result.length){
   const goal=(profile.roadmap||[]).find(t=>t.id==='B-05'&&t.status==='planned'&&t.village==='Builder'&&t.queue==='Star Laboratory');
-  const candidate=(ex.units2||[]).filter(r=>Number.isInteger(r.lvl)&&r.lvl>=1&&r.lvl<18&&!Number.isFinite(r.timer))
-   .sort((a,b)=>b.lvl-a.lvl)[0];
-  if(goal&&candidate&&names[candidate.data]){
-   result.push({taskId:goal.id,title:names[candidate.data]+' '+candidate.lvl+' → '+(candidate.lvl+1),
-    note:'Suggested Builder Base research toward the roadmap goal of level 18. Confirm availability and cost in game.',
-    currency:'builderElixir',cost:null,affordableFromSaved:false,sourceIndex:999,derivedFrom:'Builder troop roadmap goal'});
+  if(goal){
+   const eligible=(ex.units2||[]).filter(r=>Number.isInteger(r.lvl)&&r.lvl>=1&&r.lvl<18&&!Number.isFinite(r.timer)
+      &&builderTroopResearchCap(r.data,structure.lvl)>r.lvl&&names[r.data])
+    .sort((a,b)=>b.lvl-a.lvl);
+   for(const [i,r] of eligible.slice(0,3).entries())result.push({
+    taskId:goal.id,title:names[r.data]+' '+r.lvl+' → '+(r.lvl+1),note:
+      'Specific Builder Base troop step toward roadmap goal level 18. Current Star Laboratory Lv '+structure.lvl+
+      '; verify research access and actual Builder Elixir price in game.',
+    currency:'builderElixir',cost:null,affordableFromSaved:false,sourceIndex:999+i,
+    derivedFrom:'Builder troop roadmap goal'});
   }
+ }
+ if(def.key==='petHouse'&&!result.length){
+  // The roadmap's Unicorn 1->2 goal is blocked until House Lv4 unlocks.
+  // Existing pets CAN be upgraded while the Pet House building is upgrading.
+  const available=new Map([[73000002,2],[73000000,1],[73000001,3],[73000003,4]]);
+  const pets=(ex.pets||[]).filter(r=>available.has(r.data)&&available.get(r.data)<=structure.lvl
+   &&Number.isInteger(r.lvl)&&r.lvl>=1&&r.lvl<10&&!Number.isFinite(r.timer)&&names[r.data]);
+  pets.sort((a,b)=>(a.data===73000002?-1:a.data===73000000?0:1)-
+                   (b.data===73000002?-1:b.data===73000000?0:1));
+  for(const [i,p]of pets.slice(0,3).entries())result.push({taskId:null,
+   title:names[p.data]+' '+p.lvl+' → '+(p.lvl+1),
+   note:'Pet research is separate from building construction and can start while Pet House upgrades. Verify Dark Elixir price.',
+   currency:'dark',cost:null,affordableFromSaved:false,sourceIndex:1000+i,derivedFrom:'Owned pet'});
  }
  result.sort((a,b)=>Number(b.affordableFromSaved)-Number(a.affordableFromSaved)||a.sourceIndex-b.sourceIndex);
  return result.slice(0,3);
@@ -166,12 +190,44 @@ export function availableResearchQueues(profile){
   const buildings=ex[def.buildingSection];
   const structure=Array.isArray(buildings)&&buildings.find(r=>r.data===def.buildingId);
   const completeSections=def.timerSections.every(k=>Array.isArray(ex[k]));
-  const structureUnderConstruction=!!structure&&Number.isFinite(structure.timer);
-  const known=!!structure&&completeSections&&!structureUnderConstruction;
+  const known=!!structure&&completeSections;
   const active=known&&def.timerSections.some(k=>ex[k].some(r=>Number.isFinite(r.timer)));
   const status=!known?'unknown':active?'busy':'idle';
-  const recommendations=status==='idle'?nextResearchTasks(profile,def):[];
+  const recommendations=status==='idle'?nextResearchTasks(profile,def,structure):[];
   return {key:def.key,name:def.name,status,snapshotAt:ex.timestamp*1000,
-   recommendations,source:'In-game JSON research timers (not Lab Assistant availability)'};
+   structureLevel:structure?.lvl??null,structureUpgrading:!!structure&&Number.isFinite(structure.timer),
+   recommendations,source:'In-game research timer and correct structure ID; independent of helpers and builder construction'};
  });
+}
+// These building upgrade opportunities are NOT separate research jobs.
+// Only display exact TH14/BH9 caps verified for the user's current hall levels.
+const ARMY_FACILITIES=[
+ {name:'Barracks',id:1000006,kind:'Home',max14:16,usage:'Troop unlocking/army; no separate research queue'},
+ {name:'Dark Barracks',id:1000026,kind:'Home',max14:11,usage:'Dark troop unlocking; no separate research queue'},
+ {name:'Spell Factory',id:1000020,kind:'Home',max14:7,usage:'Normal spell production; spell levels use Home Laboratory'},
+ {name:'Dark Spell Factory',id:1000029,kind:'Home',max14:7,usage:'Dark spell production; dark spell levels use Home Laboratory'},
+ {name:'Workshop',id:1000059,kind:'Home',max14:6,usage:'Siege machines; research uses Home Laboratory'},
+ {name:'Laboratory',id:1000007,kind:'Home',max14:12,usage:'One shared troop/spell/siege research queue'},
+ {name:'Pet House',id:1000068,kind:'Home',max14:4,usage:'One independent pet upgrade queue'},
+ {name:'Blacksmith',id:1000070,kind:'Home',max14:7,usage:'Equipment levels use ores; not timed laboratory research'},
+ {name:'Hero Hall',id:1000071,kind:'Home',max14:8,usage:'Hero progression uses Home builders; not a laboratory queue'},
+ {name:'Builder Barracks',id:1000040,kind:'Builder',max9:11,usage:'Unlocks Builder troops; upgrades researched in Star Laboratory'},
+ {name:'Star Laboratory',id:1000046,kind:'Builder',max9:9,usage:'One independent Builder Base troop research queue'}
+];
+export function armyFacilityAudit(profile){
+ const ex=profile?.export;if(!ex)return [];
+ const th=ex.buildings?.find(r=>r.data===1000001)?.lvl;
+ const bh=ex.buildings2?.find(r=>r.data===1000034)?.lvl;
+ return ARMY_FACILITIES.map(def=>{
+  const rows=def.kind==='Home'?ex.buildings:ex.buildings2;
+  const row=Array.isArray(rows)&&rows.find(r=>r.data===def.id);
+  if(!row)return null;
+  const cap=def.kind==='Home'&&th===14?def.max14:def.kind==='Builder'&&bh===9?def.max9:null;
+  const upgrading=Number.isFinite(row.timer);
+  const canUpgrade=cap!==null&&Number.isInteger(row.lvl)&&row.lvl<cap;
+  return {id:def.id,name:def.name,village:def.kind,level:row.lvl,
+   buildingUpgradeActive:upgrading,nextLevel:canUpgrade?row.lvl+1:null,
+   atKnownHallCap:cap!==null&&row.lvl>=cap,
+   usage:def.usage};
+ }).filter(Boolean);
 }
