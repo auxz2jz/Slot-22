@@ -1,3 +1,4 @@
+import {names} from './catalog.mjs';
 // Pure display and planning calculations. These never start upgrades in Clash of Clans.
 export const VERSION = '0.3.0';
 export const RESOURCE_LABELS={gold:'Gold',elixir:'Elixir',dark:'Dark Elixir',builderGold:'Builder Gold',builderElixir:'Builder Elixir'};
@@ -54,4 +55,49 @@ export function progressSummary(tasks){
 export function getTaskForRecord(tasks,record){
   const name=(record?.name||'').toLowerCase();
   return tasks.find(t=>t.status!=='skipped'&&t.title.toLowerCase().includes(name)&&t.title.includes(String(record?.level)+' →'))||null;
+}
+
+// Conservative Home Village builder detection from a DATED game export.
+// Builder huts are a verified baseline. An optional 6th builder might exist
+// but is intentionally not inferred from town hall or B.O.B. milestones.
+// Expired timer estimates never prove that a builder slot was freed.
+export function homeBuilderAvailability(exported){
+ if(!exported || !Number.isFinite(exported.timestamp) || !Array.isArray(exported.buildings))return null;
+ const huts=exported.buildings.filter(r=>r.data===1000015).reduce((n,r)=>n+(Number.isInteger(r.cnt)?Math.max(0,r.cnt):1),0);
+ if(huts<1||huts>5)return null; // no trustworthy capacity estimate
+ const active=[...exported.buildings,...(exported.heroes||[]),...(exported.traps||[])]
+   .filter(r=>Number.isFinite(r.timer)&&r.timer>=0).length;
+ const available=Math.max(0,huts-active);
+ return {buildersAtLeast:huts,occupiedFromSnapshot:active,availableAtLeast:available,
+   snapshotAt:exported.timestamp*1000,source:'Builder Huts and active Home Village building/hero/trap timers'};
+}
+const normalizedName=name=>String(name).trim().toLowerCase().replace(/[’']/g,"'");
+const buildIds=new Map(Object.entries(names).map(([id,name])=>[normalizedName(name),Number(id)]));
+// A recommendation must match an actual unstarted level in the village JSON.
+// Roadmap priority is its existing order, but known affordability improves rank.
+// Currency is user-entered, NOT exported by Clash; confirm in the game.
+export function nextHomeBuilderRecommendations(profile){
+ const ex=profile?.export;
+ const availability=homeBuilderAvailability(ex);
+ if(!availability)return {availability:null,recommendations:[]};
+ const candidates=(profile?.roadmap||[]).flatMap((task,index)=>{
+  if(task.status!=='planned'||task.village!=='Home'||task.queue!=='Builder')return [];
+  const matched=String(task.title||'').match(/^(?:(?:First|Second|Third|Fourth|Fifth)\s+)?(.+?)\s+(\d+)\s*→\s*(\d+)\s*$/i);
+  if(!matched)return []; // skip unclear hero cycles or prerequisites
+  const id=buildIds.get(normalizedName(matched[1]));
+  const startLevel=Number(matched[2]),nextLevel=Number(matched[3]);
+  if(!id||nextLevel!==startLevel+1)return [];
+  const category=String(id).startsWith('28')?'heroes':'buildings';
+  const records=Array.isArray(ex[category])?ex[category]:[];
+  const spare=records.some(r=>r.data===id&&r.lvl===startLevel&&!Number.isFinite(r.timer)&&(!Number.isInteger(r.cnt)||r.cnt>0));
+  if(!spare)return [];
+  const currency=task.costType,estimate=Number(task.cost);
+  const savedBalance=profile?.resources?.[currency];
+  const affordableFromSaved=Number.isFinite(estimate)&&estimate>0&&Number.isFinite(savedBalance)&&savedBalance>=estimate;
+  return [{taskId:task.id,title:task.title,note:task.note||'',currency,
+    cost:Number.isFinite(estimate)&&estimate>0?estimate:null,
+    affordableFromSaved,sourceIndex:index}];
+ });
+ candidates.sort((a,b)=>Number(b.affordableFromSaved)-Number(a.affordableFromSaved)||a.sourceIndex-b.sourceIndex);
+ return {availability,recommendations:candidates.slice(0,3)};
 }
