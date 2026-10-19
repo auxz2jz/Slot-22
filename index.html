@@ -6,7 +6,7 @@
   <title>Clash Village Planner — Slot-22</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=3">
+  <link rel="stylesheet" href="./styles.css?v=4">
 </head>
 <body>
   <div class="shell">
@@ -31,6 +31,7 @@
         <select id="profile-select" aria-label="Select Clash of Clans account"></select>
         <button class="btn secondary small" data-action="rename-profile">Rename</button>
         <button class="btn small" data-action="choose-file">+ Import / Add account</button>
+        <button class="btn secondary small" data-action="paste-shortcut">Paste game JSON</button>
         <span class="smallmuted">Separate resources &amp; plans per account</span>
       </div>
       <div id="notice" role="status" aria-live="polite"></div>
@@ -40,5 +41,5 @@
   </div>
   <input id="game-file" type="file" accept=".json,application/json" hidden>
   <input id="backup-file" type="file" accept=".json,application/json" hidden>
-  <script type="module" src="./app.js?v=3"></script>
+  <script type="module" src="./app.js?v=4"></script>
 </body></html>
