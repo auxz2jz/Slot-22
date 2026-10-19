@@ -240,7 +240,8 @@ function showQueuedBuilderPrompt(){
  const rec=nextHomeBuilderRecommendations(state);
  const hasBuilder=rec.availability?.availableAtLeast>0&&rec.recommendations.length>0;
  const research=availableResearchQueues(state).filter(q=>q.status==='idle'&&q.recommendations.length);
- if(!hasBuilder&&!research.length)return;
+ const assistantActions=helperActionRecommendations(state);
+ if(!hasBuilder&&!research.length&&!assistantActions.length)return;
  const dialog=el('builder-dialog');
  builderDialogProfile=state.playerTag;builderDialogSnapshot=state.export.timestamp;
  const n=rec.availability?.availableAtLeast||0;
