@@ -34,8 +34,8 @@ const gauges=[
 ];
 export function gaugeDeck(profile){
   return '<section class="card resource-deck"><div class="panel-heading"><div><span class="kicker">TREASURY</span><h2>Resource vaults</h2></div>'+
-  '<span class="tag">Tap a capacity to edit</span></div>'+
-  '<p class="subtext">Fill bars are accurate only after you enter your in-game storage capacity. No guessed capacities.</p>'+
+  '<span class="tag">Storage from game export</span></div>'+
+  '<p class="subtext">Calculated from the storage levels in your latest imported JSON. You can override a maximum if needed.</p>'+
   '<div class="vault-grid">'+gauges.map(({key,label,className})=>{
     const balance=profile.resources?.[key]||0;
     const selected=resolvedCapacity(profile,key),cap=selected.value;
