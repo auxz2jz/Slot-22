@@ -464,7 +464,9 @@ function changeAction(e){
  if(t.dataset.passChoice){try{state=updatePassState(state,t.dataset.passChoice,'choose',t.value);saveLocal('pass-choice-selection');render();}catch(err){notify(err.message,'error');render();}return;}
  if(t.dataset.commandBoost){
   const value=t.value===''?null:Number(t.value);
-  if(value!==null&&![0,10,15,20].includes(value)){notify('Choose the boost percentage visible in game.','warn');return;}
+  if(value!==null&&!(t.dataset.commandBoost==='returningBoost'?[0,50]:[0,10,15,20]).includes(value)){
+   notify('Choose the actual boost percentage shown in the game.','warn');return;
+  }
   state.upgradePreferences??={};
   state.upgradePreferences[t.dataset.commandBoost]=value;
   saveLocal('confirmed-gold-pass-boost');
