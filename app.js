@@ -485,6 +485,33 @@ function clickAction(e){
  if(target.dataset.openRecord!==undefined){openDetail({recordIndex:Number(target.dataset.openRecord),fromQueue:true});return;}
  if(target.dataset.openInventory!==undefined){openDetail({recordIndex:Number(target.dataset.openInventory),category:invGroup});return;}
  const action=target.dataset.action;
+ if(action==='command-close'){el('command-dialog')?.close();return;}
+ if(action==='command-edit-resources'){
+  const panel=el('advanced-panels');if(panel)panel.open=true;
+  el('advanced-resources')?.scrollIntoView({block:'start',behavior:'smooth'});return;
+ }
+ if(action==='command-save-quote'){
+  const dialog=el('command-dialog'),source=dialog?.querySelector('.command-quote');
+  const key=target.dataset.quoteKey;
+  if(!source||!key){notify('Open an individual building to save its upgrade price.','warn');return;}
+  const read=name=>source.querySelector('[data-quote-field="'+name+'"]');
+  const amount=Number(read('price')?.value);
+  const hoursText=read('hours')?.value?.trim()||'';
+  const hours=hoursText?Number(hoursText):null,currency=read('currency')?.value;
+  if(!Number.isFinite(amount)||amount<=0||amount>1000000000||
+     (hours!==null&&(!Number.isFinite(hours)||hours<=0||hours>10000))||
+     !moneyKeys.includes(currency)){
+    notify('Enter a valid in-game cost, currency and optional duration.','warn');return;
+  }
+  state.upgradeQuotes??={};
+  state.upgradeQuotes[key]={price:amount,hours,currency,beforeBoost:!!read('beforeBoost')?.checked,
+    recordedAt:new Date().toISOString()};
+  saveLocal('upgrade-cost-quote');
+  openCommandDetail(commandSelection);
+  render();
+  notify('This upgrade quote is saved locally. Nothing changed in Clash.');
+  return;
+ }
  if(action==='jump-full-plan'){view='overview';render();document.querySelector('.full-plan-panel')?.scrollIntoView({block:'start',behavior:'smooth'});return;}
  if(action==='builder-dismiss'){el('builder-dialog')?.close();return;}
  if(action==='view-pets'){el('builder-dialog')?.close();view='inventory';invGroup='pets';render();return;}
