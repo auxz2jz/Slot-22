@@ -42,6 +42,23 @@ try{
  console.log('UPGRADE ETA / PROGRESS UI:',estimateResult);
  if(!['tile','finish','bar','percent','match'].every(k=>estimateResult[k]===true))process.exitCode=1;
 
+ const helperWidget=await cmd('Runtime.evaluate',{expression:`(async()=>{
+  const {renderHelperStrip,helperCountdown}=await import('./insights-view.mjs');
+  const sample={timestamp:1792401610,helpers:[{data:93000000,lvl:7,helper_cooldown:82787}],
+   heroes:[{data:28000001,lvl:47,timer:48152,helper_timer:3587,helper_recurrent:true}]};
+  const holder=document.createElement('div');
+  holder.innerHTML=renderHelperStrip({export:sample});
+  const text=holder.innerText||holder.textContent;
+  return {target:text.includes('Archer Queen'),repeat:text.includes('Repeat assignment: On'),
+   session:!!holder.querySelector('[data-helper-session-end]'),
+   cooldown:!!holder.querySelector('[data-helper-cooldown-end]'),
+   expired:helperCountdown(1000,'work',1500).includes('refresh JSON')};
+ })()`,awaitPromise:true,returnByValue:true});
+ const helperResult=helperWidget.result?.result?.value||{};
+ console.log('HELPER ASSIGNMENT WIDGET:',helperResult);
+ if(!['target','repeat','session','cooldown','expired'].every(k=>helperResult[k]===true))process.exitCode=1;
+
+
  if((counts.overview||0)<10) {console.error('No artwork rendered on dashboard');process.exitCode=1;}
  await cmd('Runtime.evaluate',{expression:"document.querySelector('[data-tab=inventory]').click()"});
  const inventory=await cmd('Runtime.evaluate',{expression:"document.querySelectorAll('img.item-art').length",returnByValue:true});
