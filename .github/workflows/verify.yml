@@ -1,0 +1,30 @@
+name: Verify static web app
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate JavaScript syntax
+        run: |
+          node --check core.mjs
+          node --check catalog.mjs
+          node --check app.js
+          node --check sw.js
+      - name: Run unit tests
+        run: node --test tests/*.test.mjs
+      - name: Verify static assets
+        run: |
+          test -f index.html
+          test -f styles.css
+          test -f data/player-state.json
+          node -e "const s=require('./data/player-state.json');if(s.schemaVersion!==1 || !s.export || s.export.tag!=='#QVLP9RVV')process.exit(1)"
