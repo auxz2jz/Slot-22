@@ -44,7 +44,7 @@ test('Spell Factory detail includes its own timer and linked Laboratory research
  assert.match(d,/Freeze Spell/);
  assert.match(d,/following upgrades|Then work on/);
  assert.match(d,/data-quote-key="buildings:1000020:7"/);
- assert.match(d,/saved roadmap estimate/);
+ assert.match(d,/game-data reference/);
 });
 test('Hero Hall details explain builder and show next Hero',()=>{
  const d=renderCommandDetail(p(),'structure:buildings:1000071');
@@ -73,8 +73,21 @@ test('verified undiscouted quote applies only confirmed boost once',()=>{
  assert.doesNotMatch(spell,/2,550,000/);
  assert.match(spell,/data-quote-key="spells:26000005:5"/);
 });
-test('no guessed cost when roadmap has no exact level; missing snapshot is safe',()=>{
- const d=renderCommandDetail(p(),'structure:buildings:1000071');
+test('uncovered upgrade levels remain unknown rather than guessed',()=>{
+ const d=renderCommandDetail(p(),'structure:buildings:1000007');
  assert.match(d,/Price and total duration not recorded/);
  assert.match(renderCommandCenter({export:{}}),/Import a dated game JSON/);
+});
+
+test('reference game costs and durations apply only confirmed discounts',()=>{
+ const profile=p();
+ profile.upgradePreferences={builderBoost:20,researchBoost:15};
+ const camp=renderCommandDetail(profile,'structure:buildings:1000020');
+ const spell=renderCommandDetail(profile,'structure:spells:26000005');
+ const tome=renderCommandDetail(profile,'structure:equipment:90000004');
+ assert.match(camp,/7,200,000 Elixir/);
+ assert.match(spell,/Oct 17 game-data reference/);
+ assert.match(spell,/85\.0h/); // Freeze 4->5 = 100h base, research 15% set by user
+ assert.match(tome,/Shiny 1,800/);
+ assert.match(tome,/Glowy 200/);
 });
