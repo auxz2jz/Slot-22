@@ -6,6 +6,7 @@ import {renderPassRewards,updatePassState,saveRewardDefinition,removeCustomRewar
 import {renderInsights,renderHelperStrip,helperCountdown} from './insights-view.mjs';
 import {ensureHelperRoadmap} from './helper-plan.mjs';
 import {helperActionRecommendations} from './helper-advice.mjs';
+import {renderFullVillagePlan} from './full-plan-view.mjs';
 import {helperSummary} from './snapshot-insights.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
@@ -274,7 +275,7 @@ function showQueuedBuilderPrompt(){
 function renderOverview(){
  const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
- return coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+renderBuilderNudge(state)+renderResearchNudges(state)+renderFacilityAudit(state)+
+ return coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+renderFullVillagePlan(state)+renderBuilderNudge(state)+renderResearchNudges(state)+renderFacilityAudit(state)+
  '<div class="command-grid"><div>'+builderBoard(state)+'</div><div class="command-side">'+
  '<section class="card"><div class="panel-heading"><div><span class="kicker">NEXT MOVES</span><h2>Upgrade quest path</h2></div><button class="btn secondary small" data-action="goto-roadmap">Full roadmap ›</button></div>'+
  '<p class="subtext">Tap a quest to inspect its cost and change its status. These are suggested steps, not automatic game actions.</p>'+
