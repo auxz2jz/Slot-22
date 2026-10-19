@@ -133,9 +133,7 @@ test('new snapshot: Home Lab busy, Star Lab construction blocks research, pet up
  assert.equal(result[0].recommendations.length,0);
  assert.equal(result[1].structureUpgrading,true);
  assert.equal(result[1].structureLevel,7);
- assert.equal(result[1].recommendations[0].title,'Raged Barbarian 13 → 14');
- assert.equal(result[1].recommendations[0].taskId,'B-05');
- assert.equal(result[1].recommendations.some(x=>x.title.includes('Hog Glider')),false);
+ assert.equal(result[1].recommendations.length,0); // Laboratory building itself is upgrading
  assert.equal(result[2].structureUpgrading,true);
  assert.equal(result[2].recommendations[0].title,'Electro Owl 2 → 3');
  assert.equal(result[2].recommendations[0].taskId,null);
