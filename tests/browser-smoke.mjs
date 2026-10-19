@@ -27,6 +27,18 @@ try{
  const res=await cmd('Runtime.evaluate',{expression:'document.body.innerText.slice(0,2200)',returnByValue:true});
  const body=res.result?.result?.value||'';
  console.log('RENDERED TEXT:\n'+body.slice(0,1200));
+ const artwork=await cmd('Runtime.evaluate',{expression:"({overview:document.querySelectorAll('img.item-art').length,loaded:[...document.querySelectorAll('img.item-art')].filter(i=>i.complete&&i.naturalWidth>0).length,first:[...document.querySelectorAll('img.item-art')].slice(0,3).map(i=>i.src)})",returnByValue:true});
+ const counts=artwork.result?.result?.value||{};
+ console.log('ARTWORK:',counts);
+ if((counts.overview||0)<10) {console.error('No artwork rendered on dashboard');process.exitCode=1;}
+ await cmd('Runtime.evaluate',{expression:"document.querySelector('[data-tab=inventory]').click()"});
+ const inventory=await cmd('Runtime.evaluate',{expression:"document.querySelectorAll('img.item-art').length",returnByValue:true});
+ console.log('INVENTORY ARTWORK COUNT:',inventory.result?.result?.value);
+ if((inventory.result?.result?.value||0)<5)process.exitCode=1;
+ await cmd('Runtime.evaluate',{expression:"document.querySelector('[data-tab=items]').click()"});
+ const magic=await cmd('Runtime.evaluate',{expression:"document.querySelectorAll('img.item-art').length",returnByValue:true});
+ console.log('MAGIC ITEMS ARTWORK COUNT:',magic.result?.result?.value);
+ if((magic.result?.result?.value||0)<20)process.exitCode=1;
  console.log('BROWSER ERRORS:',failures);
  if(!body.toLowerCase().includes('gold in storage')||body.toLowerCase().includes('loading village tracker'))process.exitCode=1;
 }catch(e){console.error(e);process.exitCode=1;}finally{ws?.close();chrome.kill('SIGKILL');}
