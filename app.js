@@ -79,17 +79,21 @@ function download(name,data){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2500);
   log('download','OK',name);
 }
+function applyGameExport(raw){
+ const x=validateExport(raw);
+ if(!bundle.profiles[x.tag]&&!confirm('Add a new village profile for '+x.tag+'? Its currencies, Magic Items and roadmap will start empty.'))return false;
+ bundle.profiles[bundle.activeProfileId]=state;
+ useBundle(importIntoBundle(bundle,x));
+ notify('Imported '+x.tag+'. Each account keeps its own resources, Magic Items and roadmap.');
+ return true;
+}
 async function readFile(e,kind){
   const f=e.target.files?.[0];if(!f)return;
   try {
     if(f.size>(kind==='game'?1200000:9000000))throw Error('File exceeds import size limit.');
     const raw=await f.text();
     if(kind==='game'){
-      const x=validateExport(raw);
-      if(!bundle.profiles[x.tag]&&!confirm('Add a new village profile for '+x.tag+'? Its currencies, Magic Items and roadmap will start empty.'))return;
-      bundle.profiles[bundle.activeProfileId]=state;
-      useBundle(importIntoBundle(bundle,x));
-      notify('Imported '+x.tag+'. Every account retains its own balances and upgrade plan.');
+      if(!applyGameExport(raw))return;
     }else{
       const restored=normalizeBundle(raw);
       if(!confirm('Restore all profiles from this backup? This replaces local profiles, currency and roadmaps. Download a backup first if needed.'))return;
@@ -179,7 +183,7 @@ function renderItems(){
  '<div class="grid two space">'+groups+'</div><section class="card space"><h2>Hero equipment ores</h2><div class="resource-grid">'+ores.map(k=>'<div class="field"><label class="label-with-art">'+resImage(k)+enc(moneyLabels[k])+'</label><input type="text" inputmode="numeric" autocomplete="off" data-money="'+k+'" value="'+format(state.resources[k])+'"></div>').join('')+'</div><p class="smallmuted">Equipment levels belong to the selected profile. Confirm actual Blacksmith costs before spending ores.</p></section>';
 }
 function renderSync(){
- return '<div class="grid two"><section class="card"><h2>Import & export</h2><p class="smallmuted">Import an unfamiliar player tag to add another profile. An existing tag updates only that account. Full backups contain ALL profiles, currencies, Magic Items and roadmaps.</p><div class="stack"><button class="btn" data-action="choose-file">↑ Import Clash of Clans JSON</button><button class="btn secondary" data-action="download">↓ Download full planner backup</button><button class="btn secondary" data-action="restore">↑ Restore planner backup</button></div><div class="divider"></div><div class="field"><label>Latest imported game snapshot</label><div class="note">'+enc(state.importedAt||'No game export imported yet')+'</div></div></section>'+
+ return '<div class="grid two"><section class="card"><h2>Import & export</h2><p class="smallmuted">Import an unfamiliar player tag to add another profile. An existing tag updates only that account. Full backups contain ALL profiles, currencies, Magic Items and roadmaps.</p><div class="stack"><button class="btn" data-action="choose-file">↑ Import Clash of Clans JSON</button><button class="btn secondary" data-action="download">↓ Download full planner backup</button><button class="btn secondary" data-action="restore">↑ Restore planner backup</button></div><div class="divider"></div><div class="field"><label for="paste-export">Or paste the JSON copied from Clash of Clans</label><textarea id="paste-export" rows="5" spellcheck="false" autocomplete="off" placeholder="{&quot;tag&quot;:&quot;#YOURTAG&quot;, ...}"></textarea></div><button class="btn space" data-action="import-pasted">Import pasted game JSON</button><div class="divider"></div><div class="field"><label>Latest imported game snapshot</label><div class="note">'+enc(state.importedAt||'No game export imported yet')+'</div></div></section>'+
  '<section class="card"><h2>GitHub sync</h2><p class="smallmuted">Repository: <a href="https://github.com/'+REPO+'" target="_blank" rel="noopener">'+REPO+'</a>. The code is public. Sync writes ALL saved profiles to a PUBLIC GitHub file. Anyone can view player tags, resource balances and inventories.</p>'+
  '<div class="note">Use a <strong>fine-grained GitHub token</strong> with Contents read/write access restricted to <strong>Slot-22 only</strong>. Paste it below. The token stays in this tab memory, is never saved to GitHub or exported, and is cleared on refresh/close.</div>'+
  '<div class="field space"><label>Fine-grained GitHub token (not saved)</label><input id="github-token" type="password" autocomplete="off" spellcheck="false" placeholder="Paste GitHub token here"></div>'+
@@ -234,6 +238,14 @@ function clickAction(e){
  const action=target.dataset.action;
  if(action==='goto-roadmap'){view='roadmap';render();}
  if(action==='choose-file')el('game-file').click();
+ if(action==='paste-shortcut'){view='sync';render();el('paste-export')?.focus();}
+ if(action==='import-pasted'){
+  try{
+   const raw=el('paste-export')?.value?.trim();
+   if(!raw)throw Error('Paste the Clash of Clans JSON from the game first.');
+   if(applyGameExport(raw)){saveLocal('paste-import');view='overview';render();}
+  }catch(err){notify(err.message||'Paste failed','error');log('paste-import','FAILED',err.message);}
+ }
  if(action==='restore')el('backup-file').click();
  if(action==='download')download('clash-all-profiles-backup.json',bundle);
  if(action==='diagnostics')download('clash-diagnostics.json',{generatedAt:new Date().toISOString(),version:1,logs:diagnostics});
