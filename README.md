@@ -51,3 +51,22 @@ See [ROADMAP.md](ROADMAP.md), [AGENTS.md](AGENTS.md), [Handoff](docs/CODEX_HANDO
 - Upgrade costs shown in the roadmap are provisional, subject to in-game event discounts and game patches.
 - GitHub Pages is public and not a private account database.
 - The app never spends Gems or in-game items or starts an actual game upgrade; it is a tracker and guide.
+
+## Multiple Clash accounts (v0.2.0)
+
+You can track up to 20 separate Clash of Clans profiles in the **same web app**. At the top of the screen, choose an account from the **Account** selector. Tap **Rename** to give it a friendly label (Main, Mini, etc.).
+
+To add another account:
+1. Open that account in Clash of Clans and export/copy its village JSON.
+2. In the planner, select **+ Import / Add account**, and choose the JSON file.
+3. Confirm the new player tag. A separate profile is created and selected.
+4. The new profile starts with **zero manually recorded resources/Magic Items and an empty roadmap**, because those values are not available in the game export. Enter its actual amounts and create roadmap entries for it.
+5. To update an existing profile, import a newer JSON containing its **same player tag**. Its manual balances, Magic Items, and roadmap are preserved.
+
+**Switching profiles does not mix resource balances or upgrades.** The old v1 saved account and v1 backup files migrate automatically into the v2 multi-profile format without deleting the original local storage backup key. The GitHub saved file `data/player-state.json` now stores all account profiles together, including the original #QVLP9RVV snapshot.
+
+Editable numerical balances (including resources, ores and Magic Items) use grouped commas, for example **17,000,000**, and are saved as numbers after an edit. Labels in the upgrade timeline now separate upgrade level from category.
+
+**Privacy:** GitHub sync publishes **every account** in the saved bundle together to your PUBLIC Slot-22 repository. Local changes on each browser remain local until you explicitly choose **Save to GitHub**. **Load from GitHub** replaces the full set of local profiles only after confirmation; download a local all-profiles backup first if you have unpublished changes.
+
+**Verification:** GitHub Actions browser startup smoke run 39190994116 verified entering 1,200,000, creating a second account, zero starting balances, original-account balance preservation, switching back, and no JavaScript errors. Android user confirmation is still needed.
