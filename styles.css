@@ -83,6 +83,8 @@ body{background:radial-gradient(circle at 80% 0%,#253351 0,transparent 40%),radi
 .queue-name{font-weight:800;font-size:12px;line-height:1.35;overflow-wrap:anywhere}
 .queue-name em{color:#deb977;font-size:10px;font-weight:650;font-style:normal;display:block;margin-top:2px}
 .queue-time{font-size:11px;color:#c2deff}
+.queue-finish{font-size:10px;color:#bed4e8;line-height:1.3;overflow-wrap:anywhere}
+.queue-basis strong{font-variant-numeric:tabular-nums;color:#b1dbea}
 .queue-basis{font-size:9px;color:#7b99b8}
 .chevron{color:#b5a37f;font-size:22px;margin-left:2px}
 .mini-track{height:6px;width:100%;border:0}
