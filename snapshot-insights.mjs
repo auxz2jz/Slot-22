@@ -1,12 +1,37 @@
 // Read-only analysis of user-imported village snapshots. No game or inventory changes.
 import {labelFor} from './catalog.mjs';
 export const HELPER_LABELS={93000000:"Builder's Apprentice",93000001:"Lab Assistant",93000002:"Third helper (likely Alchemist)",93000003:"Prospector (verify in game)"};
+// Work assignments are stored on the TARGET upgrade record, not on the
+// helper record. Only link a helper where the matching target is unambiguous.
+// The assignments are observations from a dated export, not live game status.
+const HELPER_TARGET_CATEGORIES={
+ 93000000:['buildings','heroes'], // Builder's Apprentice: Home construction / heroes
+ 93000001:['units','spells','siege_machines'] // Lab Assistant: Home research
+};
 export function helperSummary(exported){
  const rows=Array.isArray(exported?.helpers)?exported.helpers:[];
- return rows.map(r=>({id:r.data,name:HELPER_LABELS[r.data]||'Unidentified helper '+r.data,level:r.lvl,
- cooldownSeconds:Number.isFinite(r.helper_cooldown)?Math.max(0,r.helper_cooldown):null,
- snapshotEnd:Number.isFinite(r.helper_cooldown)&&Number.isFinite(exported.timestamp)?(exported.timestamp+r.helper_cooldown)*1000:null,
- recurrent:!!r.helper_recurrent}));
+ const timestamp=Number.isFinite(exported?.timestamp)?exported.timestamp:null;
+ return rows.map(r=>{
+  const candidates=(HELPER_TARGET_CATEGORIES[r.data]||[]).flatMap(category=>
+   (Array.isArray(exported?.[category])?exported[category]:[])
+    .filter(e=>Number.isFinite(e?.helper_timer)||e?.helper_recurrent===true)
+    .map(e=>({
+     category,id:e.data,name:labelFor(e.data),level:e.lvl,
+     workSeconds:Number.isFinite(e.helper_timer)?Math.max(0,e.helper_timer):null,
+     workEndsAt:timestamp!==null&&Number.isFinite(e.helper_timer)?(timestamp+Math.max(0,e.helper_timer))*1000:null,
+     recurrent:e.helper_recurrent===true?true:e.helper_recurrent===false?false:null
+    }))
+  );
+  return {
+   id:r.data,name:HELPER_LABELS[r.data]||'Unidentified helper '+r.data,level:r.lvl,
+   cooldownSeconds:Number.isFinite(r.helper_cooldown)?Math.max(0,r.helper_cooldown):null,
+   snapshotEnd:Number.isFinite(r.helper_cooldown)&&timestamp!==null?(timestamp+Math.max(0,r.helper_cooldown))*1000:null,
+   assignment:candidates.length===1?candidates[0]:null,
+   assignmentCount:candidates.length,
+   // Legacy field: a helper's own recurrence flag is not proof of a target.
+   recurrent:r.helper_recurrent===true
+  };
+ });
 }
 export function snapshotCoverage(x){
  if(!x)return [];
