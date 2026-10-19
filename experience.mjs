@@ -190,12 +190,13 @@ export function availableResearchQueues(profile){
   const buildings=ex[def.buildingSection];
   const structure=Array.isArray(buildings)&&buildings.find(r=>r.data===def.buildingId);
   const completeSections=def.timerSections.every(k=>Array.isArray(ex[k]));
-  // User confirmed Star Laboratory research is blocked while the building is
-  // upgrading. Pet research remains usable while Pet House construction runs.
-  const constructionBlocksResearch=def.key!=='petHouse'&&!!structure&&Number.isFinite(structure.timer);
+  // Supercell Dec 2022: troop/spell/pet research can start while its own
+  // Laboratory, Star Laboratory or Pet House structure is upgrading.
+  // An unlocked next research level still depends on the CURRENT structure
+  // level and the actual game's eligibility/pricing; never borrow future levels.
   const known=!!structure&&completeSections;
   const active=known&&def.timerSections.some(k=>ex[k].some(r=>Number.isFinite(r.timer)));
-  const status=!known?'unknown':active?'busy':constructionBlocksResearch?'blocked':'idle';
+  const status=!known?'unknown':active?'busy':'idle';
   const recommendations=status==='idle'?nextResearchTasks(profile,def,structure):[];
   return {key:def.key,name:def.name,status,snapshotAt:ex.timestamp*1000,
    structureLevel:structure?.lvl??null,structureUpgrading:!!structure&&Number.isFinite(structure.timer),
