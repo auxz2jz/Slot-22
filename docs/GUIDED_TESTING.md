@@ -101,3 +101,17 @@ Automated regression covers link between Archer Queen and Builder's Apprentice, 
 6. Dismiss with **Not now** (or Android Back) and verify no repeated modal for the same snapshot, even if you import the identical JSON again. Import a **newer** JSON while a builder is still available: expect a fresh prompt and recomputed recommendation.
 7. Verify **no retroactive upgrades** are recommended: completed Queen 47→48 and already-running Pet House, Army Camp, Clan Castle, and Inferno Tower tasks must not appear as next options. Duplicate catalog labels for Home Army Camp vs Builder Base Army Camp must match the Home building's actual game ID and level.
 8. Ensure switching profiles, page reload, resources, Magic Items, seasonal rewards and the roadmap remain intact. If the banner or prompt is wrong, export **Test & diagnostics**, record snapshot time/active builder count, and share a screenshot (never your GitHub token). Automated CI browser tests do not replace physical Android acceptance.
+
+## v16 — Home/Star Lab idle research popups (Oct 19, 2026)
+
+1. First download a full phone-local planner backup. Keep existing resources, Magic Items, event claims and roadmap. Do not use **Load from GitHub** just to get code updates.
+2. Your latest GitHub village snapshot (2026-10-19 11:46 AM Pacific) shows **Laboratory Lv12**, Freeze Spell Lv4, no active Home Laboratory research in units/spells/siege machines; **Star Laboratory Lv9** with no active units2 timer; Pet House Lv3 is upgrading, so Pet House research availability must remain unknown until game reconfirmation.
+3. On the **Village overview**, verify separate research recommendation panels. Home Laboratory → **Freeze Spell 4→5**, an eligible planned Level-4 research upgrade; Star Laboratory → **Hog Glider 15→16** (specific Lv15 troop mapped to existing Builder Base roadmap goal B-05, cost unknown); do not recommend stale active Freeze 3→4 or a locked Unicorn.
+4. Import a fresh, later-dated *game village JSON*. If Home builder is free plus Laboratory and Star Laboratory idle, expect ONE combined immediate modal with three distinct categories and recommended upgrades; recommendations must not start upgrades, spend resources, or change roadmap automatically.
+5. Test with all Home builders actively upgrading but no Laboratory research. Expect a **research-only** modal, still recommending valid Home/Star Lab projects.
+6. If a Home Laboratory spell or troop has a timer, suppress its *idle* recommendation regardless of whether the old estimated finish time already elapsed (until a fresh JSON confirms it stopped). Same rule for Star Lab units2 and Pet House pets. If the Laboratory building is itself upgrading or required arrays are missing, display **unknown** rather than claiming it is idle.
+7. Lab Assistant and Builder's Apprentice are **time-saving helpers, not extra research/build queues**. Available Lab Assistant does not mean the Laboratory is idle, and vice versa.
+8. Dismiss with **Not now**; importing the same snapshot again must not reopen the dialog. A newer snapshot can prompt again when any researched queue is observed idle. No automatic in-game synchronization occurs. Reopen the site and confirm local data survives.
+9. Open **Test & diagnostics** and export a report if the actual Android presentation differs; include screenshot and export time but never share GitHub tokens.
+
+All automated tests and browser CI are distinct from physical user confirmation on Android. App code is candidate until user accepts.
