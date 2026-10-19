@@ -41,69 +41,73 @@ try{
  const estimateResult=upgradeEstimate.result?.result?.value||{};
  console.log('UPGRADE ETA / PROGRESS UI:',estimateResult);
 
- const freeBuilderBanner=await cmd('Runtime.evaluate',{expression:`(()=>{
-  const banner=document.querySelector('.builder-nudge');
-  return {visible:!!banner,spell:banner?.textContent.includes('Spell Factory 6 → 7'),
-   modal:!!document.getElementById('builder-dialog')};
+ const audited=await cmd('Runtime.evaluate',{expression:`(()=>{
+  const f=document.querySelector('.factory-audit'),r=document.querySelector('.research-nudge'),b=document.querySelector('.builder-nudge:not(.research-nudge)');
+  return {factory:!!f,darkSpell:f?.textContent.includes('Dark Spell Factory'),workshop:f?.textContent.includes('Workshop'),
+    starLab:f?.textContent.includes('Star Laboratory'),petHouse:f?.textContent.includes('Pet House'),
+    research:!!r,pet:r?.textContent.includes('Electro Owl 2 → 3'),
+    star:r?.textContent.includes('Raged Barbarian 13 → 14'),notHog:!r?.textContent.includes('Hog Glider 15 → 16'),
+    noFreeHomeBuilder:!b,modal:!!document.getElementById('builder-dialog')};
  })()`,returnByValue:true});
- const bannerState=freeBuilderBanner.result?.result?.value||{};
- console.log('AVAILABLE HOME BUILDER / NEXT UPGRADE:',bannerState);
- if(!bannerState.visible||!bannerState.spell||!bannerState.modal)process.exitCode=1;
- // Simulate the same user's newer in-game export in isolated Chrome localStorage.
+ const auditedResult=audited.result?.result?.value||{};
+ console.log('FACTORY AUDIT AND IDLE PET/STAR RESEARCH:',auditedResult);
+ if(!['factory','darkSpell','workshop','starLab','petHouse','research','pet','star','notHog','noFreeHomeBuilder','modal'].every(k=>auditedResult[k]===true))process.exitCode=1;
  const builderPopup=await cmd('Runtime.evaluate',{expression:`(async()=>{
   const bundle=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
-  const player=bundle.profiles[bundle.activeProfileId];
-  const newer=structuredClone(player.export);
+  const player=bundle.profiles[bundle.activeProfileId],newer=structuredClone(player.export);
   newer.timestamp+=60;
-  const input=document.getElementById('game-file');
-  const transfer=new DataTransfer();
-  transfer.items.add(new File([JSON.stringify(newer)],'fresh-builder.json',{type:'application/json'}));
-  input.files=transfer.files;
-  input.dispatchEvent(new Event('change',{bubbles:true}));
-  await new Promise(r=>setTimeout(r,120));
+  delete newer.buildings.find(r=>r.data===1000020).timer;
+  delete newer.spells.find(r=>r.data===26000005).timer;
+  const input=document.getElementById('game-file'),transfer=new DataTransfer();
+  transfer.items.add(new File([JSON.stringify(newer)],'fresh-four-queues.json',{type:'application/json'}));
+  input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));
+  await new Promise(r=>setTimeout(r,220));
   const dialog=document.getElementById('builder-dialog');
   const shown=dialog.open&&dialog.textContent.includes('Spell Factory 6 → 7');
   const homeLab=dialog.textContent.includes('Freeze Spell 4 → 5');
-  const starLab=dialog.textContent.includes('Hog Glider 15 → 16');
-  const separateQueues=!!dialog.querySelector('[data-alert-queue="laboratory"]')&&!!dialog.querySelector('[data-alert-queue="starLaboratory"]');
+  const starLab=dialog.textContent.includes('Raged Barbarian 13 → 14');
+  const pet=dialog.textContent.includes('Electro Owl 2 → 3');
+  const notHog=!dialog.textContent.includes('Hog Glider 15 → 16');
+  const separateQueues=['home-builders','laboratory','starLaboratory','petHouse'].every(k=>
+    !!dialog.querySelector('[data-alert-queue="'+k+'"]'));
+  const petButton=!!dialog.querySelector('[data-action="view-pets"]');
   dialog.querySelector('[data-action="builder-dismiss"]')?.click();
-  await new Promise(r=>setTimeout(r,60));
+  await new Promise(r=>setTimeout(r,90));
   const after=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
   const saved=after.profiles[after.activeProfileId];
   const acknowledged=saved.builderPromptDismissedAt===newer.timestamp;
-  input.files=transfer.files;
-  input.dispatchEvent(new Event('change',{bubbles:true}));
-  await new Promise(r=>setTimeout(r,120));
-  return {shown,homeLab,starLab,separateQueues,acknowledged,notRepeated:!dialog.open,untouchedResources:saved.resources.gold===player.resources.gold,
-   freshSnapshot:saved.export.timestamp===newer.timestamp};
+  input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));
+  await new Promise(r=>setTimeout(r,180));
+  return {shown,homeLab,starLab,pet,notHog,separateQueues,petButton,
+    acknowledged,notRepeated:!dialog.open,untouchedResources:saved.resources.gold===player.resources.gold,
+    freshSnapshot:saved.export.timestamp===newer.timestamp};
  })()`,awaitPromise:true,returnByValue:true});
  const popupResult=builderPopup.result?.result?.value||{};
- console.log('FRESH JSON BUILDER POPUP:',popupResult);
- if(!['shown','homeLab','starLab','separateQueues','acknowledged','notRepeated','untouchedResources','freshSnapshot'].every(k=>popupResult[k]===true))process.exitCode=1;
-
-// A Laboratory can trigger on a newer JSON even when all construction builders are busy.
+ console.log('FOUR-QUEUE POPUP AFTER FRESH JSON:',popupResult);
+ if(!['shown','homeLab','starLab','pet','notHog','separateQueues','petButton','acknowledged','notRepeated','untouchedResources','freshSnapshot'].every(k=>popupResult[k]===true))process.exitCode=1;
  const researchOnly=await cmd('Runtime.evaluate',{expression:`(async()=>{
   const saved=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
   const p=saved.profiles[saved.activeProfileId],newer=structuredClone(p.export);
   newer.timestamp+=90;
-  newer.buildings.push({data:1000097,lvl:1,timer:90000});
+  newer.buildings.find(r=>r.data===1000020).timer=239000;
+  newer.spells.find(r=>r.data===26000005).timer=86000;
   const input=document.getElementById('game-file'),transfer=new DataTransfer();
   transfer.items.add(new File([JSON.stringify(newer)],'research-only.json',{type:'application/json'}));
   input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));
-  await new Promise(r=>setTimeout(r,160));
+  await new Promise(r=>setTimeout(r,220));
   const dialog=document.getElementById('builder-dialog');
   const result={open:dialog.open,
     noBuilder:!dialog.querySelector('[data-alert-queue="home-builders"]'),
-    homeLab:!!dialog.querySelector('[data-alert-queue="laboratory"]'),
+    noHomeLab:!dialog.querySelector('[data-alert-queue="laboratory"]'),
     starLab:!!dialog.querySelector('[data-alert-queue="starLaboratory"]'),
-    freeze:dialog.textContent.includes('Freeze Spell 4 → 5')};
+    petHouse:!!dialog.querySelector('[data-alert-queue="petHouse"]'),
+    noHog:!dialog.textContent.includes('Hog Glider 15 → 16')};
   dialog.querySelector('[data-action="builder-dismiss"]')?.click();
   return result;
  })()`,awaitPromise:true,returnByValue:true});
  const researchOnlyResult=researchOnly.result?.result?.value||{};
- console.log('RESEARCH-ONLY FREE-QUEUE POPUP:',researchOnlyResult);
- if(!['open','noBuilder','homeLab','starLab','freeze'].every(k=>researchOnlyResult[k]===true))process.exitCode=1;
-
+ console.log('PET/STAR-ONLY FREE QUEUE POPUP:',researchOnlyResult);
+ if(!['open','noBuilder','noHomeLab','starLab','petHouse','noHog'].every(k=>researchOnlyResult[k]===true))process.exitCode=1;
 
  if(!['tile','finish','bar','percent','match'].every(k=>estimateResult[k]===true))process.exitCode=1;
 
