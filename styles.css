@@ -242,3 +242,15 @@ summary{cursor:pointer;font-weight:750}
 .factory-row small{color:#b9cadd;font-size:11px;line-height:1.4}
 @media(max-width:600px){.factory-grid{grid-template-columns:1fr 1fr;gap:7px}.factory-row{padding:9px}}
 @media(max-width:430px){.factory-grid{grid-template-columns:1fr}}
+
+/* Helper Hut — next action suggestions from last dated game export. */
+.helper-next-actions{margin-top:16px;padding:12px;background:#132942;border:1px solid #3b617d;border-radius:13px}
+.helper-next-actions h3{margin:0 0 7px;color:#f4d9a2}
+.helper-recommend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px;margin:12px 0}
+.helper-recommend{display:grid;align-content:start;gap:7px;padding:11px;border:1px solid #3d5772;background:#112139;border-radius:10px}
+.helper-recommend strong{font-size:12px;color:#ffd69a}
+.helper-recommend span{font-size:12px;line-height:1.45;color:#d6e6ff}
+.helper-recommend small{font-size:11px;line-height:1.4;color:#a9c0d9}
+.helper-recommend .helper-recommend-state{font-size:11px;font-weight:750;color:#ffda98}
+.helper-popup-item{gap:7px}
+@media(max-width:520px){.helper-recommend-grid{grid-template-columns:1fr}.helper-next-actions{padding:11px}}
