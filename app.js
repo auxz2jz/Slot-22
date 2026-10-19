@@ -19,7 +19,10 @@ const testSteps=[
  'Magic Item quantity edits survive reload.',
  'Backup JSON downloads and can be restored.',
  'GitHub Load/Save works with a restricted token (optional; never record token).',
- 'Export diagnostics produces a redacted report.'
+ 'Export diagnostics produces a redacted report.',
+ 'Season Pass tab lists 30 Silver and 19 Gold reward positions, including 22 either-or choices.',
+ 'Choose a Builder Gold alternative and mark it claimed; balances and Magic Items remain unchanged until separately edited.',
+ 'Changing to another account does not copy the October Season Pass reward checklist.'
 ];
 const moneyLabels=Object.fromEntries(moneyKeys);
 function log(type,outcome='OK',detail='') {
