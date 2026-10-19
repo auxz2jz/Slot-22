@@ -14,15 +14,17 @@ export function remainingTime(finishesAt,now=Date.now()){
   const d=Math.floor(left/86400),h=Math.floor((left%86400)/3600),m=Math.floor((left%3600)/60);
   return {expired:false,text:d?d+'d '+h+'h left':h?h+'h '+m+'m left':m+'m left'};
 }
-// Important: the real construction START is not in a player export.
-// This bar shows time elapsed SINCE THE EXPORT, not whole-upgrade completion.
-export function snapshotCountdown(ex,record,now=Date.now()){
-  const start=Number(ex?.timestamp)*1000,remaining=Number(record?.timer);
-  if(!Number.isFinite(start)||!Number.isFinite(remaining)||remaining<0)return null;
-  const end=start+remaining*1000;
-  const total=Math.max(1,remaining*1000);
+// Actual construction start is not present in village exports. The optional
+// trackedFirstSeenAt survives subsequent imports of the same observed upgrade.
+export function snapshotCountdown(ex,record,now=Date.now(),trackedFirstSeenAt=null){
+  const snapshotStart=Number(ex?.timestamp)*1000,remaining=Number(record?.timer);
+  if(!Number.isFinite(snapshotStart)||!Number.isFinite(remaining)||remaining<0)return null;
+  const seen=Number(trackedFirstSeenAt);
+  const start=trackedFirstSeenAt!==null&&Number.isFinite(seen)&&seen>0&&seen<=snapshotStart?seen:snapshotStart;
+  const end=snapshotStart+remaining*1000;
+  const total=Math.max(1,end-start);
   const percent=Math.max(0,Math.min(100,((now-start)/total)*100));
-  return {start,end,percent,remaining:remainingTime(end,now),basis:'Since last game export'};
+  return {start,end,percent,remaining:remainingTime(end,now),basis:start<snapshotStart?'Since first tracked':'Since last game export'};
 }
 export function classifyQueue(category){
   if(category==='buildings'||category==='heroes')return 'Home builders';
