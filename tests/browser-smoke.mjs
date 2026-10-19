@@ -41,6 +41,21 @@ try{
  const estimateResult=upgradeEstimate.result?.result?.value||{};
  console.log('UPGRADE ETA / PROGRESS UI:',estimateResult);
 
+ const strategic=await cmd('Runtime.evaluate',{expression:`(()=>{
+  const root=document.querySelector('.full-plan-panel');
+  const ids=['homeBuilders','builderBuilders','homeLab','starLab','pets','equipment'];
+  return {visible:!!root,lanes:ids.every(id=>!!root?.querySelector('[data-plan-lane="'+id+'"]')),
+    pet:root?.textContent.includes('Electro Owl 2 → 3'),
+    nextSpell:root?.textContent.includes('Freeze Spell 5 → 6 (after current)'),
+    heroHall:root?.textContent.includes('Hero Hall Lv 7'),
+    hero:root?.textContent.includes('Grand Warden 28 → 29'),
+    inventory:!!root?.querySelector('.full-plan-audit'),
+    builders:root?.textContent.includes('Home builders'),
+    allChoices:root?.textContent.includes('Spell, troop and siege options')};
+ })()`,returnByValue:true});
+ const strategyResult=strategic.result?.result?.value||{};
+ console.log('FULL VILLAGE STRATEGY:',strategyResult);
+ if(!['visible','lanes','pet','nextSpell','heroHall','hero','inventory','builders','allChoices'].every(k=>strategyResult[k]===true))process.exitCode=1;
  const audited=await cmd('Runtime.evaluate',{expression:`(async()=>{
   const f=document.querySelector('.factory-audit'),b=document.querySelector('.builder-nudge:not(.research-nudge)'),h=document.querySelector('.helper-next-actions');
   const {availableResearchQueues}=await import('./experience.mjs');
