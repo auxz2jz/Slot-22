@@ -63,6 +63,9 @@ try{
   await new Promise(r=>setTimeout(r,120));
   const dialog=document.getElementById('builder-dialog');
   const shown=dialog.open&&dialog.textContent.includes('Spell Factory 6 → 7');
+  const homeLab=dialog.textContent.includes('Freeze Spell 4 → 5');
+  const starLab=dialog.textContent.includes('Hog Glider 15 → 16');
+  const separateQueues=!!dialog.querySelector('[data-alert-queue="laboratory"]')&&!!dialog.querySelector('[data-alert-queue="starLaboratory"]');
   dialog.querySelector('[data-action="builder-dismiss"]')?.click();
   await new Promise(r=>setTimeout(r,60));
   const after=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
@@ -71,12 +74,36 @@ try{
   input.files=transfer.files;
   input.dispatchEvent(new Event('change',{bubbles:true}));
   await new Promise(r=>setTimeout(r,120));
-  return {shown,acknowledged,notRepeated:!dialog.open,untouchedResources:saved.resources.gold===player.resources.gold,
+  return {shown,homeLab,starLab,separateQueues,acknowledged,notRepeated:!dialog.open,untouchedResources:saved.resources.gold===player.resources.gold,
    freshSnapshot:saved.export.timestamp===newer.timestamp};
  })()`,awaitPromise:true,returnByValue:true});
  const popupResult=builderPopup.result?.result?.value||{};
  console.log('FRESH JSON BUILDER POPUP:',popupResult);
- if(!['shown','acknowledged','notRepeated','untouchedResources','freshSnapshot'].every(k=>popupResult[k]===true))process.exitCode=1;
+ if(!['shown','homeLab','starLab','separateQueues','acknowledged','notRepeated','untouchedResources','freshSnapshot'].every(k=>popupResult[k]===true))process.exitCode=1;
+
+// A Laboratory can trigger on a newer JSON even when all construction builders are busy.
+ const researchOnly=await cmd('Runtime.evaluate',{expression:`(async()=>{
+  const saved=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
+  const p=saved.profiles[saved.activeProfileId],newer=structuredClone(p.export);
+  newer.timestamp+=90;
+  newer.buildings.push({data:1000097,lvl:1,timer:90000});
+  const input=document.getElementById('game-file'),transfer=new DataTransfer();
+  transfer.items.add(new File([JSON.stringify(newer)],'research-only.json',{type:'application/json'}));
+  input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));
+  await new Promise(r=>setTimeout(r,160));
+  const dialog=document.getElementById('builder-dialog');
+  const result={open:dialog.open,
+    noBuilder:!dialog.querySelector('[data-alert-queue="home-builders"]'),
+    homeLab:!!dialog.querySelector('[data-alert-queue="laboratory"]'),
+    starLab:!!dialog.querySelector('[data-alert-queue="starLaboratory"]'),
+    freeze:dialog.textContent.includes('Freeze Spell 4 → 5')};
+  dialog.querySelector('[data-action="builder-dismiss"]')?.click();
+  return result;
+ })()`,awaitPromise:true,returnByValue:true});
+ const researchOnlyResult=researchOnly.result?.result?.value||{};
+ console.log('RESEARCH-ONLY FREE-QUEUE POPUP:',researchOnlyResult);
+ if(!['open','noBuilder','homeLab','starLab','freeze'].every(k=>researchOnlyResult[k]===true))process.exitCode=1;
+
 
  if(!['tile','finish','bar','percent','match'].every(k=>estimateResult[k]===true))process.exitCode=1;
 
