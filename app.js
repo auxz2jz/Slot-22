@@ -508,7 +508,7 @@ function clickAction(e){
   const hours=hoursText?Number(hoursText):null,currency=read('currency')?.value;
   if(!Number.isFinite(amount)||amount<=0||amount>1000000000||
      (hours!==null&&(!Number.isFinite(hours)||hours<=0||hours>10000))||
-     !moneyKeys.includes(currency)){
+     !moneyKeys.some(([id])=>id===currency)){
     notify('Enter a valid in-game cost, currency and optional duration.','warn');return;
   }
   state.upgradeQuotes??={};
