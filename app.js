@@ -186,7 +186,8 @@ function renderBuilderRecommendationCard(t){
  '<small>'+enc(t.affordableFromSaved?'Saved balance appears sufficient; verify current game amount.':'Current affordability not confirmed. Confirm price and resources in game.')+'</small>'+
  (t.note?'<small>'+enc(t.note)+'</small>':'')+
  (t.taskId?'<button class="btn small" data-action="builder-view-task" data-task-id="'+encodeURIComponent(t.taskId)+'">View upgrade details</button>':
- '<button class="btn small" data-action="view-pets">View your pets</button>')+'</div>';
+ t.derivedFrom==='Owned pet'?'<button class="btn small" data-action="view-pets">View your pets</button>':
+ '<small>Open the in-game upgrade menu to confirm this research.</small>')+'</div>';
 }
 function renderBuilderNudge(profile){
  const result=nextHomeBuilderRecommendations(profile);
