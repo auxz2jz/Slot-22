@@ -254,3 +254,29 @@ summary{cursor:pointer;font-weight:750}
 .helper-recommend .helper-recommend-state{font-size:11px;font-weight:750;color:#ffda98}
 .helper-popup-item{gap:7px}
 @media(max-width:520px){.helper-recommend-grid{grid-template-columns:1fr}.helper-next-actions{padding:11px}}
+
+/* Whole-village upgrade pipeline. Group independent workers and all structures. */
+.full-plan-panel{margin:16px 0;border:1px solid #53758e}
+.full-plan-panel>h2{margin:7px 0}
+.full-plan-panel>p{font-size:13px;line-height:1.55}
+.full-plan-hero{padding:12px;background:#172e43;border:1px solid #4c6985;border-radius:10px;margin:14px 0}
+.full-plan-hero b{color:#f4d4a0}
+.full-plan-hero p{margin:7px 0 0;font-size:12px;line-height:1.5}
+.full-plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;margin:14px 0}
+.full-plan-lane{padding:13px;border:1px solid #476581;background:#152841;border-radius:13px;min-width:0}
+.full-plan-lane h3{margin:0 0 8px;font-size:14px;color:#fbd99e}
+.full-plan-lane h4{margin:12px 0 8px;font-size:12px}
+.full-plan-status{display:inline-block;font-size:11px;border-radius:6px;background:#273c51;padding:4px 8px;margin-bottom:10px}
+.full-plan-lane>small{display:block;font-size:11px;line-height:1.4;color:#afd2e4}
+.full-plan-lane p{font-size:12px;line-height:1.55}
+.full-plan-lane ol{margin:8px 0;padding-left:22px;display:grid;gap:10px}
+.strategy-choice{font-size:12px;line-height:1.5}
+.strategy-choice b{color:#e9eef7}
+.strategy-choice p{margin:4px 0}
+.strategy-choice small{display:block;color:#bad0e4}
+.full-plan-lane details{padding:8px 0;border-top:1px solid #435671;margin-top:10px}
+.full-plan-lane summary,.full-plan-audit summary{cursor:pointer;color:#bde8fa}
+.full-plan-audit{border:1px solid #476581;border-radius:10px;padding:12px;margin:14px 0}
+.full-plan-audit details{margin:8px 0;padding:7px;border-top:1px solid #39536a}
+.full-plan-audit table{width:100%;font-size:11px}
+@media(max-width:600px){.full-plan-grid{grid-template-columns:1fr}.full-plan-lane{padding:11px}.full-plan-panel{padding:12px}}
