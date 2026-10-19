@@ -37,7 +37,7 @@ test('wrong options and cross-profile reward changes rejected',()=>{
  const profile=emptyProfile('#ANOTHER1');
  assert.throws(()=>updatePassState(profile,'S08','choose','100 Gems'),/Invalid choice/);
  assert.throws(()=>updatePassState(profile,'NOPE','toggle'),/Unknown reward/);
- assert.equal(passSummary(profile).pending,49);
+ assert.equal(passSummary(profile).pending,0); // no account-specific event catalog until its rewards are entered
  const changed=updatePassState(seedState(),'G19','toggle');
  assert.equal(passSummary(changed).claimed,1);
 });
