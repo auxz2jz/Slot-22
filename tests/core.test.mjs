@@ -66,3 +66,36 @@ test('new upgrade starts a new anchor and duplicate entities are tracked individ
  assert.equal(replacement.upgradeTracking.length,1);
  assert.equal(replacement.upgradeTracking[0].firstSeenAt,11000000);
 });
+
+test('a refreshed game snapshot changes expected finish without resetting a continuing upgrade',()=>{
+ const initial={tag:'#QVLP9RVV',timestamp:1000,buildings:[{data:1000068,lvl:3,timer:7200}],buildings2:[]};
+ const first=importVillage(seedState(),initial);
+ const shifted={...initial,timestamp:1600,buildings:[{data:1000068,lvl:3,timer:9000}]};
+ const later=importVillage(first,shifted);
+ assert.equal(later.export.timestamp,1600);
+ assert.equal(later.upgradeTracking[0].firstSeenAt,1000000);
+ assert.equal(later.upgradeTracking[0].endAt,10600000);
+ assert.deepEqual(later.resources,first.resources);
+ assert.deepEqual(later.items,first.items);
+ assert.deepEqual(later.roadmap,first.roadmap);
+});
+
+test('old or dateless game JSON cannot replace newer countdown and user data',()=>{
+ const newest={tag:'#QVLP9RVV',timestamp:2200,buildings:[{data:1000068,lvl:3,timer:7200}],buildings2:[]};
+ const saved=importVillage(seedState(),newest);
+ const previous={...newest,timestamp:2100,buildings:[{data:1000068,lvl:3,timer:7300}]};
+ assert.throws(()=>importVillage(saved,previous),/older than the saved snapshot/);
+ const missing={...newest};delete missing.timestamp;
+ assert.throws(()=>importVillage(saved,missing),/older than the saved snapshot/);
+ assert.equal(saved.export.timestamp,2200);
+ assert.equal(saved.upgradeTracking[0].endAt,9400000);
+});
+
+test('reimporting an identical snapshot does not reset an existing first-seen anchor',()=>{
+ const first={tag:'#QVLP9RVV',timestamp:1000,buildings:[{data:1000068,lvl:3,timer:7200}],buildings2:[]};
+ const second={...first,timestamp:1300,buildings:[{data:1000068,lvl:3,timer:6900}]};
+ const older=importVillage(seedState(),first);
+ const current=importVillage(older,second);
+ const repeated=importVillage(current,second);
+ assert.deepEqual(current.upgradeTracking,repeated.upgradeTracking);
+});
