@@ -36,3 +36,12 @@ Only the automation listed in browser smoke run 39190994116 is verified; actual 
 8. Switch between profiles; capacities, balances and task statuses must stay separated.
 9. Optionally use backup and explicit public GitHub Save/Load; review before publishing any account data.
 10. Export diagnostics and report the specific test step if a screen fails. CI success is not user acceptance.
+
+## October 2026 Season Pass reward checklist
+
+1. Select Season Pass prizes from the nav on main player #QVLP9RVV. Verify 30 Silver and 19 Gold positions, 22 alternating two-option rewards.
+2. On Choices only filter, select Builder Gold 1,000,000 for S08, mark claimed in app only and verify counts; undo if not actually collected in game.
+3. Verify attempting to mark a choice claimed with no option selected is rejected.
+4. Check existing balances, Books, Runes and another profile are not affected by a checklist claim.
+5. Reload browser and confirm chosen claim is retained locally; backup before optional public GitHub load.
+6. Only confirm actual claims after in-game collection; do not treat this tracker as a game connection.
