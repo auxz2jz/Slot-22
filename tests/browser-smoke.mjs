@@ -45,7 +45,7 @@ try{
   const root=document.querySelector('.full-plan-panel');
   const ids=['homeBuilders','builderBuilders','homeLab','starLab','pets','equipment'];
   return {visible:!!root,lanes:ids.every(id=>!!root?.querySelector('[data-plan-lane="'+id+'"]')),
-    pet:root?.textContent.includes('Electro Owl 2 → 3'),
+    pet:root?.textContent.includes('L.A.S.S.I 3 → 4'),
     nextSpell:root?.textContent.includes('Freeze Spell 5 → 6 (after current)'),
     heroHall:root?.textContent.includes('Hero Hall Lv 7'),
     hero:root?.textContent.includes('Grand Warden 28 → 29'),
@@ -64,7 +64,7 @@ try{
   const q=availableResearchQueues(profile);
   return {factory:!!f,helpers:!!h,helperCount:h?.querySelectorAll('[data-helper-advice]').length===4,darkSpell:f?.textContent.includes('Dark Spell Factory'),workshop:f?.textContent.includes('Workshop'),
     starLab:f?.textContent.includes('Star Laboratory'),petHouse:f?.textContent.includes('Pet House'),
-    pet:q.some(z=>z.key==='petHouse'&&z.status==='idle'&&z.recommendations[0]?.title==='Electro Owl 2 → 3'),
+    pet:q.some(z=>z.key==='petHouse'&&z.status==='busy'&&z.recommendations.length===0),
     star:q.some(z=>z.key==='starLaboratory'&&z.status==='idle'&&z.recommendations[0]?.title==='Raged Barbarian 13 → 14'),
     notHog:!q.some(z=>z.recommendations.some(t=>t.title.includes('Hog Glider 15 → 16'))),
     noFreeHomeBuilder:!b,modal:!!document.getElementById('builder-dialog')};
@@ -78,6 +78,7 @@ try{
   newer.timestamp+=60;
   delete newer.buildings.find(r=>r.data===1000020).timer;
   delete newer.spells.find(r=>r.data===26000005).timer;
+  const owl=newer.pets.find(r=>r.data===73000002);if(owl){delete owl.timer;owl.lvl=3;}
   const input=document.getElementById('game-file'),transfer=new DataTransfer();
   transfer.items.add(new File([JSON.stringify(newer)],'fresh-four-queues.json',{type:'application/json'}));
   input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));
@@ -86,7 +87,7 @@ try{
   const shown=dialog.open&&dialog.textContent.includes('Grand Warden 28 → 29');
   const homeLab=dialog.textContent.includes('Freeze Spell 4 → 5');
   const star=!!dialog.querySelector('[data-alert-queue="starLaboratory"]');
-  const pet=dialog.textContent.includes('Electro Owl 2 → 3');
+  const pet=dialog.textContent.includes('Electro Owl 3 → 4');
   const notHog=!dialog.textContent.includes('Hog Glider 15 → 16');
   const helperAdvice=!!dialog.querySelector('[data-alert-queue="helpers"]')&&dialog.textContent.includes('Lab Assistant')&&dialog.textContent.includes('Alchemist')&&dialog.textContent.includes('Prospector');
   const separateQueues=['home-builders','laboratory','starLaboratory','petHouse'].every(k=>
