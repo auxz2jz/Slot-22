@@ -187,6 +187,10 @@ body{background:radial-gradient(circle at 80% 0%,#253351 0,transparent 40%),radi
 .helper-tile strong{font-size:14px;color:#f5d49a}
 .helper-tile span{color:#addfee;font-size:13px;font-weight:bold}
 .helper-tile small{font-size:11px;line-height:1.5;color:#a7c1d2}
+.helper-assignment{font-size:12px;line-height:1.45;color:#d3e8ff;border-left:3px solid #e3b55d;padding:5px 0 5px 9px;background:#142f40}
+.helper-assignment strong{color:#ffe3ad;font-size:12px}
+.helper-countdown{font-size:11px!important;color:#b9efff!important;font-weight:700;font-variant-numeric:tabular-nums}
+.queue-helper{font-size:10px;font-weight:650;color:#ffe0a0;line-height:1.3;overflow-wrap:anywhere}
 .bob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:12px 0}
 .bob-item{display:flex;flex-direction:column;gap:8px;border:1px solid #3f526b;border-radius:10px;background:#14263b;padding:12px}
 .bob-item strong{color:#ffe3a2;font-size:22px}.bob-item span{font-size:12px}.bob-item small{font-size:10px;color:#97bad2}
