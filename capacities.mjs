@@ -14,3 +14,20 @@ const specs={
  builderGold:['buildings2',1000038,1000034,builder,hall],
  builderElixir:['buildings2',1000036,1000034,builder,hall]
 };
+
+export function inferredCapacity(data,key){
+ const spec=specs[key];
+ if(!spec||!Array.isArray(data?.[spec[0]]))return null;
+ const all=data[spec[0]],base=all.find(b=>b.data===spec[2]);
+ const baseCapacity=spec[4][Number(base?.lvl)];
+ if(!Number.isFinite(baseCapacity))return null;
+ const stores=all.filter(b=>b.data===spec[1]);
+ if(!stores.length)return null;
+ let amount=baseCapacity;
+ for(const store of stores){
+  const size=spec[3][Number(store.lvl)],n=store.cnt??1;
+  if(!Number.isFinite(size)||!Number.isInteger(n)||n<1)return null;
+  amount+=size*n;
+ }
+ return amount;
+}
