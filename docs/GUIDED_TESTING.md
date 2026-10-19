@@ -45,3 +45,11 @@ Only the automation listed in browser smoke run 39190994116 is verified; actual 
 4. Check existing balances, Books, Runes and another profile are not affected by a checklist claim.
 5. Reload browser and confirm chosen claim is retained locally; backup before optional public GitHub load.
 6. Only confirm actual claims after in-game collection; do not treat this tracker as a game connection.
+
+## Editable October rewards and Magic Items — Android acceptance
+1. Pass Rewards → Unclaimed rewards only in Clash of Clans is the authoritative event list. In the app, open Season Pass prizes. Existing main village has 49 originally reported positions; some may have since been claimed.
+2. Mark each prize that was actually collected in-game. An either/or slot requires selecting one option first; it remains one reward.
+3. Tap Edit to correct an original prize's options/note. Add a new prize in the top form: track Silver, Gold or Event, one prize or either/or pair. Verify it persists after reopening.
+4. Switch to Magic Items & ores. Enter your actual Rune of Gold count e.g. 8 even if in-game capacity says 1/1; no forced clamping. Add a custom item name if needed.
+5. Verify a claim/checklist edit DOES NOT change actual owned Magic Item counts or resources automatically, and switching profiles keeps their lists separate.
+6. Download a local backup before using GitHub Load. Explicit GitHub Save publishes all game records in the public Slot-22 repo.
