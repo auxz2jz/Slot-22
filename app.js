@@ -2,14 +2,14 @@ import {names,categories,moneyKeys,itemGroups,labelFor} from './catalog.mjs';
 import {artworkUrl,artForResource} from './artwork.mjs';
 import {coverFor,gaugeDeck,builderBoard,questTrail,gallery,detailContent} from './dashboard.mjs';
 import {planPreview,snapshotCountdown,remainingTime} from './experience.mjs';
-import {renderPassRewards,updatePassState} from './pass-rewards.mjs';
+import {renderPassRewards,updatePassState,saveRewardDefinition,removeCustomReward} from './pass-rewards.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
 const STORAGE='clash-slot22-state-v2',LEGACY_STORAGE='clash-slot22-state-v1',TESTS='clash-slot22-tests-v1';
 const el=id=>document.getElementById(id);
 const enc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let bundle=normalizeBundle(seedState()),state=bundle.profiles[bundle.activeProfileId],view='overview',filter='all',invGroup='buildings',ghSha=null;
-let inventoryMode='gallery',activeDialog=null,passFilter='unclaimed';
+let inventoryMode='gallery',activeDialog=null,passFilter='unclaimed',editingRewardId=null;
 let diagnostics=[],manualTests={};
 const testSteps=[
  'Overview lists current resource values.',
@@ -195,10 +195,26 @@ function renderInventory(){
  '</tbody></table></div>')+'</section>';
 }
 function renderItems(){
- let groups=itemGroups.map(([group,keys])=>'<section class="card"><h2>'+enc(group)+'</h2><div class="grid items">'+keys.map(key=>'<div class="item-field"><label class="label-with-art">'+itemImage('magicItem',key,1,true)+enc(key)+'</label><input type="text" inputmode="numeric" autocomplete="off" data-item="'+enc(key)+'" value="'+format(state.items[key])+'"></div>').join('')+'</div></section>').join('');
+ const known=new Set(itemGroups.flatMap(([_,keys])=>keys));
+ const additions=Object.keys(state.items||{}).filter(k=>!known.has(k)).sort();
+ const group=(title,keys)=>'<section class="card"><h2>'+enc(title)+'</h2><div class="grid items">'+keys.map(key=>
+  '<div class="item-field"><label class="label-with-art">'+itemImage('magicItem',key,1,true)+enc(key)+'</label>'+
+  '<input type="text" inputmode="numeric" autocomplete="off" aria-label="Actual quantity of '+enc(key)+'" data-item="'+enc(key)+'" value="'+format(state.items[key])+'"></div>').join('')+'</div></section>';
+ const groups=itemGroups.map(([label,keys])=>group(label,keys)).join('')+(additions?group('Additional inventory items',additions):'');
  const ores=['shiny','glowy','starry'];
- return '<div class="note">These balances are not in the Supercell JSON export. Update them manually after events, magic item use, chests, or Blacksmith upgrades. Changes are saved locally until you click “Save to GitHub”.</div>'+
- '<div class="grid two space">'+groups+'</div><section class="card space"><h2>Hero equipment ores</h2><div class="resource-grid">'+ores.map(k=>'<div class="field"><label class="label-with-art">'+resImage(k)+enc(moneyLabels[k])+'</label><input type="text" inputmode="numeric" autocomplete="off" data-money="'+k+'" value="'+format(state.resources[k])+'"></div>').join('')+'</div><p class="smallmuted">Equipment levels belong to the selected profile. Confirm actual Blacksmith costs before spending ores.</p></section>';
+ return '<section class="card magic-lead"><span class="kicker">ACTUAL INVENTORY</span><h2>Books, Runes, Potions & Magic Items</h2>'+
+ '<p><strong>Enter what you currently OWN</strong>, not what is still unclaimed in the event. There is no 5/5 limit in this tracker: enter 6, 8, 12 or any real amount shown by your game.</p>'+
+ '<div class="row wrap"><button class="btn secondary" data-action="go-pass">◈ Open Season Pass claim list</button><button class="btn secondary" data-action="go-sync">↓ Back up your inventory</button></div>'+
+ '<p class="smallmuted">This app cannot read Magic Item quantities from the village JSON. Changes are saved locally on this phone until you choose Save to GitHub.</p></section>'+
+ '<div class="grid two space">'+groups+'</div>'+
+ '<section class="card space"><h2>Have another item that isn’t listed?</h2>'+
+ '<form id="extra-item-form" class="row wrap"><div class="field grow"><label for="extra-item-name">Item name</label><input id="extra-item-name" name="name" maxlength="70" placeholder="e.g. Limited event item" required></div>'+
+ '<div class="field"><label for="extra-item-count">Actual quantity</label><input id="extra-item-count" name="quantity" type="text" inputmode="numeric" placeholder="0" value="0"></div>'+
+ '<button class="btn" type="submit">Add to inventory</button></form></section>'+
+ '<section class="card space"><h2>Hero equipment ores</h2><div class="resource-grid">'+ores.map(k=>
+ '<div class="field"><label class="label-with-art">'+resImage(k)+enc(moneyLabels[k])+'</label>'+
+ '<input type="text" inputmode="numeric" autocomplete="off" data-money="'+k+'" value="'+format(state.resources[k])+'"></div>').join('')+'</div>'+
+ '<p class="smallmuted">Equipment levels are saved separately in your imported village snapshot.</p></section>';
 }
 function renderSync(){
  return '<div class="grid two"><section class="card"><h2>Import & export</h2><p class="smallmuted">Import an unfamiliar player tag to add another profile. An existing tag updates only that account. Full backups contain ALL profiles, currencies, Magic Items and roadmaps.</p><div class="stack"><button class="btn" data-action="choose-file">↑ Import Clash of Clans JSON</button><button class="btn secondary" data-action="download">↓ Download full planner backup</button><button class="btn secondary" data-action="restore">↑ Restore planner backup</button></div><div class="divider"></div><div class="field"><label for="paste-export">Or paste the JSON copied from Clash of Clans</label><textarea id="paste-export" rows="5" spellcheck="false" autocomplete="off" placeholder="{&quot;tag&quot;:&quot;#YOURTAG&quot;, ...}"></textarea></div><button class="btn space" data-action="import-pasted">Import pasted game JSON</button><div class="divider"></div><div class="field"><label>Latest imported game snapshot</label><div class="note">'+enc(state.importedAt||'No game export imported yet')+'</div></div></section>'+
@@ -282,7 +298,7 @@ function render() {
  const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
  el('village-subtitle').textContent='TOWN HALL '+th+' · BUILDER HALL '+bh;
- el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter),sync:renderSync,testing:renderTesting}[view])();
+ el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter,editingRewardId),sync:renderSync,testing:renderTesting}[view])();
  updateVisualTimers();
 }
 function commaInput(e){
@@ -312,8 +328,9 @@ function changeAction(e){
  if(t.dataset.test!==undefined){manualTests[t.dataset.test]=t.checked;localStorage.setItem(TESTS,JSON.stringify(manualTests));log('guided-test','MANUAL',t.dataset.test+' '+(t.checked?'checked':'unchecked'));}
 }
 function clickAction(e){
- const target=e.target.closest('[data-action],[data-filter],[data-category],[data-open-task],[data-open-record],[data-open-inventory],[data-inventory-mode],[data-pass-filter],[data-pass-toggle]');
+ const target=e.target.closest('[data-action],[data-filter],[data-category],[data-open-task],[data-open-record],[data-open-inventory],[data-inventory-mode],[data-pass-filter],[data-pass-toggle],[data-edit-reward]');
  if(!target)return;
+ if(target.dataset.editReward){editingRewardId=target.dataset.editReward;view='pass';render();el('pass-reward-form')?.scrollIntoView({block:'center',behavior:'smooth'});return;}
  if(target.dataset.passFilter){passFilter=target.dataset.passFilter;render();return;}
  if(target.dataset.passToggle){try{state=updatePassState(state,target.dataset.passToggle,'toggle');saveLocal('pass-claim-status');render();notify('Pass reward recorded in tracker only. Update actual balances and Magic Items after claiming in-game.');}catch(err){notify(err.message,'error');}return;}
  if(target.dataset.filter){filter=target.dataset.filter;render();return;}
@@ -323,6 +340,11 @@ function clickAction(e){
  if(target.dataset.openRecord!==undefined){openDetail({recordIndex:Number(target.dataset.openRecord),fromQueue:true});return;}
  if(target.dataset.openInventory!==undefined){openDetail({recordIndex:Number(target.dataset.openInventory),category:invGroup});return;}
  const action=target.dataset.action;
+ if(action==='go-items'){view='items';render();return;}
+ if(action==='go-pass'){view='pass';render();return;}
+ if(action==='go-sync'){view='sync';render();return;}
+ if(action==='reward-cancel'){editingRewardId=null;render();return;}
+ if(action==='reward-delete'){if(confirm('Remove this extra reward from your tracker? This only changes the planner, not the game.')){try{state=removeCustomReward(state,target.dataset.rewardId);editingRewardId=null;saveLocal('reward-delete');render();notify('Extra reward removed from tracker.');}catch(err){notify(err.message,'error');}}return;}
  if(action==='goto-roadmap'){view='roadmap';render();}
  if(action==='close-detail'){el('item-dialog')?.close();return;}
  if(action==='mark-task'||action==='record-upgrade'){trackUpgradeAction(action,target.dataset.taskId);return;}
@@ -345,6 +367,24 @@ function clickAction(e){
  if(action==='gh-save')void gitSave();
 }
 function submitAction(e){
+ if(e.target.id==='pass-reward-form'){
+  e.preventDefault();
+  const f=new FormData(e.target);
+  try{
+   state=saveRewardDefinition(state,{id:f.get('id'),track:f.get('track'),kind:f.get('kind'),optionA:f.get('optionA'),optionB:f.get('optionB'),note:f.get('note')});
+   editingRewardId=null;saveLocal('reward-definition');render();notify('Reward saved in the selected account’s checklist. No game item was collected.');
+  }catch(err){notify(err.message,'error');log('reward-definition','FAILED',err.message);}
+  return;
+ }
+ if(e.target.id==='extra-item-form'){
+  e.preventDefault();const f=new FormData(e.target);
+  const name=String(f.get('name')||'').trim().slice(0,70);
+  if(!name||name==='__proto__'||name==='constructor'||name==='prototype'){notify('Enter a valid Magic Item name.','error');return;}
+  if(Object.keys(state.items||{}).length>=150 && !(name in (state.items||{}))){notify('Item limit reached.','error');return;}
+  if(name in (state.items||{})){notify('Item already exists. Update its quantity above instead.','error');return;}
+  state.items??={};state.items[name]=integer(f.get('quantity'));
+  saveLocal('inventory-new-item');render();notify('Added '+name+' to your actual Magic Item inventory (not Season Pass rewards).');return;
+ }
  if(e.target.id!=='task-form')return;
  e.preventDefault();const f=new FormData(e.target);
  const title=String(f.get('title')||'').trim();if(!title)return;
