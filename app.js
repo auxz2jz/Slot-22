@@ -78,7 +78,7 @@ async function initialize(){
   el('backup-file').addEventListener('change',async e=>readFile(e,'backup'));
   el('profile-select').addEventListener('change',e=>{try{bundle.profiles[bundle.activeProfileId]=state;useBundle(selectProfile(bundle,e.target.value));const next=ensureHelperRoadmap(state);if(next.added)state=next.profile;saveLocal('profile-switch');render();}catch(err){notify(err.message,'error');render();}});
   document.addEventListener('click',clickAction);
-  setInterval(updateVisualTimers,30000);
+  setInterval(updateVisualTimers,10000);
   el('item-dialog').addEventListener('click',e=>{if(e.target===el('item-dialog'))el('item-dialog').close();});
   document.addEventListener('input',commaInput);
   document.addEventListener('change',changeAction);
@@ -100,7 +100,9 @@ function applyGameExport(raw){
  useBundle(importIntoBundle(bundle,x));
  const improved=ensureHelperRoadmap(state);
  if(improved.added){state=improved.profile;bundle.profiles[bundle.activeProfileId]=state;}
- notify('Imported '+x.tag+'. Each account keeps its own resources, Magic Items and roadmap. Helper routines are added only when missing.');
+ const snapshotTime=Number.isFinite(x.timestamp)?new Date(x.timestamp*1000).toLocaleString():'unknown';
+ notify('Imported '+x.tag+' (game snapshot: '+snapshotTime+'). Countdown and estimated finish times refreshed. Resources, Magic Items and roadmap preserved.');
+ log('game-timer-refresh','OK','Refreshed estimate from village JSON timestamp');
  return true;
 }
 async function readFile(e,kind){
@@ -265,13 +267,15 @@ function updateVisualTimers(){
    const end=Number(node.dataset.timerEnd);
    node.textContent=end?remainingTime(end,now).text:'Timer unavailable';
  });
- document.querySelectorAll('[data-timer-progress]').forEach(node=>{
-   const [start,end]=node.dataset.timerProgress.split(',').map(Number);
-   if(end>start && Number.isFinite(start)){
+ for(const node of document.querySelectorAll('[data-timer-progress],[data-timer-percent]')){
+   const raw=node.dataset.timerProgress||node.dataset.timerPercent;
+   const [start,end]=raw.split(',').map(Number);
+   if(end>start && Number.isFinite(start)&&Number.isFinite(end)){
      const pct=Math.max(0,Math.min(100,100*(now-start)/(end-start)));
-     node.style.width=pct.toFixed(1)+'%';
+     if(node.dataset.timerPercent!==undefined)node.textContent=String(Math.round(pct));
+     else node.style.width=pct.toFixed(1)+'%';
    }
- });
+ }
 }
 function trackUpgradeAction(action,encodedId){
  try{
