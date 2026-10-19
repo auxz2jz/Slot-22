@@ -41,6 +41,35 @@ try{
  const estimateResult=upgradeEstimate.result?.result?.value||{};
  console.log('UPGRADE ETA / PROGRESS UI:',estimateResult);
 
+ const commandCenter=await cmd('Runtime.evaluate',{expression:`(async()=>{
+  const main=document.querySelector('.command-center');
+  const cards=main?.querySelectorAll('[data-command-lane]')||[];
+  const profile=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
+  const original=profile.profiles[profile.activeProfileId].resources.elixir;
+  const spell=main.querySelector('[data-command-structure="buildings:1000020"]');
+  const drawerBefore=!!document.getElementById('command-dialog');
+  spell?.click();
+  const drawer=document.getElementById('command-dialog');
+  const correct=drawer?.open&&drawer.textContent.includes('Spell Factory')&&drawer.textContent.includes('Freeze Spell');
+  const form=drawer.querySelector('.command-quote');
+  if(form){form.open=true;form.querySelector('[data-quote-field="price"]').value='5000000';
+   form.querySelector('[data-quote-field="hours"]').value='120';
+   form.querySelector('[data-quote-field="currency"]').value='elixir';
+   form.querySelector('[data-quote-field="beforeBoost"]').checked=false;
+   form.querySelector('[data-action="command-save-quote"]')?.click();
+  }
+  const next=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
+  const saved=next.profiles[next.activeProfileId];
+  const quote=saved.upgradeQuotes?.['buildings:1000020:7'];
+  const safe=saved.resources.elixir===original;
+  drawer.querySelector('[data-action="command-close"]')?.click();
+  return {main:!!main,seven:cards.length===7,resource:main.textContent.includes('17,504,427'),
+   finder:!!spell,drawerBefore,correct,quote:quote?.price===5000000&&quote?.hours===120,
+   safe,closed:!drawer.open,discount:!!main.querySelector('[data-command-boost="builderBoost"]')};
+ })()`,awaitPromise:true,returnByValue:true});
+ const commandResult=commandCenter.result?.result?.value||{};
+ console.log('COMPACT COMMAND CENTER:',commandResult);
+ if(!['main','seven','resource','finder','drawerBefore','correct','quote','safe','closed','discount'].every(k=>commandResult[k]===true))process.exitCode=1;
  const strategic=await cmd('Runtime.evaluate',{expression:`(()=>{
   const root=document.querySelector('.full-plan-panel');
   const ids=['homeBuilders','builderBuilders','homeLab','starLab','pets','equipment'];
