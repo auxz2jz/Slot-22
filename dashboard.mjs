@@ -21,7 +21,7 @@ export function coverFor(profile){
     '<p>Town Hall '+(th||'—')+' <span aria-hidden="true">·</span> Builder Hall '+(bh||'—')+' <span aria-hidden="true">·</span> '+esc(profile.playerTag)+'</p></div></div>'+
     '<div class="royal-stats"><span><strong>'+progress.active+'</strong> active plans</span><span><strong>'+progress.done+'</strong> completed</span>'+
     '<span><strong>'+progress.total+'</strong> tracked upgrades</span></div>'+
-    '<div class="royal-meter"><span style="width:'+progress.percent.toFixed(1)+'%"></span></div>'+
+    '<div class="royal-meter"><span data-fill="'+progress.percent.toFixed(1)+'"></span></div>'+
     '<div class="royal-caption">Roadmap milestones completed · '+Math.round(progress.percent)+'%</div></div>';
 }
 const gauges=[
@@ -44,7 +44,7 @@ export function gaugeDeck(profile){
       (img?'<img src="'+esc(img)+'" alt="" loading="lazy" decoding="async">':'')+esc(label)+'</span>'+
     '<span class="vault-value">'+format(balance)+'</span></div>'+
     '<div class="vault-track '+(g.known?'':'unknown')+'" role="progressbar" aria-label="'+esc(label)+' capacity" aria-valuemin="0" '+(g.known?'aria-valuemax="100" aria-valuenow="'+Math.round(g.percent)+'"':'aria-valuetext="Capacity not set"')+'>'+
-      '<span style="width:'+g.percent.toFixed(2)+'%"></span></div>'+
+      '<span data-fill="'+g.percent.toFixed(2)+'"></span></div>'+
     '<div class="vault-foot"><span>'+ (g.known?Math.round(g.percent)+'% full':'Set storage capacity')+'</span>'+
       '<label>Max <input data-cap="'+esc(key)+'" aria-label="'+esc(label)+' storage capacity" inputmode="numeric" autocomplete="off" type="text" placeholder="Not set" value="'+(cap?format(cap):'')+'"></label></div></div>';
   }).join('')+'</div></section>';
@@ -70,7 +70,7 @@ export function builderBoard(profile,now=Date.now()){
           '<div class="queue-art">'+iconFor(r.categoryId,r.name,r.level)+'</div>'+
           '<div class="queue-data"><span class="queue-name">'+esc(r.name)+' <em>Lv '+r.level+' → '+(r.level+1)+'</em></span>'+
           '<span class="queue-time" data-timer-end="'+(count?.end||0)+'">'+(count?esc(count.remaining.text):'Timer unavailable')+'</span>'+
-          '<div class="mini-track" title="Time elapsed since snapshot; not overall construction completion"><span data-timer-progress="'+(count?.start||0)+','+(count?.end||0)+'" style="width:'+(count?.percent||0).toFixed(1)+'%"></span></div>'+
+          '<div class="mini-track" title="Time elapsed since snapshot; not overall construction completion"><span data-timer-progress="'+(count?.start||0)+','+(count?.end||0)+'"></span></div>'+
           '<span class="queue-basis">'+(expired?'Snapshot is outdated':'Countdown since import')+'</span></div>'+
           '<span class="chevron" aria-hidden="true">›</span></button>';
       }).join('')+'</div></div>';
