@@ -158,7 +158,7 @@ export function renderPassRewards(profile,filter='unclaimed',editingId=null){
   const v=value||{id:'',track:'Silver',kind:'fixed',options:['',''],note:''};
   return '<section class="card pass-editor"><h2>'+(value?'Edit reward '+esc(v.id):'Add another event reward')+'</h2>'+
   '<p class="subtext">You can enter a new prize or correct any listed reward. If its image alternates between two prizes, choose Either/or and enter both; it counts as one reward.</p>'+
-  '<form id="pass-reward-form" class="stack"><input type="hidden" name="id" value="'+esc(v.id)+'">'+
+  '<form id="pass-reward-form" class="stack"><input type="hidden" name="rewardId" value="'+esc(v.id)+'">'+
   '<div class="grid two"><div class="field"><label for="event-track">Reward track</label><select name="track" id="event-track">'+
    TRACKS.map(t=>'<option '+(v.track===t?'selected':'')+'>'+t+'</option>').join('')+'</select></div>'+
    '<div class="field"><label for="event-kind">Reward type</label><select name="kind" id="event-kind"><option value="fixed" '+(v.kind==='fixed'?'selected':'')+'>One fixed reward</option><option value="choice" '+(v.kind==='choice'?'selected':'')+'>Either/or – choose one</option></select></div></div>'+
