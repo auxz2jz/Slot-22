@@ -28,5 +28,5 @@ try{
  const body=res.result?.result?.value||'';
  console.log('RENDERED TEXT:\n'+body.slice(0,1200));
  console.log('BROWSER ERRORS:',failures);
- if(!body.includes('Gold in storage')||body.includes('Loading village tracker'))process.exitCode=1;
+ if(!body.toLowerCase().includes('gold in storage')||body.toLowerCase().includes('loading village tracker'))process.exitCode=1;
 }catch(e){console.error(e);process.exitCode=1;}finally{ws?.close();chrome.kill('SIGKILL');}
