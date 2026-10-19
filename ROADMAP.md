@@ -58,3 +58,11 @@ All positions and recommendations are defined in pass-rewards.mjs and claim reco
 - [x] S22-031: Support extra inventory item names and quantities for items outside the starting list.
 - [x] S22-032: Unit tests and real browser acceptance for creating and editing rewards, choosing one, and saving inventory > usual capacity.
 - [ ] S22-033: Ask user to inspect event's Unclaimed rewards only filter, compare with tracker, enter actual Magic Item holdings and validate on their Android phone.
+
+## 2026-10-18 JSON insights and Helper Hut integration
+- [x] S22-034 — Audit imported JSON top-level fields and reveal previously unrepresented helpers, boost metadata, house parts, skins, decorations and obstacles.
+- [x] S22-035 — Display recorded Builder Apprentice (7), Lab Assistant (8), and ambiguous third-helper ID (level 3, likely Alchemist) from player export, without claiming helper availability when cooldown absent.
+- [x] S22-036 — Add B.O.B. milestones computed from actual gear-up flags, Builder Base defense/troop levels and combined hero levels.
+- [x] S22-037 — Provide per-section counts plus read-only full export in a new JSON insights & helpers tab, and helper overview cards.
+- [x] S22-038 — Automated helper/BOB tests and Chrome regression; user Android verification pending.
+- [ ] S22-039 — Consider secure official API synchronization of public player stats with a backend/GitHub Actions secret; do not require in-game verification token or expose developer API key. Manual village JSON remains needed for precise structures and timers.
