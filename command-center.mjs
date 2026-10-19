@@ -3,6 +3,7 @@
 // This module never changes the village, resources, or existing roadmap.
 import {fullVillagePlan} from './full-plan.mjs';
 import {labelFor} from './catalog.mjs';
+import {REFERENCE_CATALOG} from './upgrade-reference.mjs';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Number(n).toLocaleString('en-US');
 const categories=[
@@ -29,6 +30,13 @@ const quoteInfo=(p,group,id,next)=>{
   (t.title||'').toLowerCase().includes((labelFor(id)||'UNKNOWN').toLowerCase()));
  if(data?.price>0)return {price:data.price,hours:data.hours??null,currency:data.currency,
   beforeBoost:data.beforeBoost===true,source:'user-verified game quote',key};
+ const source=REFERENCE_CATALOG[group+':'+id];
+ const actual=source?.levels.find(x=>x.l===next);
+ if(actual&&actual.c!==null&&actual.c>0)return {price:actual.c,hours:actual.s?actual.s/3600:null,
+  currency:actual.r,beforeBoost:true,source:'Oct 17 game-data reference; verify in Clash',key,
+  requirement:actual,ore:actual.ore};
+ if(actual?.ore?.some(n=>n>0))return {price:null,hours:null,currency:null,beforeBoost:false,
+  source:'Oct 17 ore data; verify in Clash',key,ore:actual.ore,requirement:actual};
  if(roadmap?.cost>0)return {price:roadmap.cost,hours:null,currency:roadmap.costType,
   beforeBoost:false,source:'saved roadmap estimate (discount status unknown)',key};
  return {price:null,hours:null,currency:null,beforeBoost:false,source:'not recorded',key};
@@ -40,6 +48,9 @@ const discountFor=(p,group)=>{
 };
 const costDisplay=(profile,group,id,next)=>{
  const q=quoteInfo(profile,group,id,next);
+ if(q.ore?.some(n=>n>0)&&(!Number.isFinite(q.price)||q.price<=0))
+  return {line:'Equipment ore cost: '+['Shiny','Glowy','Starry'].map((n,i)=>n+' '+fmt(q.ore[i]||0)).join(' · ')+
+    ' · '+q.source,detail:q};
  if(!Number.isFinite(q.price)||q.price<=0)return {line:'Price and total duration not recorded — check in Clash',detail:q};
  const pct=discountFor(profile,group),discounted=q.beforeBoost&&Number.isFinite(pct)&&pct>=0?Math.ceil(q.price*(100-pct)/100):null;
  const shown=discounted??q.price;
