@@ -71,20 +71,33 @@ try{
  console.log('COMPACT COMMAND CENTER:',commandResult);
  if(!['main','seven','resource','finder','drawerBefore','correct','quote','safe','closed','discount'].every(k=>commandResult[k]===true))process.exitCode=1;
  const strategic=await cmd('Runtime.evaluate',{expression:`(()=>{
-  const root=document.querySelector('.full-plan-panel');
-  const ids=['homeBuilders','builderBuilders','homeLab','starLab','pets','equipment'];
-  return {visible:!!root,lanes:ids.every(id=>!!root?.querySelector('[data-plan-lane="'+id+'"]')),
-    pet:root?.textContent.includes('L.A.S.S.I 3 → 4'),
-    nextSpell:root?.textContent.includes('Freeze Spell 5 → 6 (after current)'),
-    heroHall:root?.textContent.includes('Hero Hall Lv 7'),
-    hero:root?.textContent.includes('Grand Warden 28 → 29'),
-    inventory:!!root?.querySelector('.full-plan-audit'),
-    builders:root?.textContent.includes('Home builders'),
-    allChoices:root?.textContent.includes('Spell, troop and siege options')};
+  const root=document.querySelector('.command-center');
+  const ids=['homeBuilders','builderBuilders','homeLab','starLab','pets','equipment','assistants'];
+  const lanes=ids.every(id=>!!root?.querySelector('[data-command-lane="'+id+'"]'));
+  const noDuplicate=!document.querySelector('.full-plan-panel');
+  const advanced=!!document.getElementById('advanced-panels');
+  const inventory=!!root?.querySelector('.command-structures');
+  const heroHall=root?.textContent.includes('Hero Hall');
+  const open=(id)=>{
+    root?.querySelector('[data-command-lane="'+id+'"]')?.click();
+    const dialog=document.getElementById('command-dialog');
+    const content=dialog?.open?dialog.textContent:'';
+    dialog?.querySelector('[data-action="command-close"]')?.click();
+    return content;
+  };
+  const builders=open('homeBuilders');
+  const lab=open('homeLab');
+  const pets=open('pets');
+  return {visible:!!root,lanes,noDuplicate,advanced,inventory,heroHall,
+    hero:builders.includes('Grand Warden 28 → 29'),
+    nextSpell:lab.includes('Freeze Spell 5 → 6'),
+    pet:pets.includes('L.A.S.S.I 3 → 4'),
+    ranked:builders.includes('My recommended next jobs, in order'),
+    closed:!document.getElementById('command-dialog').open};
  })()`,returnByValue:true});
  const strategyResult=strategic.result?.result?.value||{};
- console.log('FULL VILLAGE STRATEGY:',strategyResult);
- if(!['visible','lanes','pet','nextSpell','heroHall','hero','inventory','builders','allChoices'].every(k=>strategyResult[k]===true))process.exitCode=1;
+ console.log('CONSOLIDATED COMMAND CENTER:',strategyResult);
+ if(!['visible','lanes','noDuplicate','advanced','inventory','heroHall','hero','nextSpell','pet','ranked','closed'].every(k=>strategyResult[k]===true))process.exitCode=1;
  const audited=await cmd('Runtime.evaluate',{expression:`(async()=>{
   const f=document.querySelector('.factory-audit'),b=document.querySelector('.builder-nudge:not(.research-nudge)'),h=document.querySelector('.helper-next-actions');
   const {availableResearchQueues}=await import('./experience.mjs');
