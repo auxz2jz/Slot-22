@@ -5,8 +5,8 @@
     "#QVLP9RVV": {
       "schemaVersion": 1,
       "playerTag": "#QVLP9RVV",
-      "revision": 0,
-      "savedAt": null,
+      "revision": 5,
+      "savedAt": "2026-10-19T08:23:45.772Z",
       "resources": {
         "gold": 19000000,
         "elixir": 12608735,
@@ -46,172 +46,62 @@
       },
       "roadmap": [
         {
-          "id": "GP-OCT26-00",
-          "title": "Gold Pass purchased",
-          "village": "Home",
-          "queue": "Season Pass",
-          "costType": "gold",
-          "cost": 0,
-          "status": "done",
-          "note": "Confirmed by user: October 2026 Gold Pass purchased for $2.99. This is a tracker note, not a receipt.",
-          "updatedAt": null
-        },
-        {
-          "id": "GP-OCT26-01",
-          "title": "Claim seasonal Gold Pass perks now",
-          "village": "Home",
-          "queue": "Season Pass",
-          "costType": "gold",
-          "cost": 0,
-          "status": "planned",
-          "note": "Claim unlocked discounts and Hoggy Bank-related perks promptly; boosts apply during the remaining October season.",
-          "updatedAt": null
-        },
-        {
-          "id": "GP-OCT26-02",
-          "title": "Audit every unclaimed Gold/Silver Pass choice",
-          "village": "Home",
-          "queue": "Season Pass",
-          "costType": "gold",
-          "cost": 0,
-          "status": "planned",
-          "note": "The screenshots show some, NOT all, rewards. Scroll both reward tracks; pick options deliberately. Default at season end is first choice or Gems if item inventory is full.",
-          "updatedAt": null
-        },
-        {
-          "id": "GP-OCT26-03",
-          "title": "Use current Books before collecting replacement Books",
-          "village": "Home",
-          "queue": "Season Pass",
-          "costType": "gold",
-          "cost": 0,
-          "status": "planned",
-          "note": "Existing inventory last reported: Book of Building, Fighting, Spells and Heroes = 1 each. Use only for real long or strategically important upgrades, then collect newly earned books before October 31.",
-          "updatedAt": null
-        },
-        {
-          "id": "GP-OCT26-04",
-          "title": "Empty resource storages before using and replacing Runes",
-          "village": "Home",
-          "queue": "Season Pass",
-          "costType": "gold",
-          "cost": 0,
-          "status": "planned",
-          "note": "Existing Runes last reported: one each of Gold, Elixir, Dark Elixir, Builder Gold and Builder Elixir. Spend resources in meaningful upgrades first, use a Rune when storage is low and claim new Rune choices with space.",
-          "updatedAt": null
-        },
-        {
-          "id": "GP-OCT26-05",
-          "title": "Claim potions, Wall Rings and ore without overflow",
-          "village": "Home",
-          "queue": "Season Pass",
-          "costType": "gold",
-          "cost": 0,
-          "status": "planned",
-          "note": "Prior inventory had Research and Clock Tower Potions above usual caps. Verify actual current counts. Use potions while relevant queues are active. Do not assume unclaimed ore and consumables will fit.",
-          "updatedAt": null
-        },
-        {
-          "id": "GP-OCT26-06",
-          "title": "Keep a builder free for Gold/Elixir wall upgrades",
-          "village": "Home",
-          "queue": "Season Pass",
-          "costType": "gold",
-          "cost": 0,
-          "status": "planned",
-          "note": "By October 28–30, free one builder if possible; spend excess Gold or Elixir instantly on walls to make room for pending Season Pass resource rewards. Remember Loot Cart is separate.",
-          "updatedAt": null
-        },
-        {
-          "id": "GP-OCT26-07",
-          "title": "Collect all affordable Gold/Silver Pass rewards by October 30",
-          "village": "Home",
-          "queue": "Season Pass",
-          "costType": "gold",
-          "cost": 0,
-          "status": "planned",
-          "note": "Choose each reward manually, create storage space, claim Books and Runes after using existing ones, claim cosmetics and rewards that do not compete for storage. Avoid automatic end-season Gem conversions.",
-          "updatedAt": null
-        },
-        {
-          "id": "GP-OCT26-08",
-          "title": "Check Hoggy Bank and any remaining choice prizes",
-          "village": "Home",
-          "queue": "Season Pass",
-          "costType": "gold",
-          "cost": 0,
-          "status": "planned",
-          "note": "Hoggy Bank and Pass Track rewards can behave differently; inspect in-game instructions. Confirm which rewards were actually claimed. Gold Pass season ends Oct 31.",
-          "updatedAt": null
-        },
-        {
-          "id": "GP-OCT26-09",
-          "title": "Final October 30 reward sweep",
-          "village": "Home",
-          "queue": "Season Pass",
-          "costType": "gold",
-          "cost": 0,
-          "status": "planned",
-          "note": "Check the Unclaimed rewards only filter on both Gold and Silver tracks and confirm remaining expiring choices and items are used or claimed before the October 31 cutoff.",
-          "updatedAt": null
-        },
-        {
           "id": "HP-01",
-          "title": "Daily: Builder's Apprentice L7 → longest Home Village upgrade",
+          "title": "Daily: Builder's Apprentice → priority Home upgrade",
           "village": "Home",
           "queue": "Helper Hut",
           "costType": "gold",
           "cost": 0,
           "status": "planned",
-          "note": "From latest export: Builder's Apprentice level 7. When ready, assign to the longest remaining high-priority Home builder upgrade (Clan Castle, Pet House, Army Camp, Inferno Tower, or hero as applicable). Works on an existing job; not another permanent builder. Verify target, current remaining time, and cooldown inside game. Repeat each cycle; do not use Gems.",
+          "note": "Assign to an actively upgrading Home building/hero with enough remaining time to benefit. Choose a long priority job, and check the 23h helper work-day in Clash. Recurring; never spend Gems.",
           "updatedAt": null,
           "recurring": true
         },
         {
           "id": "HP-02",
-          "title": "Daily: Lab Assistant L8 → active Laboratory research",
+          "title": "Daily: Lab Assistant → Laboratory research",
           "village": "Home",
           "queue": "Helper Hut",
           "costType": "gold",
           "cost": 0,
           "status": "planned",
-          "note": "From latest export: Lab Assistant level 8. When ready, assign to ongoing Laboratory research such as Freeze Spell or the next priority; cannot accelerate Star Laboratory or pets. Avoid using near the end of a job if faster completion would waste remaining helper work. Shares helper work-day/cooldown. Repeat each cycle; no Gems.",
+          "note": "Assign to active Home Laboratory research, not Builder Base Star Laboratory or Pet House. Choose a job long enough to use the hour. Recurring; no Gems.",
           "updatedAt": null,
           "recurring": true
         },
         {
           "id": "HP-03",
-          "title": "Daily: Alchemist L3 → convert excess resources strategically",
+          "title": "Daily: verify third helper and convert excess resources",
           "village": "Home",
           "queue": "Helper Hut",
           "costType": "gold",
           "cost": 0,
           "status": "planned",
-          "note": "Export includes helper ID 93000002 level 3, tentatively Alchemist; verify in Helper Hut. When ready, convert surplus Gold↔Elixir only if it helps make space for pass rewards or fund army upgrades. Confirm conversion limits/bonus and available storage in game to avoid resource waste. Repeat each cycle; no Gem upgrades.",
+          "note": "Snapshot helper ID 93000002 is likely Alchemist. Confirm identity in Helper Hut, then use a useful resource conversion with capacity room rather than wasting rewards. Recurring; no Gems.",
           "updatedAt": null,
           "recurring": true
         },
         {
           "id": "HP-04",
-          "title": "Gold Pass Prospector → convert unneeded ore when unlocked",
+          "title": "Gold Pass Prospector → check unlock, convert ore",
           "village": "Home",
           "queue": "Helper Hut",
           "costType": "gold",
           "cost": 0,
           "status": "planned",
-          "note": "Gold Pass purchased; Prospector unlocked by season points/perk, but older export does NOT confirm it is active. Check Gold Pass perk and Helper Hut first. When available use ore conversion to address Shiny/Glowy/Starry bottleneck for equipment; respect exchange loss and 23-hour shared helper cycle. Do not spend Gems or assume ownership.",
+          "note": "Check Gold Pass perk and Helper Hut to verify Prospector unlocked; the snapshot alone does not confirm ownership. If available, convert unneeded ore toward an equipment bottleneck. Recurring, avoid Gem purchases.",
           "updatedAt": null,
           "recurring": true
         },
         {
           "id": "HP-05",
-          "title": "Check shared helper availability every play session",
+          "title": "Check Helper Hut shared daily cooldown",
           "village": "Home",
           "queue": "Helper Hut",
           "costType": "gold",
           "cost": 0,
           "status": "planned",
-          "note": "Review Helper Hut once per play session and each 23h workday; ensure the Builder's Apprentice, Lab Assistant, Alchemist, and Gold Pass Prospector are assigned or used only when helpful. No available-again timer exists in the saved JSON, so do not automatically mark ready/used. Repeat habit; this roadmap task should remain planned rather than permanently done.",
+          "note": "Visit Helper Hut when playing; check availability for all helpers and assign/use them when useful. Export cooldown may be absent; app never assumes helpers ready. Do not permanently complete a daily recurring task.",
           "updatedAt": null,
           "recurring": true
         },
@@ -493,7 +383,7 @@
       ],
       "export": {
         "tag": "#QVLP9RVV",
-        "timestamp": 1792373123,
+        "timestamp": 1792390997,
         "helpers": [
           {
             "data": 93000000,
@@ -506,6 +396,10 @@
           {
             "data": 93000002,
             "lvl": 3
+          },
+          {
+            "data": 93000003,
+            "lvl": 1
           }
         ],
         "buildings": [
@@ -517,7 +411,7 @@
           {
             "data": 1000014,
             "lvl": 9,
-            "timer": 249441
+            "timer": 231567
           },
           {
             "data": 1000008,
@@ -532,7 +426,7 @@
           {
             "data": 1000000,
             "lvl": 10,
-            "timer": 163067
+            "timer": 145193
           },
           {
             "data": 1000013,
@@ -542,12 +436,12 @@
           {
             "data": 1000027,
             "lvl": 7,
-            "timer": 206282
+            "timer": 188408
           },
           {
             "data": 1000068,
             "lvl": 3,
-            "timer": 98204
+            "timer": 80330
           },
           {
             "data": 1000000,
@@ -576,7 +470,8 @@
           },
           {
             "data": 1000004,
-            "lvl": 16
+            "lvl": 16,
+            "cnt": 1
           },
           {
             "data": 1000005,
@@ -585,11 +480,13 @@
           },
           {
             "data": 1000006,
-            "lvl": 14
+            "lvl": 14,
+            "cnt": 1
           },
           {
             "data": 1000007,
-            "lvl": 12
+            "lvl": 12,
+            "cnt": 1
           },
           {
             "data": 1000008,
@@ -603,7 +500,8 @@
           },
           {
             "data": 1000008,
-            "lvl": 13
+            "lvl": 13,
+            "cnt": 1
           },
           {
             "data": 1000009,
@@ -612,7 +510,8 @@
           },
           {
             "data": 1000009,
-            "lvl": 13
+            "lvl": 13,
+            "cnt": 1
           },
           {
             "data": 1000010,
@@ -646,7 +545,8 @@
           },
           {
             "data": 1000012,
-            "lvl": 8
+            "lvl": 8,
+            "cnt": 1
           },
           {
             "data": 1000013,
@@ -665,23 +565,28 @@
           },
           {
             "data": 1000019,
-            "lvl": 9
+            "lvl": 9,
+            "cnt": 1
           },
           {
             "data": 1000019,
-            "lvl": 11
+            "lvl": 11,
+            "cnt": 1
           },
           {
             "data": 1000019,
-            "lvl": 12
+            "lvl": 12,
+            "cnt": 1
           },
           {
             "data": 1000020,
-            "lvl": 6
+            "lvl": 6,
+            "cnt": 1
           },
           {
             "data": 1000021,
-            "lvl": 5
+            "lvl": 5,
+            "cnt": 1
           },
           {
             "data": 1000021,
@@ -695,11 +600,13 @@
           },
           {
             "data": 1000024,
-            "lvl": 8
+            "lvl": 8,
+            "cnt": 1
           },
           {
             "data": 1000026,
-            "lvl": 9
+            "lvl": 9,
+            "cnt": 1
           },
           {
             "data": 1000027,
@@ -708,19 +615,23 @@
           },
           {
             "data": 1000028,
-            "lvl": 6
+            "lvl": 6,
+            "cnt": 1
           },
           {
             "data": 1000028,
-            "lvl": 7
+            "lvl": 7,
+            "cnt": 1
           },
           {
             "data": 1000029,
-            "lvl": 6
+            "lvl": 6,
+            "cnt": 1
           },
           {
             "data": 1000031,
-            "lvl": 5
+            "lvl": 5,
+            "cnt": 1
           },
           {
             "data": 1000032,
@@ -729,7 +640,8 @@
           },
           {
             "data": 1000059,
-            "lvl": 5
+            "lvl": 5,
+            "cnt": 1
           },
           {
             "data": 1000067,
@@ -738,21 +650,25 @@
           },
           {
             "data": 1000070,
-            "lvl": 6
+            "lvl": 6,
+            "cnt": 1
           },
           {
             "data": 1000071,
-            "lvl": 7
+            "lvl": 7,
+            "cnt": 1
           },
           {
             "data": 1000093,
-            "lvl": 1
+            "lvl": 1,
+            "cnt": 1
           }
         ],
         "traps": [
           {
             "data": 12000000,
-            "lvl": 5
+            "lvl": 5,
+            "cnt": 1
           },
           {
             "data": 12000000,
@@ -766,7 +682,8 @@
           },
           {
             "data": 12000002,
-            "lvl": 2
+            "lvl": 2,
+            "cnt": 1
           },
           {
             "data": 12000002,
@@ -775,7 +692,8 @@
           },
           {
             "data": 12000005,
-            "lvl": 4
+            "lvl": 4,
+            "cnt": 1
           },
           {
             "data": 12000005,
@@ -784,7 +702,8 @@
           },
           {
             "data": 12000006,
-            "lvl": 1
+            "lvl": 1,
+            "cnt": 1
           },
           {
             "data": 12000006,
@@ -793,11 +712,13 @@
           },
           {
             "data": 12000006,
-            "lvl": 3
+            "lvl": 3,
+            "cnt": 1
           },
           {
             "data": 12000008,
-            "lvl": 2
+            "lvl": 2,
+            "cnt": 1
           },
           {
             "data": 12000008,
@@ -806,30 +727,64 @@
           },
           {
             "data": 12000016,
-            "lvl": 1
+            "lvl": 1,
+            "cnt": 1
           }
         ],
-        "heroes": [
+        "decos": [
           {
-            "data": 28000000,
-            "lvl": 44
+            "data": 18000001,
+            "cnt": 4
           },
           {
-            "data": 28000001,
-            "lvl": 47,
-            "timer": 76730
+            "data": 18000003,
+            "cnt": 1
           },
           {
-            "data": 28000002,
-            "lvl": 28
+            "data": 18000005,
+            "cnt": 4
           },
           {
-            "data": 28000004,
-            "lvl": 20
+            "data": 18000006,
+            "cnt": 4
           },
           {
-            "data": 28000006,
-            "lvl": 50
+            "data": 18000007,
+            "cnt": 1
+          },
+          {
+            "data": 18000008,
+            "cnt": 1
+          },
+          {
+            "data": 18000009,
+            "cnt": 1
+          },
+          {
+            "data": 18000010,
+            "cnt": 1
+          },
+          {
+            "data": 18000060,
+            "cnt": 1
+          },
+          {
+            "data": 18000067,
+            "cnt": 1
+          }
+        ],
+        "obstacles": [
+          {
+            "data": 8000004,
+            "cnt": 1
+          },
+          {
+            "data": 8000137,
+            "cnt": 1
+          },
+          {
+            "data": 8000139,
+            "cnt": 1
           }
         ],
         "units": [
@@ -948,6 +903,29 @@
             "lvl": 1
           }
         ],
+        "heroes": [
+          {
+            "data": 28000000,
+            "lvl": 44
+          },
+          {
+            "data": 28000001,
+            "lvl": 47,
+            "timer": 58856
+          },
+          {
+            "data": 28000002,
+            "lvl": 28
+          },
+          {
+            "data": 28000004,
+            "lvl": 20
+          },
+          {
+            "data": 28000006,
+            "lvl": 50
+          }
+        ],
         "spells": [
           {
             "data": 26000000,
@@ -964,6 +942,11 @@
           {
             "data": 26000003,
             "lvl": 2
+          },
+          {
+            "data": 26000005,
+            "lvl": 3,
+            "timer": 16458
           },
           {
             "data": 26000009,
@@ -996,11 +979,6 @@
           {
             "data": 26000070,
             "lvl": 3
-          },
-          {
-            "data": 26000005,
-            "lvl": 3,
-            "timer": 34332
           }
         ],
         "pets": [
@@ -1014,8 +992,7 @@
           },
           {
             "data": 73000002,
-            "lvl": 1,
-            "timer": 12846
+            "lvl": 2
           }
         ],
         "equipment": [
@@ -1176,16 +1153,37 @@
             "lvl": 1
           }
         ],
+        "house_parts": [
+          82000000,
+          82000008,
+          82000009,
+          82000011,
+          82000048,
+          82000058,
+          82000059
+        ],
+        "skins": [
+          52000020,
+          52000014,
+          52000005,
+          52000015,
+          52000006,
+          52000116,
+          52000210,
+          52000206,
+          52000324
+        ],
+        "sceneries": [],
         "buildings2": [
           {
             "data": 1000044,
             "lvl": 7,
-            "timer": 192687
+            "timer": 174813
           },
           {
             "data": 1000046,
             "lvl": 7,
-            "timer": 192282
+            "timer": 174408
           },
           {
             "data": 1000033,
@@ -1199,7 +1197,8 @@
           },
           {
             "data": 1000034,
-            "lvl": 9
+            "lvl": 9,
+            "cnt": 1
           },
           {
             "data": 1000035,
@@ -1223,23 +1222,28 @@
           },
           {
             "data": 1000039,
-            "lvl": 9
+            "lvl": 9,
+            "cnt": 1
           },
           {
             "data": 1000040,
-            "lvl": 11
+            "lvl": 11,
+            "cnt": 1
           },
           {
             "data": 1000041,
-            "lvl": 4
+            "lvl": 4,
+            "cnt": 1
           },
           {
             "data": 1000041,
-            "lvl": 5
+            "lvl": 5,
+            "cnt": 1
           },
           {
             "data": 1000041,
-            "lvl": 6
+            "lvl": 6,
+            "cnt": 1
           },
           {
             "data": 1000042,
@@ -1258,11 +1262,13 @@
           },
           {
             "data": 1000045,
-            "lvl": 8
+            "lvl": 8,
+            "cnt": 1
           },
           {
             "data": 1000048,
-            "lvl": 5
+            "lvl": 5,
+            "cnt": 1
           },
           {
             "data": 1000048,
@@ -1271,7 +1277,8 @@
           },
           {
             "data": 1000049,
-            "lvl": 1
+            "lvl": 1,
+            "cnt": 1
           },
           {
             "data": 1000050,
@@ -1285,19 +1292,23 @@
           },
           {
             "data": 1000051,
-            "lvl": 5
+            "lvl": 5,
+            "cnt": 1
           },
           {
             "data": 1000052,
-            "lvl": 5
+            "lvl": 5,
+            "cnt": 1
           },
           {
             "data": 1000053,
-            "lvl": 1
+            "lvl": 1,
+            "cnt": 1
           },
           {
             "data": 1000054,
-            "lvl": 4
+            "lvl": 4,
+            "cnt": 1
           },
           {
             "data": 1000055,
@@ -1306,35 +1317,43 @@
           },
           {
             "data": 1000056,
-            "lvl": 5
+            "lvl": 5,
+            "cnt": 1
           },
           {
             "data": 1000057,
-            "lvl": 1
+            "lvl": 1,
+            "cnt": 1
           },
           {
             "data": 1000058,
-            "lvl": 6
+            "lvl": 6,
+            "cnt": 1
           },
           {
             "data": 1000063,
-            "lvl": 1
+            "lvl": 1,
+            "cnt": 1
           },
           {
             "data": 1000065,
-            "lvl": 2
+            "lvl": 2,
+            "cnt": 1
           },
           {
             "data": 1000078,
-            "lvl": 1
+            "lvl": 1,
+            "cnt": 1
           },
           {
             "data": 1000080,
-            "lvl": 1
+            "lvl": 1,
+            "cnt": 1
           },
           {
             "data": 1000082,
-            "lvl": 2
+            "lvl": 2,
+            "cnt": 1
           }
         ],
         "traps2": [
@@ -1357,6 +1376,73 @@
             "data": 12000014,
             "lvl": 7,
             "cnt": 4
+          }
+        ],
+        "decos2": [],
+        "obstacles2": [
+          {
+            "data": 8000041,
+            "cnt": 4
+          },
+          {
+            "data": 8000047,
+            "cnt": 1
+          },
+          {
+            "data": 8000049,
+            "cnt": 1
+          },
+          {
+            "data": 8000056,
+            "cnt": 1
+          },
+          {
+            "data": 8000057,
+            "cnt": 1
+          },
+          {
+            "data": 8000058,
+            "cnt": 5
+          },
+          {
+            "data": 8000059,
+            "cnt": 3
+          },
+          {
+            "data": 8000063,
+            "cnt": 12
+          },
+          {
+            "data": 8000064,
+            "cnt": 7
+          },
+          {
+            "data": 8000091,
+            "cnt": 3
+          },
+          {
+            "data": 8000092,
+            "cnt": 2
+          },
+          {
+            "data": 8000097,
+            "cnt": 4
+          },
+          {
+            "data": 8000098,
+            "cnt": 1
+          },
+          {
+            "data": 8000099,
+            "cnt": 1
+          },
+          {
+            "data": 8000100,
+            "cnt": 2
+          },
+          {
+            "data": 8000105,
+            "cnt": 1
           }
         ],
         "units2": [
@@ -1415,156 +1501,13 @@
             "lvl": 15
           }
         ],
-        "obstacles": [
-          {
-            "data": 8000004,
-            "cnt": 1
-          },
-          {
-            "data": 8000137,
-            "cnt": 1
-          },
-          {
-            "data": 8000139,
-            "cnt": 1
-          }
-        ],
-        "obstacles2": [
-          {
-            "data": 8000041,
-            "cnt": 4
-          },
-          {
-            "data": 8000047,
-            "cnt": 1
-          },
-          {
-            "data": 8000049,
-            "cnt": 1
-          },
-          {
-            "data": 8000056,
-            "cnt": 1
-          },
-          {
-            "data": 8000057,
-            "cnt": 1
-          },
-          {
-            "data": 8000058,
-            "cnt": 5
-          },
-          {
-            "data": 8000059,
-            "cnt": 3
-          },
-          {
-            "data": 8000063,
-            "cnt": 12
-          },
-          {
-            "data": 8000064,
-            "cnt": 6
-          },
-          {
-            "data": 8000091,
-            "cnt": 3
-          },
-          {
-            "data": 8000092,
-            "cnt": 2
-          },
-          {
-            "data": 8000097,
-            "cnt": 4
-          },
-          {
-            "data": 8000098,
-            "cnt": 1
-          },
-          {
-            "data": 8000099,
-            "cnt": 1
-          },
-          {
-            "data": 8000100,
-            "cnt": 2
-          },
-          {
-            "data": 8000105,
-            "cnt": 1
-          }
-        ],
-        "decos": [
-          {
-            "data": 18000001,
-            "cnt": 4
-          },
-          {
-            "data": 18000003,
-            "cnt": 1
-          },
-          {
-            "data": 18000005,
-            "cnt": 4
-          },
-          {
-            "data": 18000006,
-            "cnt": 4
-          },
-          {
-            "data": 18000007,
-            "cnt": 1
-          },
-          {
-            "data": 18000008,
-            "cnt": 1
-          },
-          {
-            "data": 18000009,
-            "cnt": 1
-          },
-          {
-            "data": 18000010,
-            "cnt": 1
-          },
-          {
-            "data": 18000060,
-            "cnt": 1
-          },
-          {
-            "data": 18000067,
-            "cnt": 1
-          }
-        ],
-        "decos2": [],
-        "boosts": {
-          "clocktower_cooldown": 30845
-        },
-        "house_parts": [
-          82000000,
-          82000008,
-          82000009,
-          82000011,
-          82000048,
-          82000058,
-          82000059
-        ],
-        "skins": [
-          52000020,
-          52000014,
-          52000005,
-          52000015,
-          52000006,
-          52000116,
-          52000210,
-          52000206
-        ],
-        "sceneries": [],
         "skins2": [],
-        "sceneries2": []
+        "sceneries2": [],
+        "boosts": {
+          "clocktower_cooldown": 13100
+        }
       },
-      "importedAt": "2026-10-18T18:25:23-07:00",
+      "importedAt": "2026-10-19T06:24:06.719Z",
       "history": [
         {
           "at": "2026-10-18T18:25:23-07:00",
@@ -1572,57 +1515,45 @@
           "note": "Initial user-exported 2026-10-18 snapshot. All 5 Home builders and 2 Builder Base builders active; Freeze and Electro Owl active."
         },
         {
-          "at": "2026-10-18T21:30:00-07:00",
-          "kind": "gold-pass-plan",
-          "note": "Gold Pass purchased; unclaimed Silver/Gold rewards need deliberate claim-and-use by October 30. No resources/items changed."
-        },
-        {
-          "at": "2026-10-18T23:46:00-07:00",
-          "kind": "roadmap-helper-plan",
-          "note": "Added five recurring Helper Hut tasks based on saved helper levels, Gold Pass entitlement, and TH14 priorities. No live helper availability assumed; no inventory/resources changed."
+          "at": "2026-10-19T06:24:06.719Z",
+          "kind": "import",
+          "note": "Imported village snapshot dated 1792390997"
         }
       ],
       "notes": "Goal: use 50% Home Village builder/research returning boost, avoid Gem spending and Rune waste; open event rewards before expiry and only when storage permits; unlock B.O.B. sixth builder.",
       "boostEnd": null,
-      "displayName": "Main village",
+      "storageCaps": {
+        "gold": 19000000,
+        "elixir": 19000000
+      },
       "seasonalPlan": {
-        "season": "2026-10",
-        "name": "Cosmic Curse: Portal Panic Season Pass",
-        "goldPassPurchased": true,
-        "rewardTrackCompletedReported": true,
-        "rewardClaimsUnconfirmed": true,
-        "plannedFinalReview": "2026-10-30",
-        "seasonEnd": "2026-10-31",
-        "note": "User confirmed Gold Pass purchase and stated rewards were not collected. Exact choices/quantities need current in-game inspection; never infer them from cropped screenshots.",
-        "reportedRemaining": 49,
-        "reportedSilver": 30,
-        "reportedGold": 19,
-        "reportedChoicePositions": 22,
-        "claimSource": "User dictated exact remaining rewards October 18, 2026. See pass-rewards.mjs. Current real game claim counts require user confirmation.",
-        "claims": {}
+        "nextRewardId": 2,
+        "customRewards": [
+          {
+            "id": "CUSTOM-1",
+            "track": "Silver",
+            "kind": "fixed",
+            "options": [
+              "Chest"
+            ],
+            "note": "9",
+            "priority": "hold",
+            "recommend": 0
+          }
+        ]
       },
       "helperPlan": {
-        "version": 1,
-        "snapshotTimestamp": 1792373123,
-        "helperLevels": {
-          "93000000": 7,
-          "93000001": 8,
-          "93000002": 3
-        },
-        "prospectorStatus": "Gold Pass purchased; activation not verified",
-        "cooldownSource": "unknown—verify in game",
+        "gemsSpendAllowed": false,
         "routineTaskIds": [
           "HP-01",
           "HP-02",
           "HP-03",
           "HP-04",
           "HP-05"
-        ],
-        "gemsSpendAllowed": false,
-        "notes": "Helper workday assignments are not visible in the saved JSON. Helper tasks are repeatable routines; statuses don't imply present availability."
+        ]
       }
     }
   },
-  "revision": 0,
-  "savedAt": null
+  "revision": 5,
+  "savedAt": "2026-10-19T08:23:45.772Z"
 }
