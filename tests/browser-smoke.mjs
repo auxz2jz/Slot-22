@@ -197,6 +197,7 @@ try{
     gold.dispatchEvent(new Event('input',{bubbles:true}));
     const commaGrouped=gold.value==='1,200,000';
     gold.dispatchEvent(new Event('change',{bubbles:true}));
+    const startingProfiles=document.querySelector('#profile-select').options.length;
     const snapshot={tag:'#SECOND1',timestamp:1792374000,buildings:[{data:1000001,lvl:12}],buildings2:[{data:1000034,lvl:8}]};
     window.confirm=()=>true;
     const transfer=new DataTransfer();
@@ -204,7 +205,7 @@ try{
     const file=document.getElementById('game-file');file.files=transfer.files;
     file.dispatchEvent(new Event('change',{bubbles:true}));
     await new Promise(done=>setTimeout(done,450));
-    const added=document.querySelector('#profile-select').options.length===2;
+    const added=document.querySelector('#profile-select').options.length===startingProfiles+1;
     const altEmpty=document.querySelector('[data-money="gold"]').value==='0';
     const snapshotLocal=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
     const preserved=snapshotLocal.profiles['#QVLP9RVV'].resources.gold===1200000;
@@ -221,21 +222,23 @@ try{
  const pasted=await cmd('Runtime.evaluate',{
   expression:`(()=>{
     document.querySelector('[data-tab="sync"]').click();
+    const precedingProfiles=document.querySelector('#profile-select').options.length;
     const third={tag:'#THIRD33',timestamp:1792374100,buildings:[{data:1000001,lvl:11}],buildings2:[{data:1000034,lvl:7}]};
     document.getElementById('paste-export').value=JSON.stringify(third);
     document.querySelector('[data-action="import-pasted"]').click();
     const stored=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
     const count=document.getElementById('profile-select').options.length;
+    const added=count===precedingProfiles+1;
     const selected=document.getElementById('profile-select').value;
     const zero=document.querySelector('[data-money="gold"]').value==='0';
     const oldGold=stored.profiles['#QVLP9RVV'].resources.gold===1200000;
-    return {count,selected,zero,oldGold};
+    return {count,added,selected,zero,oldGold};
   })()`,
   returnByValue:true
  });
  const pasteResult=pasted.result?.result?.value||{};
  console.log('PASTE JSON:',pasteResult);
- if(pasteResult.count!==3||pasteResult.selected!=='#THIRD33'||!pasteResult.zero||!pasteResult.oldGold)process.exitCode=1;
+ if(!pasteResult.added||pasteResult.selected!=='#THIRD33'||!pasteResult.zero||!pasteResult.oldGold)process.exitCode=1;
  const spacing=await cmd('Runtime.evaluate',{expression:`(()=>{
    document.getElementById('profile-select').value='#QVLP9RVV';
    document.getElementById('profile-select').dispatchEvent(new Event('change',{bubbles:true}));
