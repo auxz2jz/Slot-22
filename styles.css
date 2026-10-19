@@ -28,3 +28,100 @@
 .timeline .item-identity small{display:block;line-height:1.35;font-size:12px;color:#a3b5ce}
 .resource-grid input[data-money],.item-field input[data-item]{font-variant-numeric:tabular-nums;letter-spacing:.3px}
 @media(max-width:760px){.profile-toolbar{padding:11px 0 2px;gap:8px}.profile-toolbar .smallmuted{flex-basis:100%}.profile-toolbar select{flex:1 1 160px;min-width:120px}.profile-toolbar .btn{padding:9px 10px;font-size:11px}}
+
+
+/* v0.3 command-center redesign; graceful reduced-motion fallback. */
+:root{--gold:#f6c874;--ember:#f08b55;--ocean:#6ac7f5;--jade:#7ce3b8;--purple:#da9afc}
+body{background:radial-gradient(circle at 80% 0%,#253351 0,transparent 40%),radial-gradient(circle at 0% 60%,#172d3f 0,transparent 37%),#0b1222}
+.workspace{padding-bottom:10px}
+.card{box-shadow:0 12px 28px #040a1940;border-color:#314362}
+.topbar{position:relative}
+.topbar h1{font-size:30px;font-weight:800}
+.royal-hero{position:relative;overflow:hidden;padding:28px 30px 20px;border-radius:22px;border:1px solid #9e784b;background:linear-gradient(115deg,#422e31 0%,#302a41 43%,#192d42 100%);box-shadow:0 14px 35px #07091280, inset 0 1px 0 #f5bf7960;margin-top:22px}
+.royal-hero:after{content:"";position:absolute;pointer-events:none;right:-90px;top:-140px;width:390px;height:390px;border-radius:50%;background:radial-gradient(circle,#f6bd6870,transparent 65%);filter:blur(22px);opacity:.35}
+.royal-glint{position:absolute;top:0;left:-40%;height:2px;width:55%;background:linear-gradient(90deg,transparent,#ffda94,transparent);animation:glint 8s ease-in-out infinite}
+@keyframes glint{0%,10%{transform:translateX(0);opacity:0}38%{opacity:1}60%,100%{transform:translateX(300%);opacity:0}}
+.royal-title{display:flex;gap:19px;align-items:center;position:relative;z-index:1}
+.royal-hall .art-badge{height:100px;width:100px;flex-basis:100px;border:1px solid #a98551;border-radius:21px;background:linear-gradient(150deg,#a47d4a70,#28283f);box-shadow:0 8px 18px #0a102444}
+.hall-placeholder{font-size:44px}
+.royal-copy h2{font-size:clamp(23px,3vw,34px);letter-spacing:-.7px;margin:7px 0 5px;color:#fff1dc}
+.royal-copy p{color:#d4c5c0;margin:0;font-size:13px}
+.kicker{letter-spacing:2px;font-size:10px;color:#efbd7a;font-weight:900}
+.royal-stats{position:relative;z-index:1;display:flex;gap:25px;flex-wrap:wrap;margin:22px 0 13px;padding-top:15px;border-top:1px solid #ffffff24}
+.royal-stats span{font-size:12px;color:#e0cdd0}.royal-stats strong{font-size:20px;color:#ffdc9b;margin-right:5px}
+.royal-meter,.vault-track,.mini-track{background:#091324b2;border:1px solid #3b485d;overflow:hidden;border-radius:99px}
+.royal-meter{height:10px;position:relative;z-index:1}.royal-meter>span{height:100%;display:block;background:linear-gradient(90deg,#e4a053,#ffec9c);box-shadow:0 0 14px #fac77d8c;transition:width .4s}
+.royal-caption{font-size:11px;margin-top:6px;color:#dec7b4}
+.panel-heading{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.panel-heading h2{margin:4px 0 0;font-size:21px;letter-spacing:-.5px}
+.resource-deck{margin:18px 0}
+.vault-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px;margin-top:18px}
+.vault{min-width:0;padding:13px;background:linear-gradient(135deg,#0f1e32,#1f2c44);border:1px solid #354660;border-radius:13px}
+.vault-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:6px;min-width:0}
+.vault-label{display:flex;align-items:center;gap:6px;font-size:11px;color:#bbcce2;font-weight:800}
+.vault-label img{height:26px;width:26px;object-fit:contain}
+.vault-value{font-size:17px;font-variant-numeric:tabular-nums;font-weight:850;letter-spacing:-.4px;color:#fff}
+.vault-track{height:10px;margin:11px 0 8px}
+.vault-track>span{height:100%;display:block;transition:width .5s;box-shadow:0 0 12px currentColor}
+.vault.gold .vault-track>span,.vault.buildergold .vault-track>span{background:linear-gradient(90deg,#bd863d,#ffe292);color:#eeba58}
+.vault.elixir .vault-track>span,.vault.builderelixir .vault-track>span{background:linear-gradient(90deg,#7942b0,#ecb1fb);color:#ca72fa}
+.vault.dark .vault-track>span{background:linear-gradient(90deg,#5a5590,#c7c3f6);color:#c7c3f6}
+.vault-track.unknown{background:repeating-linear-gradient(45deg,#26344b 0 7px,#1e293c 7px 14px)}
+.vault-foot{display:flex;flex-direction:column;gap:4px;color:#95a9c5;font-size:10px}
+.vault-foot label{display:flex;gap:6px;align-items:center;justify-content:space-between}
+.vault-foot input{width:100px;max-width:70%;background:#111d31;border:1px solid #3d4c65;padding:5px;border-radius:6px;color:#e0efff;font-size:11px;text-align:right;font-variant-numeric:tabular-nums}
+.command-grid{display:grid;grid-template-columns:1.45fr 1fr;gap:16px;margin:18px 0}
+.queue-board{min-width:0}
+.queue-group{margin-top:16px}
+.queue-title{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#bbcae1;margin-bottom:8px}
+.queue-title strong{font-size:13px;color:#e8ecf6}.queue-title span{font-size:11px;color:#7e98bc}
+.queue-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.queue-tile{min-width:0;display:flex;align-items:center;gap:9px;background:linear-gradient(125deg,#11243c,#1f304b);border:1px solid #385070;border-radius:13px;padding:10px;color:#fff;text-align:left;transition:transform .16s,background .16s,border-color .16s;box-shadow:0 4px 9px #080f2452}
+.queue-tile:hover,.queue-tile:focus-visible,.collection-card:hover,.quest-node:hover{border-color:#f4c77d;transform:translateY(-2px)}
+.queue-tile .art-badge{height:50px;width:50px;flex-basis:50px}
+.queue-data{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}
+.queue-name{font-weight:800;font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.queue-name em{color:#deb977;font-size:10px;font-weight:650;font-style:normal;display:block;margin-top:2px}
+.queue-time{font-size:11px;color:#c2deff}
+.queue-basis{font-size:9px;color:#7b99b8}
+.chevron{color:#b5a37f;font-size:22px;margin-left:2px}
+.mini-track{height:6px;width:100%;border:0}
+.mini-track>span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#4b96bd,#8be0ed);transition:width .4s}
+.quest-trail{display:grid;gap:8px;margin-top:14px}
+.quest-node{min-width:0;background:#12243b;border:1px solid #324761;border-radius:13px;display:flex;align-items:center;gap:11px;text-align:left;padding:13px;color:#f3f7ff;transition:transform .16s,border-color .16s}
+.quest-order{border:1px solid #93764d;background:linear-gradient(145deg,#76512e,#332d36);border-radius:50%;height:33px;width:33px;flex:0 0 33px;display:grid;place-items:center;color:#ffe3a9;font-size:12px;font-weight:900}
+.quest-node.done .quest-order{background:#29534a;color:#a4f0cc;border-color:#418774}
+.quest-node.active{background:#1a3c4a;border-color:#417a76}
+.quest-copy{min-width:0;flex:1}
+.quest-copy strong,.quest-copy small{display:block;overflow-wrap:anywhere}
+.quest-copy strong{font-size:12px;line-height:1.4}
+.quest-copy small{color:#91aac5;font-size:10px;margin-top:4px}
+.quest-state{font-size:10px;color:#e2c28d;font-weight:800;text-transform:capitalize;white-space:nowrap}
+.command-side .card+.card{margin-top:15px}
+.collection-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}
+.collection-card{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;background:linear-gradient(160deg,#1f314c,#101d32);border:1px solid #314663;border-radius:14px;padding:16px 10px;color:#fff;min-height:170px;transition:transform .16s,border-color .16s,box-shadow .16s}
+.collection-card:hover{box-shadow:0 10px 20px #050a1c7d}
+.collection-card .art-badge{height:77px;width:77px;flex-basis:77px;border-radius:14px}
+.collection-name{font-size:12px;font-weight:850;line-height:1.25;overflow-wrap:anywhere}
+.collection-meta{font-size:11px;color:#acc0da}
+.collection-active{position:absolute;top:6px;right:6px;background:#30695c;padding:4px 5px;font-size:9px;border-radius:7px;font-weight:800}
+.collection-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0}
+.collection-toolbar button{font-size:12px}
+.detail-dialog{border:1px solid #b18c56;border-radius:18px;padding:0;max-width:490px;width:calc(100% - 28px);max-height:calc(100dvh - 60px);color:#f5f4f8;background:linear-gradient(145deg,#202c46,#0f1b2f);box-shadow:0 20px 75px #050610aa}
+.detail-dialog::backdrop{background:#03091bd9;backdrop-filter:blur(5px)}
+.detail-dialog-inner{padding:24px;max-height:calc(100dvh - 75px);overflow-y:auto}
+.detail-header{display:flex;align-items:center;gap:15px}
+.detail-header .art-badge{height:80px;width:80px;flex-basis:80px}
+.detail-header h2{font-size:23px;margin:5px 0}
+.detail-divider{height:1px;background:#4c5268;margin:20px 0}
+.detail-timer{margin-top:13px;color:#a7d7e9;font-size:12px}
+.detail-notes{color:#d5e0eb;font-size:13px;line-height:1.55}
+.detail-info{display:grid;gap:9px;margin-top:10px;font-size:12px;color:#a5b9d0}
+.detail-info strong{color:#fff}
+.detail-budget{background:#263a53;border-left:3px solid #ecc176;border-radius:6px;padding:12px;color:#f1e1c8;font-size:12px;margin-top:15px}
+.detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}
+.detail-bottom{text-align:right;margin-top:20px}
+.btn:disabled{cursor:not-allowed}
+@media(max-width:1200px){.vault-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.command-grid{grid-template-columns:1fr}.queue-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.royal-hero{padding:17px;margin-top:12px}.royal-hall .art-badge{height:70px;width:70px;flex-basis:70px}.royal-stats{gap:10px}.royal-stats span{font-size:10px}.royal-stats strong{font-size:15px}.vault-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.queue-tiles{grid-template-columns:1fr}.vault{padding:10px}.vault-value{font-size:15px}.vault-foot input{width:92px}.collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.collection-card{min-height:155px}.detail-dialog-inner{padding:18px}}
+@media(prefers-reduced-motion:reduce){.royal-glint{animation:none;display:none}.queue-tile,.quest-node,.collection-card,.mini-track>span,.vault-track>span,.royal-meter>span{transition:none}}
