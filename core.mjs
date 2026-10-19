@@ -105,3 +105,61 @@ export function seedState() {
     boostEnd:null
   };
 }
+
+
+/** Version 2 stores independent Clash accounts in one versioned backup. */
+export const BUNDLE_VERSION=2;
+export function emptyProfile(tag) {
+  if (!/^#[A-Z0-9]{4,15}$/.test(tag)) throw Error('Invalid Clash player tag');
+  const base=seedState();
+  base.playerTag=tag;
+  base.displayName=tag;
+  base.export=null;
+  base.importedAt=null;
+  base.revision=0;
+  base.savedAt=null;
+  base.resources=Object.fromEntries(Object.keys(base.resources).map(k=>[k,0]));
+  base.items={};
+  base.roadmap=[];
+  base.history=[];
+  base.boostEnd=null;
+  base.resourceNotes='Enter the balances for this account. The game export does not contain resource or Magic Item amounts.';
+  base.notes='New village profile. Add a custom upgrade roadmap after reviewing the game export.';
+  return base;
+}
+export function normalizeBundle(input) {
+  const raw=typeof input==='string'?JSON.parse(input):input;
+  if(raw?.schemaVersion===VERSION){
+    const profile=validateState(raw);
+    const tag=profile.playerTag;
+    if(!/^#[A-Z0-9]{4,15}$/.test(tag||''))throw Error('Invalid original profile tag');
+    return {schemaVersion:BUNDLE_VERSION,activeProfileId:tag,profiles:{[tag]:structuredClone(profile)},revision:0,savedAt:profile.savedAt||null};
+  }
+  if(!raw||raw.schemaVersion!==BUNDLE_VERSION||!raw.profiles||typeof raw.profiles!=='object'||Array.isArray(raw.profiles))
+    throw Error('Unsupported planner backup format.');
+  const keys=Object.keys(raw.profiles);
+  if(keys.length<1||keys.length>20||!keys.includes(raw.activeProfileId))throw Error('Invalid profile selection or number of profiles.');
+  for(const tag of keys){
+    if(!/^#[A-Z0-9]{4,15}$/.test(tag))throw Error('Invalid player tag in backup.');
+    const p=validateState(raw.profiles[tag]);
+    if(p.playerTag!==tag||p.export?.tag && p.export.tag!==tag)throw Error('An account profile contains data for another player.');
+    if(p.displayName!==undefined && (typeof p.displayName!=='string'||p.displayName.length>45))throw Error('Invalid account display name.');
+  }
+  return structuredClone(raw);
+}
+export function importIntoBundle(current,input,now=new Date().toISOString()) {
+  const x=validateExport(input);
+  const bundle=normalizeBundle(current);
+  const existing=bundle.profiles[x.tag];
+  if(!existing && Object.keys(bundle.profiles).length>=20)throw Error('Maximum 20 account profiles.');
+  const profile=existing||emptyProfile(x.tag);
+  bundle.profiles[x.tag]=importVillage(profile,x,now);
+  bundle.activeProfileId=x.tag;
+  return bundle;
+}
+export function selectProfile(current,tag) {
+  const bundle=normalizeBundle(current);
+  if(!Object.hasOwn(bundle.profiles,tag))throw Error('Account not found.');
+  bundle.activeProfileId=tag;return bundle;
+}
+export function displayNumber(n) {return new Intl.NumberFormat('en-US').format(integer(n));}
