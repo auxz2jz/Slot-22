@@ -1528,7 +1528,13 @@
         "rewardClaimsUnconfirmed": true,
         "plannedFinalReview": "2026-10-30",
         "seasonEnd": "2026-10-31",
-        "note": "User confirmed Gold Pass purchase and stated rewards were not collected. Exact choices/quantities need current in-game inspection; never infer them from cropped screenshots."
+        "note": "User confirmed Gold Pass purchase and stated rewards were not collected. Exact choices/quantities need current in-game inspection; never infer them from cropped screenshots.",
+        "reportedRemaining": 49,
+        "reportedSilver": 30,
+        "reportedGold": 19,
+        "reportedChoicePositions": 22,
+        "claimSource": "User dictated exact remaining rewards October 18, 2026. See pass-rewards.mjs. Current real game claim counts require user confirmation.",
+        "claims": {}
       }
     }
   },
