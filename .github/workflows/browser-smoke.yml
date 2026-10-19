@@ -1,0 +1,36 @@
+name: Browser startup smoke test
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start static web server
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/static-server.log 2>&1 &
+          echo $! > /tmp/static-server.pid
+          sleep 3
+      - name: Inspect page after loading in Chrome
+        shell: bash
+        run: |
+          set -o pipefail
+          command -v google-chrome || command -v chromium || true
+          google-chrome --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8765/index.html > /tmp/dom.html 2>/tmp/chrome-stderr.log || true
+          echo "BROWSER ERRORS:"
+          tail -70 /tmp/chrome-stderr.log || true
+          echo "RENDERED SUMMARY:"
+          grep -o -E 'Village overview|Loading village tracker|Gold in storage|Startup failed|Current upgrade queues' /tmp/dom.html | head -15 || true
+          if grep -q 'Loading village tracker' /tmp/dom.html; then
+            echo "ERROR: app did not replace its loading placeholder"
+            exit 1
+          fi
+          if ! grep -q 'Gold in storage' /tmp/dom.html; then
+            echo "ERROR: expected dashboard not rendered"
+            exit 1
+          fi
+          echo "PASS: interactive dashboard rendered in real headless browser"
