@@ -64,3 +64,16 @@ Only the automation listed in browser smoke run 39190994116 is verified; actual 
 6. Refresh the page and switch accounts. **Expected:** tracking persists on the original profile, and the other profile has its own independent bars. If a bar resets unexpectedly, export **Test & diagnostics** plus a before/after planner backup; do not share credentials.
 
 Automated tests cover repeated snapshot imports, duplicate same-type buildings, item/currency preservation, and fresh-job anchor reset. Actual Android visual acceptance is still required.
+
+## Time-based estimate verification — candidate v0.3.1 (October 19, 2026)
+
+1. Tap **↓ Backup** before working with new JSON. Keep phone-local edits safe; never use **Load from GitHub** without reviewing newer local changes.
+2. On **Village overview → Live countdown board**, check **Game snapshot generated** is the time the village JSON was created (not the time the file was imported).
+3. Under a currently upgrading building, note **Estimated finish**, the **remaining-time countdown**, and **% tracked**. Expected finish is `snapshot timestamp + timer seconds`. The timer should decrease using the phone's clock even without re-importing.
+4. Import a fresh, newer JSON of the same account. Expected: the snapshot date, completion estimates and countdowns reflect the new export, while continuing upgrades keep their prior first-observed anchor instead of resetting their tracked progress.
+5. If a boost or helper changes an upgrade finish time, import another JSON. Expected: the estimated finish adjusts and the same observed upgrade retains its anchor; the fill may adjust to the updated tracked window, not reset to a new zero baseline.
+6. Attempt importing an **older JSON** after a newer one. Expected: show a clear error and preserve the newer village and all manually tracked resources, Magic Items, rewards and roadmap.
+7. Wait until a timer has expired or import an export from a completed upgrade. Expected: expiry is labeled as unconfirmed until a new JSON confirms the upgrade's state; expired jobs are not marked completed automatically.
+8. Check another account and restore your main one. Expected: no cross-account sharing of upgrade timers or manually tracked values. If not, export **Test & diagnostics**, avoid sharing tokens, and report the affected account/timer.
+
+The display is estimated from the device clock and game export, not from live Supercell synchronization. A substantially incorrect device clock gives inaccurate results. Percent tracked is **not** the whole construction percentage because the JSON does not provide actual start time or original duration. Android visual confirmation is still required after GitHub Actions tests.
