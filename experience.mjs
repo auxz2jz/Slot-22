@@ -72,7 +72,11 @@ export function homeBuilderAvailability(exported){
    snapshotAt:exported.timestamp*1000,source:'Builder Huts and active Home Village building/hero/trap timers'};
 }
 const normalizedName=name=>String(name).trim().toLowerCase().replace(/[’']/g,"'");
-const buildIds=new Map(Object.entries(names).map(([id,name])=>[normalizedName(name),Number(id)]));
+const buildIds=new Map();
+for(const [id,name] of Object.entries(names)){
+ const key=normalizedName(name);
+ buildIds.set(key,[...(buildIds.get(key)||[]),Number(id)]);
+}
 // A recommendation must match an actual unstarted level in the village JSON.
 // Roadmap priority is its existing order, but known affordability improves rank.
 // Currency is user-entered, NOT exported by Clash; confirm in the game.
@@ -84,12 +88,16 @@ export function nextHomeBuilderRecommendations(profile){
   if(task.status!=='planned'||task.village!=='Home'||task.queue!=='Builder')return [];
   const matched=String(task.title||'').match(/^(?:(?:First|Second|Third|Fourth|Fifth)\s+)?(.+?)\s+(\d+)\s*→\s*(\d+)\s*$/i);
   if(!matched)return []; // skip unclear hero cycles or prerequisites
-  const id=buildIds.get(normalizedName(matched[1]));
+  const ids=buildIds.get(normalizedName(matched[1]))||[];
   const startLevel=Number(matched[2]),nextLevel=Number(matched[3]);
-  if(!id||nextLevel!==startLevel+1)return [];
-  const category=String(id).startsWith('28')?'heroes':'buildings';
-  const records=Array.isArray(ex[category])?ex[category]:[];
-  const spare=records.some(r=>r.data===id&&r.lvl===startLevel&&!Number.isFinite(r.timer)&&(!Number.isInteger(r.cnt)||r.cnt>0));
+  if(!ids.length||nextLevel!==startLevel+1)return [];
+  // The catalog contains repeated names (e.g., Army Camp in both villages).
+  // Match the actual ID in this Home Village export, not the last catalog ID.
+  const spare=ids.some(id=>{
+   const category=String(id).startsWith('28')?'heroes':'buildings';
+   return (Array.isArray(ex[category])?ex[category]:[]).some(r=>
+    r.data===id&&r.lvl===startLevel&&!Number.isFinite(r.timer)&&(!Number.isInteger(r.cnt)||r.cnt>0));
+  });
   if(!spare)return [];
   const currency=task.costType,estimate=Number(task.cost);
   const savedBalance=profile?.resources?.[currency];
