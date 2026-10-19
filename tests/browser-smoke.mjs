@@ -90,11 +90,15 @@ try{
  const spacing=await cmd('Runtime.evaluate',{expression:`(()=>{
    document.getElementById('profile-select').value='#QVLP9RVV';
    document.getElementById('profile-select').dispatchEvent(new Event('change',{bubbles:true}));
-   const label=document.querySelector('.timeline .item-identity small');
+   const label=document.querySelector('.queue-name em');
    return Boolean(label)&&getComputedStyle(label).display==='block';
  })()`,returnByValue:true});
  console.log('UPGRADE LABEL SPACING:',spacing.result?.result?.value);
  if(spacing.result?.result?.value!==true)process.exitCode=1;
+ const visual=await cmd('Runtime.evaluate',{expression:"(()=>{\n const visualPresent=Boolean(document.querySelector('.royal-hero'))&&Boolean(document.querySelector('.queue-board'))&&Boolean(document.querySelector('.quest-trail'));\n const before=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));\n const oldElixir=before.profiles['#QVLP9RVV'].resources.elixir;\n document.querySelector('[data-tab=\"roadmap\"]').click();\n const task=document.querySelector('[data-open-task=\"L-02\"]');\n if(task)task.click();\n const detailOpened=document.querySelector('#item-dialog').open;\n const modalPreview=document.querySelector('#item-dialog-body')?.innerText.includes('Estimated cost');\n document.querySelector('#item-dialog [data-action=\"record-upgrade\"]')?.click();\n const after=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));\n const costDeducted=oldElixir-after.profiles['#QVLP9RVV'].resources.elixir===2100000;\n const taskActive=after.profiles['#QVLP9RVV'].roadmap.find(t=>t.id==='L-02')?.status==='active';\n const altUnchanged=after.profiles['#SECOND1'].resources.elixir===0;\n document.querySelector('[data-tab=\"overview\"]').click();\n const cap=document.querySelector('[data-cap=\"gold\"]');\n cap.value='30000000';\n cap.dispatchEvent(new Event('change',{bubbles:true}));\n const updated=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));\n const gaugeStored=updated.profiles['#QVLP9RVV'].storageCaps.gold===30000000;\n const gaugeFill=document.querySelector('.vault.gold .vault-track span')?.style.width==='4%';\n document.querySelector('[data-tab=\"inventory\"]').click();\n const first=document.querySelector('[data-open-inventory]');\n if(first)first.click();\n const inventoryModal=document.querySelector('#item-dialog').open;\n document.querySelector('#item-dialog [data-action=\"close-detail\"]')?.click();\n return {visualPresent,detailOpened,modalPreview,costDeducted,taskActive,altUnchanged,gaugeStored,gaugeFill,inventoryModal};\n})()",returnByValue:true});
+ const vr=visual.result?.result?.value||{};
+ console.log('COMMAND CENTER & INTERACTION:',vr);
+ if(!['visualPresent','detailOpened','modalPreview','costDeducted','taskActive','altUnchanged','gaugeStored','gaugeFill','inventoryModal'].every(k=>vr[k]===true))process.exitCode=1;
  console.log('BROWSER ERRORS:',failures);
- if(!body.toLowerCase().includes('gold in storage')||body.toLowerCase().includes('loading village tracker'))process.exitCode=1;
+ if(!body.toLowerCase().includes('your command center')||!body.toLowerCase().includes('resource vaults')||body.toLowerCase().includes('loading village tracker'))process.exitCode=1;
 }catch(e){console.error(e);process.exitCode=1;}finally{ws?.close();chrome.kill('SIGKILL');}
