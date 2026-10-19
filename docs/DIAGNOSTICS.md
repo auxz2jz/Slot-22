@@ -7,3 +7,12 @@ Import errors are explicit, show failed preconditions, and do not overwrite vali
 Future work: stable correlation IDs, duration measures, safe-request timeout, and stronger protocol/integration tests. Do not represent an action click as proof of success; review saved state and outputs.
 
 All diagnostics could contain unexpected user-provided strings; review before publishing. Do not commit private troubleshooting data.
+
+## Version 0.3.0 interaction trace
+
+- Open item: open-upgrade success/failure event.
+- Upgrade status: task-mark-active local operation, tracker-only, no deduction.
+- Manual spend: resource-spent-in-tracker after confirmation and adequate known non-Gem cost. Invalid and repeated actions produce upgrade-action FAILED without balance changes.
+- Resource capacity: capacity-edit event, per-account optional storageCaps. Unknown capacity never interpreted as full.
+- Snapshot countdowns do not mark completed tasks automatically and are visually labelled.
+- Gallery uses delegated handlers and records failures in the existing diagnostics log.
