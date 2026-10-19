@@ -73,3 +73,11 @@ All positions and recommendations are defined in pass-rewards.mjs and claim reco
 - [x] S22-042 Compare consecutive exports of the same account by game ID, item count, and total levels; show uncertain aggregate changes honestly and preserve at most five concise summaries per profile.
 - [x] S22-043 Preserve imported original raw JSON, manually entered currency/Magic Items, event reward choices, and account separation. Auto-import does not spend, start, or mark upgrades completed.
 - [ ] S22-044 User Android acceptance with a fresh game JSON and verification of timer/cooldown accuracy and unknown game IDs.
+
+## 2026-10-18 helper roadmap and safe data synchronization
+- [x] S22-045: Add repeatable Helper Hut priorities to main account roadmap based on snapshot: Builder's Apprentice L7, Lab Assistant L8, third helper ID 93000002 L3 likely Alchemist, and unverified Gold Pass Prospector. No assumed availability or Gems spending.
+- [x] S22-046: Add an additive idempotent helper-plan module for existing browser-local state, all account changes and new village JSON imports. Do not replace saved Magic Items, reward choices, currencies, or non-helper roadmap statuses.
+- [x] S22-047: Display Helper Hut above upgrade roadmap, link to latest JSON insights, and label GitHub fine-grained PAT vs in-game account verification token vs official developer API credential.
+- [x] S22-048: Record secure manual-import/GitHub-upload routine in docs/GAME_DATA_AND_SYNC.md, including last-snapshot caveats, extra JSON sections, and public repo privacy.
+- [ ] S22-049: User Android acceptance: inspect updated Helper Hut routines without GitHub Load, verify one fresh game export import, record manual inventory/claims, and test GitHub Save with a user-generated restricted fine-grained token after local backup.
+- [ ] S22-050: Optional public-player API refresh via protected backend and server-side developer key; must never assume balances, helper availability, village timers, or season claims from the public API.
