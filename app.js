@@ -1,7 +1,7 @@
 import {names,categories,moneyKeys,itemGroups,labelFor} from './catalog.mjs';
 import {artworkUrl,artForResource} from './artwork.mjs';
 import {coverFor,gaugeDeck,builderBoard,questTrail,gallery,detailContent} from './dashboard.mjs';
-import {planPreview,snapshotCountdown,remainingTime,nextHomeBuilderRecommendations,availableResearchQueues} from './experience.mjs';
+import {planPreview,snapshotCountdown,remainingTime,nextHomeBuilderRecommendations,availableResearchQueues,armyFacilityAudit} from './experience.mjs';
 import {renderPassRewards,updatePassState,saveRewardDefinition,removeCustomReward} from './pass-rewards.mjs';
 import {renderInsights,renderHelperStrip,helperCountdown} from './insights-view.mjs';
 import {ensureHelperRoadmap} from './helper-plan.mjs';
@@ -181,7 +181,8 @@ function renderBuilderRecommendationCard(t){
  '<span>'+enc(price)+'</span>'+
  '<small>'+enc(t.affordableFromSaved?'Saved balance appears sufficient; verify current game amount.':'Current affordability not confirmed. Confirm price and resources in game.')+'</small>'+
  (t.note?'<small>'+enc(t.note)+'</small>':'')+
- '<button class="btn small" data-action="builder-view-task" data-task-id="'+encodeURIComponent(t.taskId)+'">View upgrade details</button></div>';
+ (t.taskId?'<button class="btn small" data-action="builder-view-task" data-task-id="'+encodeURIComponent(t.taskId)+'">View upgrade details</button>':
+ '<button class="btn small" data-action="view-pets">View your pets</button>')+'</div>';
 }
 function renderBuilderNudge(profile){
  const result=nextHomeBuilderRecommendations(profile);
@@ -205,9 +206,30 @@ function renderResearchNudges(profile){
  '<h2>'+idle.length+' research queue'+(idle.length===1?'':'s')+' idle at snapshot</h2>'+
  idle.map(q=>'<div class="research-nudge-row"><strong>'+enc(q.name)+'</strong> · '+
   (q.recommendations.length?'<span>Recommended: '+enc(q.recommendations[0].title)+'</span>'+
-   '<button class="btn secondary small" data-action="builder-view-task" data-task-id="'+encodeURIComponent(q.recommendations[0].taskId)+'">Review</button>':
+   (q.recommendations[0].taskId?'<button class="btn secondary small" data-action="builder-view-task" data-task-id="'+encodeURIComponent(q.recommendations[0].taskId)+'">Review</button>':
+    '<button class="btn secondary small" data-action="view-pets">View pets</button>'):
    '<span>No verified next upgrade in the saved roadmap</span>')+'</div>').join('')+
  '<p class="smallmuted">Laboratory, Star Laboratory, and Pet House research run independently from construction builders. Idle status is based on the dated game JSON, not live syncing.</p></section>';
+}
+function renderFacilityAudit(profile){
+ const facilities=armyFacilityAudit(profile);
+ if(!facilities.length)return '';
+ const available=facilities.filter(f=>f.nextLevel!==null&&!f.buildingUpgradeActive).length;
+ return '<section class="card factory-audit" aria-label="All factories and army buildings">'+
+ '<span class="kicker">FACTORY & ARMY BUILDING AUDIT</span>'+
+ '<h2>Building upgrades and independent work</h2>'+
+ '<p class="subtext">'+available+' structure upgrades could be considered when a builder is available. '+
+ 'Production buildings do not need to keep a worker busy: Home troops, spells and siege machines share the Home Laboratory for research; pets and Builder troops use their own research queues.</p>'+
+ '<div class="factory-grid">'+facilities.map(f=>{
+  const status=f.buildingUpgradeActive?'Building upgrade underway':
+   f.nextLevel!==null?'Next structure level: '+f.level+' → '+f.nextLevel+' (requires builder)':
+   f.atKnownHallCap?'At your current Hall cap':'Next structure upgrade: verify in game';
+  return '<div class="factory-row">'+
+   '<strong>'+enc(f.name)+' <span>Lv '+Number(f.level)+'</span></strong>'+
+   '<small>'+enc(f.village)+' · '+enc(status)+'</small>'+
+   '<small>'+enc(f.usage)+'</small></div>';
+ }).join('')+'</div>'+
+ '<p class="smallmuted">Building level caps here are checked for TH14/BH9. Resources and exact in-game upgrade prices must be confirmed manually. The JSON cannot prove a production factory is actively brewing spells or making troops.</p></section>';
 }
 function showQueuedBuilderPrompt(){
  const tag=queuedBuilderPrompt;queuedBuilderPrompt=null;
@@ -239,7 +261,7 @@ function showQueuedBuilderPrompt(){
 function renderOverview(){
  const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
- return coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+renderBuilderNudge(state)+renderResearchNudges(state)+
+ return coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+renderBuilderNudge(state)+renderResearchNudges(state)+renderFacilityAudit(state)+
  '<div class="command-grid"><div>'+builderBoard(state)+'</div><div class="command-side">'+
  '<section class="card"><div class="panel-heading"><div><span class="kicker">NEXT MOVES</span><h2>Upgrade quest path</h2></div><button class="btn secondary small" data-action="goto-roadmap">Full roadmap ›</button></div>'+
  '<p class="subtext">Tap a quest to inspect its cost and change its status. These are suggested steps, not automatic game actions.</p>'+
@@ -442,6 +464,7 @@ function clickAction(e){
  if(target.dataset.openInventory!==undefined){openDetail({recordIndex:Number(target.dataset.openInventory),category:invGroup});return;}
  const action=target.dataset.action;
  if(action==='builder-dismiss'){el('builder-dialog')?.close();return;}
+ if(action==='view-pets'){el('builder-dialog')?.close();view='inventory';invGroup='pets';render();return;}
  if(action==='builder-view-task'){
    const id=decodeURIComponent(target.dataset.taskId||'');
    el('builder-dialog')?.close();
