@@ -87,7 +87,7 @@ test('reference game costs and durations apply only confirmed discounts',()=>{
  const tome=renderCommandDetail(profile,'structure:equipment:90000004');
  assert.match(camp,/7,200,000 Elixir/);
  assert.match(spell,/Oct 17 game-data reference/);
- assert.match(spell,/85\.0h/); // Freeze 4->5 = 100h base, research 15% set by user
+ assert.match(spell,/51\.0h/); // Freeze 4->5 = 60h base, research 15% set by user
  assert.match(tome,/Shiny 1,800/);
  assert.match(tome,/Glowy 200/);
 });
