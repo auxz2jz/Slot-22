@@ -1,0 +1,21 @@
+name: Reward editor browser acceptance
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Start static web server
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/server.log 2>&1 &
+          sleep 2
+      - name: Verify reward list editing in Chrome
+        run: node tests/reward-ui-browser.mjs
