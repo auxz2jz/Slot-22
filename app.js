@@ -3,8 +3,9 @@ import {artworkUrl,artForResource} from './artwork.mjs';
 import {coverFor,gaugeDeck,builderBoard,questTrail,gallery,detailContent} from './dashboard.mjs';
 import {planPreview,snapshotCountdown,remainingTime} from './experience.mjs';
 import {renderPassRewards,updatePassState,saveRewardDefinition,removeCustomReward} from './pass-rewards.mjs';
-import {renderInsights,renderHelperStrip} from './insights-view.mjs';
+import {renderInsights,renderHelperStrip,helperCountdown} from './insights-view.mjs';
 import {ensureHelperRoadmap} from './helper-plan.mjs';
+import {helperSummary} from './snapshot-insights.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
 const STORAGE='clash-slot22-state-v2',LEGACY_STORAGE='clash-slot22-state-v1',TESTS='clash-slot22-tests-v1';
@@ -103,6 +104,7 @@ function applyGameExport(raw){
  const snapshotTime=Number.isFinite(x.timestamp)?new Date(x.timestamp*1000).toLocaleString():'unknown';
  notify('Imported '+x.tag+' (game snapshot: '+snapshotTime+'). Countdown and estimated finish times refreshed. Resources, Magic Items and roadmap preserved.');
  log('game-timer-refresh','OK','Refreshed estimate from village JSON timestamp');
+ log('helper-snapshot','OK','Target assignments in village JSON: '+helperSummary(x).filter(h=>h.assignment).length);
  return true;
 }
 async function readFile(e,kind){
@@ -166,7 +168,7 @@ function renderOverview(){
  '<p class="smallmuted">Player: '+enc(state.playerTag)+'<br>Latest import: '+enc(state.importedAt?new Date(state.importedAt).toLocaleString():'Not imported yet')+'</p>'+
  '<div class="row wrap"><button class="btn" data-action="paste-shortcut">Import fresh JSON</button>'+
  '<button class="btn secondary" data-action="goto-roadmap">Plan next upgrades</button></div></section>'+
- '<section class="card"><h2>How progress works</h2><p class="note">Upgrade timer bars start at the latest snapshot date. They are not percentages of total build duration. To see current remaining time, import new game data.</p>'+
+ '<section class="card"><h2>How progress works</h2><p class="note">Upgrade timer bars track from the earliest observed snapshot for a continuing job, not necessarily the entire build. Remaining time and estimated completion use the latest dated game JSON. Known helper assignments and countdowns also come from each imported JSON.</p>'+
  '<p class="subtext space">Storage gauges infer maximum capacity from your imported buildings. In-game balances still require manual entry, and no game resources are spent automatically.</p></section></div>';
 }
 function recommendations(){
@@ -266,6 +268,11 @@ function updateVisualTimers(){
  document.querySelectorAll('[data-timer-end]').forEach(node=>{
    const end=Number(node.dataset.timerEnd);
    node.textContent=end?remainingTime(end,now).text:'Timer unavailable';
+ });
+ document.querySelectorAll('[data-helper-session-end],[data-helper-cooldown-end]').forEach(node=>{
+   const session=node.dataset.helperSessionEnd!==undefined;
+   const end=Number(session?node.dataset.helperSessionEnd:node.dataset.helperCooldownEnd);
+   node.textContent=helperCountdown(end,session?'work':'cooldown',now);
  });
  for(const node of document.querySelectorAll('[data-timer-progress],[data-timer-percent]')){
    const raw=node.dataset.timerProgress||node.dataset.timerPercent;
