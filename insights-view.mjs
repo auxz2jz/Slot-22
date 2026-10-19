@@ -8,8 +8,8 @@ const helperDescription={93000000:'Speeds up one Home Village building or hero u
 93000003:'Gold Pass ore-conversion helper if your latest export confirms ownership.'};
 // All assignment and cooldown values come from the game's dated JSON snapshot.
 // Expired estimates do NOT prove the helper is available or still assigned.
-function helperCountdown(end,kind){
- const left=Math.ceil((end-Date.now())/1000);
+export function helperCountdown(end,kind,now=Date.now()){
+ const left=Math.ceil((end-now)/1000);
  if(!Number.isFinite(left)||left<=0)return kind==='work'?'Session estimate elapsed · refresh JSON':'Cooldown estimate elapsed · verify in game';
  const d=Math.floor(left/86400),hours=Math.floor((left%86400)/3600),mins=Math.floor((left%3600)/60),secs=left%60;
  return (d?d+'d ':'')+(hours?hours+'h ':'')+(mins?mins+'m ':'')+(!d&&!hours?secs+'s ':'')+'left';
