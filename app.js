@@ -102,7 +102,7 @@ async function readFile(e,kind){
 function resourcePanel(){
   const keys=['gold','elixir','dark','gems','builderGold','builderElixir','cartGold','cartElixir','cartDark'];
   const labels={gold:'Gold · Home',elixir:'Elixir · Home',dark:'Dark Elixir',gems:'Gems · protected',builderGold:'Builder Gold',builderElixir:'Builder Elixir',cartGold:'Loot Cart Gold',cartElixir:'Loot Cart Elixir',cartDark:'Loot Cart Dark'};
-  return '<div class="resource-grid">'+keys.map(k=>'<div class="field"><label for="money-'+k+'" class="label-with-art">'+resImage(k)+enc(labels[k])+'</label><input id="money-'+k+'" data-money="'+k+'" type="number" min="0" step="1" value="'+integer(state.resources[k])+'"></div>').join('')+'</div>';
+  return '<div class="resource-grid">'+keys.map(k=>'<div class="field"><label for="money-'+k+'" class="label-with-art">'+resImage(k)+enc(labels[k])+'</label><input id="money-'+k+'" data-money="'+k+'" type="text" inputmode="numeric" autocomplete="off" value="'+format(state.resources[k])+'"></div>').join('')+'</div>';
 }
 function itemImage(category,name,level,compact=false){
  const url=artworkUrl(category,name,level);
@@ -173,14 +173,14 @@ function renderInventory(){
  '<div class="scroll-table"><table class="inventory-table"><thead><tr><th>Name</th><th class="num">Level</th><th class="num">Count</th><th>Upgrading</th></tr></thead><tbody>'+rows.map(x=>'<tr><td><span class="item-identity">'+itemImage(invGroup,x.name,x.level,true)+'<span>'+enc(x.name)+'</span></span></td><td class="num">'+x.level+'</td><td class="num">'+x.count+'</td><td>'+(x.timer!==null?(x.finishesAt ? enc(new Date(x.finishesAt).toLocaleString()) : enc(x.timer+'s')):'—')+'</td></tr>').join('')+'</tbody></table></div><div class="smallmuted">'+rows.reduce((a,x)=>a+x.count,0)+' objects in this category. Unknown game IDs stay visible for later catalog updates.</div>')+'</section>';
 }
 function renderItems(){
- let groups=itemGroups.map(([group,keys])=>'<section class="card"><h2>'+enc(group)+'</h2><div class="grid items">'+keys.map(key=>'<div class="item-field"><label class="label-with-art">'+itemImage('magicItem',key,1,true)+enc(key)+'</label><input type="number" min="0" step="1" data-item="'+enc(key)+'" value="'+integer(state.items[key])+'"></div>').join('')+'</div></section>').join('');
+ let groups=itemGroups.map(([group,keys])=>'<section class="card"><h2>'+enc(group)+'</h2><div class="grid items">'+keys.map(key=>'<div class="item-field"><label class="label-with-art">'+itemImage('magicItem',key,1,true)+enc(key)+'</label><input type="text" inputmode="numeric" autocomplete="off" data-item="'+enc(key)+'" value="'+format(state.items[key])+'"></div>').join('')+'</div></section>').join('');
  const ores=['shiny','glowy','starry'];
  return '<div class="note">These balances are not in the Supercell JSON export. Update them manually after events, magic item use, chests, or Blacksmith upgrades. Changes are saved locally until you click “Save to GitHub”.</div>'+
- '<div class="grid two space">'+groups+'</div><section class="card space"><h2>Hero equipment ores</h2><div class="resource-grid">'+ores.map(k=>'<div class="field"><label class="label-with-art">'+resImage(k)+enc(moneyLabels[k])+'</label><input type="number" min="0" data-money="'+k+'" value="'+integer(state.resources[k])+'"></div>').join('')+'</div><p class="smallmuted">Eternal Tome is currently Lv 8 per your report. Save your Shiny and Glowy Ore for deliberate milestones.</p></section>';
+ '<div class="grid two space">'+groups+'</div><section class="card space"><h2>Hero equipment ores</h2><div class="resource-grid">'+ores.map(k=>'<div class="field"><label class="label-with-art">'+resImage(k)+enc(moneyLabels[k])+'</label><input type="text" inputmode="numeric" autocomplete="off" data-money="'+k+'" value="'+format(state.resources[k])+'"></div>').join('')+'</div><p class="smallmuted">Eternal Tome is currently Lv 8 per your report. Save your Shiny and Glowy Ore for deliberate milestones.</p></section>';
 }
 function renderSync(){
- return '<div class="grid two"><section class="card"><h2>Import & export</h2><p class="smallmuted">Game export updates building/troop levels only. Planner backup includes balances, inventory, and roadmap.</p><div class="stack"><button class="btn" data-action="choose-file">↑ Import Clash of Clans JSON</button><button class="btn secondary" data-action="download">↓ Download full planner backup</button><button class="btn secondary" data-action="restore">↑ Restore planner backup</button></div><div class="divider"></div><div class="field"><label>Latest imported game snapshot</label><div class="note">'+enc(state.importedAt||'No game export imported yet')+'</div></div></section>'+
- '<section class="card"><h2>GitHub sync</h2><p class="smallmuted">Repository: <a href="https://github.com/'+REPO+'" target="_blank" rel="noopener">'+REPO+'</a>. The code is public. Sync writes the planner JSON to a PUBLIC file. Anyone can view that data.</p>'+
+ return '<div class="grid two"><section class="card"><h2>Import & export</h2><p class="smallmuted">Import an unfamiliar player tag to add another profile. An existing tag updates only that account. Full backups contain ALL profiles, currencies, Magic Items and roadmaps.</p><div class="stack"><button class="btn" data-action="choose-file">↑ Import Clash of Clans JSON</button><button class="btn secondary" data-action="download">↓ Download full planner backup</button><button class="btn secondary" data-action="restore">↑ Restore planner backup</button></div><div class="divider"></div><div class="field"><label>Latest imported game snapshot</label><div class="note">'+enc(state.importedAt||'No game export imported yet')+'</div></div></section>'+
+ '<section class="card"><h2>GitHub sync</h2><p class="smallmuted">Repository: <a href="https://github.com/'+REPO+'" target="_blank" rel="noopener">'+REPO+'</a>. The code is public. Sync writes ALL saved profiles to a PUBLIC GitHub file. Anyone can view player tags, resource balances and inventories.</p>'+
  '<div class="note">Use a <strong>fine-grained GitHub token</strong> with Contents read/write access restricted to <strong>Slot-22 only</strong>. Paste it below. The token stays in this tab memory, is never saved to GitHub or exported, and is cleared on refresh/close.</div>'+
  '<div class="field space"><label>Fine-grained GitHub token (not saved)</label><input id="github-token" type="password" autocomplete="off" spellcheck="false" placeholder="Paste GitHub token here"></div>'+
  '<div class="row wrap space"><button class="btn secondary" data-action="gh-load">↓ Load from GitHub</button><button class="btn" data-action="gh-save">↑ Save to GitHub</button></div><p class="smallmuted">GitHub save and load are manual; game data will not automatically update itself. If another device edited the remote file, a conflict will stop an overwrite.</p></section></div>';
@@ -196,12 +196,31 @@ const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'V
 function render() {
  for(const b of document.querySelectorAll('[data-tab]'))b.classList.toggle('active',b.dataset.tab===view);
  el('section-title').textContent=titles[view];el('player-tag').textContent=state.playerTag;
+ el('profile-select').innerHTML=Object.entries(bundle.profiles).map(([tag,p])=>'<option value="'+enc(tag)+'" '+(tag===bundle.activeProfileId?'selected':'')+'>'+enc(p.displayName||tag)+' ('+enc(tag)+')</option>').join('');
+ const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
+ const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
+ el('village-subtitle').textContent='TOWN HALL '+th+' · BUILDER HALL '+bh;
  el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,sync:renderSync,testing:renderTesting}[view])();
+}
+function commaInput(e){
+ const field=e.target;
+ if(!field.matches?.('[data-money],[data-item]'))return;
+ const original=field.value;
+ const start=field.selectionStart??original.length;
+ const digitPosition=original.slice(0,start).replace(/\D/g,'').length;
+ const digits=original.replace(/\D/g,'');
+ const result=digits?format(digits):'';
+ field.value=result;
+ if(!result){field.setSelectionRange(0,0);return;}
+ let seen=0,position=result.length;
+ if(digitPosition===0)position=0;
+ else for(let i=0;i<result.length;i++){if(/\d/.test(result[i]))seen++;if(seen===digitPosition){position=i+1;break;}}
+ field.setSelectionRange(position,position);
 }
 function changeAction(e){
  const t=e.target;
- if(t.dataset.money){state.resources[t.dataset.money]=integer(t.value);saveLocal('resource-edit');return;}
- if(t.dataset.item){state.items[t.dataset.item]=integer(t.value);saveLocal('item-edit');return;}
+ if(t.dataset.money){state.resources[t.dataset.money]=integer(t.value);t.value=format(state.resources[t.dataset.money]);saveLocal('resource-edit');return;}
+ if(t.dataset.item){state.items[t.dataset.item]=integer(t.value);t.value=format(state.items[t.dataset.item]);saveLocal('item-edit');return;}
  if(t.dataset.task){try{state=setTaskStatus(state,t.dataset.task,t.value);saveLocal('roadmap-status');render();}catch(err){notify(err.message,'error');}return;}
  if(t.dataset.boostEnd!==undefined){state.boostEnd=t.value||null;saveLocal('boost-edit');return;}
  if(t.dataset.stateNote!==undefined){state.notes=t.value.slice(0,3000);saveLocal('notes-edit');return;}
@@ -216,10 +235,11 @@ function clickAction(e){
  if(action==='goto-roadmap'){view='roadmap';render();}
  if(action==='choose-file')el('game-file').click();
  if(action==='restore')el('backup-file').click();
- if(action==='download')download('clash-village-backup.json',state);
+ if(action==='download')download('clash-all-profiles-backup.json',bundle);
  if(action==='diagnostics')download('clash-diagnostics.json',{generatedAt:new Date().toISOString(),version:1,logs:diagnostics});
  if(action==='test-report')download('clash-guided-test-report.json',{generatedAt:new Date().toISOString(),manual:true,results:testSteps.map((name,i)=>({name,confirmed:!!manualTests[i]})),logs:diagnostics});
  if(action==='clear-tests'){manualTests={};localStorage.setItem(TESTS,'{}');render();}
+ if(action==='rename-profile'){const name=prompt('Name for '+state.playerTag+' (e.g. Main or Mini):',state.displayName||state.playerTag);if(name!==null){const val=name.trim().slice(0,45);if(val){state.displayName=val;saveLocal('profile-rename');render();}}}
  if(action==='gh-load')void gitLoad();
  if(action==='gh-save')void gitSave();
 }
@@ -253,9 +273,9 @@ async function api(url,opts={}){
 async function gitLoad(){
  try{
   const x=await api(apiUrl()+'?ref=main');if(x.missing)throw Error('Remote planner file does not exist yet.');
-  const incoming=validateState(base64ToText(x.content));
+  const incoming=normalizeBundle(base64ToText(x.content));
   if(!confirm('Replace the local planner with the copy stored on GitHub? Download a local backup first if needed.'))return;
-  state=incoming;ghSha=x.sha;saveLocal('github-load');notify('Loaded planner data from GitHub.');render();
+  useBundle(incoming);ghSha=x.sha;saveLocal('github-load');notify('Loaded '+Object.keys(bundle.profiles).length+' profile(s) from GitHub.');render();
  }catch(e){notify(e.message,'error');log('github-load','FAILED',e.message);}
 }
 async function gitSave(){
@@ -264,7 +284,8 @@ async function gitSave(){
   const current=await api(apiUrl()+'?ref=main');
   if(!current.missing && ghSha && current.sha!==ghSha)throw Error('Conflict: the GitHub copy changed on another device. Load it and reconcile before saving.');
   if(!current.missing && !ghSha && !confirm('You have not loaded the current GitHub copy in this tab. Overwrite it with the current local planner?'))return;
-  const body={message:'data: update clash village planner snapshot',content:textToBase64(JSON.stringify(state,null,2)),branch:'main'};
+  bundle.profiles[bundle.activeProfileId]=state;
+  const body={message:'data: update clash village profiles snapshot',content:textToBase64(JSON.stringify(bundle,null,2)),branch:'main'};
   if(!current.missing)body.sha=current.sha;
   const saved=await api(apiUrl(),{method:'PUT',body:JSON.stringify(body)});
   ghSha=saved.content?.sha||null;
