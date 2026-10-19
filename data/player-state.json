@@ -5,8 +5,8 @@
     "#QVLP9RVV": {
       "schemaVersion": 1,
       "playerTag": "#QVLP9RVV",
-      "revision": 13,
-      "savedAt": "2026-10-19T18:47:47.500Z",
+      "revision": 15,
+      "savedAt": "2026-10-19T19:33:28.382Z",
       "resources": {
         "gold": 19000000,
         "elixir": 17504427,
@@ -493,12 +493,12 @@
       ],
       "export": {
         "tag": "#QVLP9RVV",
-        "timestamp": 1792435596,
+        "timestamp": 1792438344,
         "helpers": [
           {
             "data": 93000000,
             "lvl": 7,
-            "helper_cooldown": 48827
+            "helper_cooldown": 46115
           },
           {
             "data": 93000001,
@@ -522,7 +522,7 @@
           {
             "data": 1000014,
             "lvl": 9,
-            "timer": 186968
+            "timer": 184220
           },
           {
             "data": 1000008,
@@ -537,7 +537,7 @@
           {
             "data": 1000000,
             "lvl": 10,
-            "timer": 100594
+            "timer": 97846
           },
           {
             "data": 1000013,
@@ -545,14 +545,19 @@
             "gear_up": 1
           },
           {
+            "data": 1000020,
+            "lvl": 6,
+            "timer": 239653
+          },
+          {
             "data": 1000027,
             "lvl": 7,
-            "timer": 143809
+            "timer": 141061
           },
           {
             "data": 1000068,
             "lvl": 3,
-            "timer": 35731
+            "timer": 32983
           },
           {
             "data": 1000000,
@@ -687,11 +692,6 @@
           {
             "data": 1000019,
             "lvl": 12,
-            "cnt": 1
-          },
-          {
-            "data": 1000020,
-            "lvl": 6,
             "cnt": 1
           },
           {
@@ -1071,7 +1071,8 @@
           },
           {
             "data": 26000005,
-            "lvl": 4
+            "lvl": 4,
+            "timer": 86096
           },
           {
             "data": 26000009,
@@ -1304,12 +1305,12 @@
           {
             "data": 1000044,
             "lvl": 7,
-            "timer": 130214
+            "timer": 127466
           },
           {
             "data": 1000046,
             "lvl": 7,
-            "timer": 129809
+            "timer": 127061
           },
           {
             "data": 1000033,
@@ -1631,7 +1632,7 @@
         "sceneries2": [],
         "boosts": {}
       },
-      "importedAt": "2026-10-19T18:47:47.492Z",
+      "importedAt": "2026-10-19T19:32:54.966Z",
       "history": [
         {
           "at": "2026-10-18T18:25:23-07:00",
@@ -1677,6 +1678,11 @@
           "at": "2026-10-19T18:47:47.492Z",
           "kind": "import",
           "note": "Imported village snapshot dated 1792435596"
+        },
+        {
+          "at": "2026-10-19T19:32:54.966Z",
+          "kind": "import",
+          "note": "Imported village snapshot dated 1792438344"
         }
       ],
       "notes": "Goal: use 50% Home Village builder/research returning boost, avoid Gem spending and Rune waste; open event rewards before expiry and only when storage permits; unlock B.O.B. sixth builder.",
@@ -2054,6 +2060,16 @@
             "boosts"
           ],
           "recordedAt": "2026-10-19T18:47:47.497Z"
+        },
+        {
+          "tag": "#QVLP9RVV",
+          "beforeTimestamp": 1792435596,
+          "afterTimestamp": 1792438344,
+          "changes": [],
+          "other": [
+            "helpers"
+          ],
+          "recordedAt": "2026-10-19T19:32:54.969Z"
         }
       ],
       "upgradeTracking": [
@@ -2063,7 +2079,7 @@
           "level": 9,
           "firstSeenAt": 1792398410000,
           "endAt": 1792622564000,
-          "lastSeenAt": 1792435596000
+          "lastSeenAt": 1792438344000
         },
         {
           "category": "buildings",
@@ -2071,7 +2087,15 @@
           "level": 10,
           "firstSeenAt": 1792398410000,
           "endAt": 1792536190000,
-          "lastSeenAt": 1792435596000
+          "lastSeenAt": 1792438344000
+        },
+        {
+          "category": "buildings",
+          "id": 1000020,
+          "level": 6,
+          "firstSeenAt": 1792438344000,
+          "endAt": 1792677997000,
+          "lastSeenAt": 1792438344000
         },
         {
           "category": "buildings",
@@ -2079,7 +2103,7 @@
           "level": 7,
           "firstSeenAt": 1792398410000,
           "endAt": 1792579405000,
-          "lastSeenAt": 1792435596000
+          "lastSeenAt": 1792438344000
         },
         {
           "category": "buildings",
@@ -2087,7 +2111,15 @@
           "level": 3,
           "firstSeenAt": 1792398410000,
           "endAt": 1792471327000,
-          "lastSeenAt": 1792435596000
+          "lastSeenAt": 1792438344000
+        },
+        {
+          "category": "spells",
+          "id": 26000005,
+          "level": 4,
+          "firstSeenAt": 1792438344000,
+          "endAt": 1792524440000,
+          "lastSeenAt": 1792438344000
         },
         {
           "category": "buildings2",
@@ -2095,7 +2127,7 @@
           "level": 7,
           "firstSeenAt": 1792398410000,
           "endAt": 1792565810000,
-          "lastSeenAt": 1792435596000
+          "lastSeenAt": 1792438344000
         },
         {
           "category": "buildings2",
@@ -2103,11 +2135,13 @@
           "level": 7,
           "firstSeenAt": 1792398410000,
           "endAt": 1792565405000,
-          "lastSeenAt": 1792435596000
+          "lastSeenAt": 1792438344000
         }
-      ]
+      ],
+      "builderPromptLastShownAt": 1792438344,
+      "builderPromptDismissedAt": 1792438344
     }
   },
-  "revision": 13,
-  "savedAt": "2026-10-19T18:47:47.500Z"
+  "revision": 15,
+  "savedAt": "2026-10-19T19:33:28.382Z"
 }
