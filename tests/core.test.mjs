@@ -39,3 +39,30 @@ test('numbers normalize nonnegative inputs',()=>{
  assert.equal(integer('-7'),0);
  assert.equal(integer('no number',42),42);
 });
+
+test('fresh JSON import preserves progress anchor for the same active upgrade',()=>{
+ const first=importVillage(seedState(),snapshot,'2026-10-19T01:00:00Z');
+ assert.equal(first.upgradeTracking.length,3);
+ const old=first.upgradeTracking.find(t=>t.category==='buildings'&&t.id===1000068);
+ assert.equal(old.firstSeenAt,1000000000);
+ const newer={...snapshot,timestamp:1000900,buildings:[{data:1000000,lvl:10,cnt:3},{data:1000068,lvl:3,timer:2700}]};
+ const after=importVillage(first,newer,'2026-10-19T01:15:00Z');
+ const ongoing=after.upgradeTracking.find(t=>t.category==='buildings'&&t.id===1000068);
+ assert.equal(ongoing.firstSeenAt,old.firstSeenAt);
+ assert.equal(ongoing.endAt,old.endAt);
+ assert.equal(after.resources.gold,first.resources.gold);
+ assert.deepEqual(after.items,first.items);
+ assert.deepEqual(after.roadmap,first.roadmap);
+});
+
+test('new upgrade starts a new anchor and duplicate entities are tracked individually',()=>{
+ const old={tag:'#QVLP9RVV',timestamp:1000,buildings:[{data:1000000,lvl:10,timer:3600},{data:1000000,lvl:10,timer:7200}],buildings2:[]};
+ const before=importVillage(seedState(),old);
+ const fresh={...old,timestamp:1900,buildings:[{data:1000000,lvl:10,timer:6300},{data:1000000,lvl:10,timer:2700}]};
+ const after=importVillage(before,fresh);
+ assert.deepEqual(after.upgradeTracking.map(t=>t.firstSeenAt),[1000000,1000000]);
+ const completed={...old,timestamp:11000,buildings:[{data:1000000,lvl:10,timer:3600}]};
+ const replacement=importVillage(after,completed);
+ assert.equal(replacement.upgradeTracking.length,1);
+ assert.equal(replacement.upgradeTracking[0].firstSeenAt,11000000);
+});
