@@ -160,7 +160,7 @@ export function fullVillagePlan(profile){
  const hStats={id:'homeBuilders',name:'Home builders',location:'Home Village → Build → Building and Heroes',
   status:homeAvail?.availableAtLeast>0?'idle':'busy',activeCount:homeActive.length,
   reportedCapacity:homeAvail?.buildersAtLeast??null,
-  next:[...homeHero,...homeBuildings].slice(0,10),
+  next:[...homeHero,...homeBuildings].sort((a,b)=>b.weight-a.weight).slice(0,10),
   note:'Choose a Hero or high-impact offense building as each builder frees. An old timer reaching zero never proves completion.'};
  const bStats={id:'builderBuilders',name:'Builder Base builders',location:'Builder Base → Build → Building and Heroes',
   status:builderActive.length?'busy':'unknown',activeCount:builderActive.length,reportedCapacity:null,
