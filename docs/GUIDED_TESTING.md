@@ -53,3 +53,14 @@ Only the automation listed in browser smoke run 39190994116 is verified; actual 
 4. Switch to Magic Items & ores. Enter your actual Rune of Gold count e.g. 8 even if in-game capacity says 1/1; no forced clamping. Add a custom item name if needed.
 5. Verify a claim/checklist edit DOES NOT change actual owned Magic Item counts or resources automatically, and switching profiles keeps their lists separate.
 6. Download a local backup before using GitHub Load. Explicit GitHub Save publishes all game records in the public Slot-22 repo.
+
+## Persistent builder-progress regression (2026-10-19 candidate)
+
+1. Before importing again, use **↓ Backup** to save your full planner data. Do NOT choose GitHub Load if the phone has newer edits.
+2. On the Overview **Live countdown board**, note the fill of one upgrade still running in Clash.
+3. Import a fresh **game village JSON** for that SAME account and open Overview again. **Expected:** the same upgrade's bar continues from the first tracked observation instead of returning to 0%. The remaining-time countdown reflects the new snapshot.
+4. Import the same JSON once more. **Expected:** bar stays at its prior tracked position (allowing normal clock movement). Resources, Magic Items, Gold Pass claims, and roadmap remain unchanged.
+5. After a different upgrade genuinely begins, import another JSON. **Expected:** the new job starts a new observed-progress bar. These bars are elapsed time since first tracked, **not exact full-building construction progress** because game JSON lacks initial start times.
+6. Refresh the page and switch accounts. **Expected:** tracking persists on the original profile, and the other profile has its own independent bars. If a bar resets unexpectedly, export **Test & diagnostics** plus a before/after planner backup; do not share credentials.
+
+Automated tests cover repeated snapshot imports, duplicate same-type buildings, item/currency preservation, and fresh-job anchor reset. Actual Android visual acceptance is still required.
