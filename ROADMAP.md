@@ -81,3 +81,10 @@ All positions and recommendations are defined in pass-rewards.mjs and claim reco
 - [x] S22-048: Record secure manual-import/GitHub-upload routine in docs/GAME_DATA_AND_SYNC.md, including last-snapshot caveats, extra JSON sections, and public repo privacy.
 - [ ] S22-049: User Android acceptance: inspect updated Helper Hut routines without GitHub Load, verify one fresh game export import, record manual inventory/claims, and test GitHub Save with a user-generated restricted fine-grained token after local backup.
 - [ ] S22-050: Optional public-player API refresh via protected backend and server-side developer key; must never assume balances, helper availability, village timers, or season claims from the public API.
+
+## 2026-10-19 targeted bug fix — progress bars survive JSON re-import
+- [x] S22-051 (candidate) — Preserve per-profile first-observed upgrade timestamp when importing newer game JSON. Match same category, entity ID, and level, prefer closest finish; use updated remaining time without resetting elapsed-fill start. Duplicate upgrades match once each; replacement upgrades start a fresh anchor. No manual balances or event data changed.
+- [x] S22-052 (candidate) — Add unit regression tests for repeat imports, duplicate buildings, completed/replaced upgrades, and elapsed-fill calculations. Make existing browser reward tests accept additional user-edited reward entries rather than assuming exactly 49 total.
+- [ ] S22-053 — Confirm new GitHub Actions checks and Pages publication; physically test on Android using docs/GUIDED_TESTING.md, retaining older known-good source. Do not treat CI success as Android verification.
+
+**Limitation:** Progress bars show elapsed time since first observation in planner, not the fraction of the entire Clash upgrade; source export omits real start and original duration. The per-profile `upgradeTracking` metadata is part of local backups and explicit GitHub Save/Load. Manual currency, Magic Items, Gold Pass claims, and roadmap remain independent. Recommended next model GPT-6 Medium for routine Android/UI checks, High for inconsistent multi-device state.
