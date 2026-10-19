@@ -14,7 +14,7 @@ const ex=()=>({tag:'#TEST',timestamp:1792441915,helpers:[{data:93000000,lvl:7,he
  heroes2:[{data:28000003,lvl:15},{data:28000005,lvl:15}],traps2:[],
  units2:[{data:4000031,lvl:13},{data:4000070,lvl:15}],
  pets:[{data:73000002,lvl:2,timer:68802},{data:73000000,lvl:3},{data:73000001,lvl:1}],
- equipment:[{data:90000004,lvl:8}],boosts:{}});
+ equipment:[{data:90000004,lvl:8},{data:90000001,lvl:5}],boosts:{}});
 const p=()=>({export:ex(),resources:{gold:19000000,elixir:17504427,dark:408530,builderGold:3055184,
  builderElixir:1352108,shiny:940,glowy:222,starry:11},roadmap:[
  {title:'Spell Factory 6 → 7',cost:4500000,costType:'elixir',status:'active'},
