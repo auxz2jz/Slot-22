@@ -17,3 +17,14 @@
 .task .item-identity{align-items:flex-start}
 .credit{font-size:11px;color:#8fa3c0;line-height:1.7}
 @media(max-width:760px){.art-badge.compact{width:38px;height:38px;flex-basis:38px}.task .item-identity{gap:7px}}
+
+
+/* Independent Clash account selector and readable timer category labels. */
+.profile-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:15px 0 3px}
+.profile-toolbar label{font-size:12px;color:#aabbd2;font-weight:800}
+.profile-toolbar select{background:#1e2d46;color:#f3f6ff;border:1px solid #456080;border-radius:9px;padding:10px;max-width:340px;min-width:170px;flex:0 1 240px}
+.timeline .item-identity>div{display:flex;flex-direction:column;gap:5px}
+.timeline .item-identity strong{display:block;line-height:1.35}
+.timeline .item-identity small{display:block;line-height:1.35;font-size:12px;color:#a3b5ce}
+.resource-grid input[data-money],.item-field input[data-item]{font-variant-numeric:tabular-nums;letter-spacing:.3px}
+@media(max-width:760px){.profile-toolbar{padding:11px 0 2px;gap:8px}.profile-toolbar .smallmuted{flex-basis:100%}.profile-toolbar select{flex:1 1 160px;min-width:120px}.profile-toolbar .btn{padding:9px 10px;font-size:11px}}
