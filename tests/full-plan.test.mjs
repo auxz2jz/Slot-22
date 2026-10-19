@@ -38,7 +38,7 @@ test('complete plan sees occupied builders, Hero Hall idle, one Home Lab and ava
  assert.equal(lane(p,'homeLab').next[0].title,'Freeze Spell 5 → 6 (after current)');
  assert.ok(lane(p,'homeLab').alternatives.spells.some(q=>q.title.includes('Invisibility Spell')));
  assert.ok(lane(p,'homeLab').alternatives.troops.some(q=>q.title.includes('Healer')));
- assert.equal(lane(p,'starLab').status,'blocked');
+ assert.equal(lane(p,'starLab').status,'idle');
  assert.equal(lane(p,'pets').status,'idle');
  assert.equal(lane(p,'pets').next[0].title,'Electro Owl 2 → 3');
  assert.equal(lane(p,'equipment').next[0].title,'Eternal Tome 8 → 9');
@@ -62,9 +62,10 @@ test('after Pet House unlock Unicorn gets highest pet priority if confirmed in g
  const p=fullVillagePlan(profile(x));
  assert.equal(lane(p,'pets').next[0].title,'Unicorn 1 → 2');
 });
-test('does not claim Star Lab troop research while Star Lab building is upgrading',()=>{
+test('Star Lab can research during building upgrade but cannot access Hog before laboratory level 9',()=>{
  const x=ex(),p=fullVillagePlan(profile(x));
- assert.equal(lane(p,'starLab').status,'blocked');
+ assert.equal(lane(p,'starLab').status,'idle');
+ assert.equal(lane(p,'starLab').next[0].title,'Raged Barbarian 13 → 14');
  assert.ok(!lane(p,'starLab').next.some(t=>t.title.includes('Hog Glider 15 → 16')));
  const lab=x.buildings2.find(r=>r.data===1000046);delete lab.timer;lab.lvl=8;
  const next=fullVillagePlan(profile(x));
