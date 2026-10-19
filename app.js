@@ -8,6 +8,7 @@ import {ensureHelperRoadmap} from './helper-plan.mjs';
 import {helperActionRecommendations} from './helper-advice.mjs';
 import {renderFullVillagePlan} from './full-plan-view.mjs';
 import {fullVillagePlan} from './full-plan.mjs';
+import {renderCommandCenter,renderCommandDetail} from './command-center.mjs';
 import {helperSummary} from './snapshot-insights.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
@@ -17,6 +18,7 @@ const enc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 let bundle=normalizeBundle(seedState()),state=bundle.profiles[bundle.activeProfileId],view='overview',filter='all',invGroup='buildings',ghSha=null;
 let inventoryMode='gallery',activeDialog=null,passFilter='unclaimed',editingRewardId=null;
 let diagnostics=[],manualTests={},queuedBuilderPrompt=null,builderDialogProfile=null,builderDialogSnapshot=null;
+let commandSelection=null;
 const testSteps=[
  'Overview lists current resource values.',
  'Changing a Gold balance survives a page reload.',
@@ -85,6 +87,7 @@ async function initialize(){
   setInterval(updateVisualTimers,10000);
   el('item-dialog').addEventListener('click',e=>{if(e.target===el('item-dialog'))el('item-dialog').close();});
   el('builder-dialog').addEventListener('click',e=>{if(e.target===el('builder-dialog'))el('builder-dialog').close();});
+  el('command-dialog').addEventListener('click',e=>{if(e.target===el('command-dialog'))el('command-dialog').close();});
   el('builder-dialog').addEventListener('close',()=>{
     if(state.playerTag===builderDialogProfile && state.export?.timestamp===builderDialogSnapshot){
       state.builderPromptDismissedAt=builderDialogSnapshot;
@@ -276,22 +279,22 @@ function showQueuedBuilderPrompt(){
  if(!dialog.open)dialog.showModal();
 }
 function renderOverview(){
- const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
- const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
- return coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+renderFullVillagePlan(state)+renderBuilderNudge(state)+renderResearchNudges(state)+renderFacilityAudit(state)+
+ return renderCommandCenter(state)+
+ '<details class="command-legacy" id="advanced-panels"><summary>Advanced panels · timelines, full lists and resource editing</summary>'+
+ '<div class="command-legacy-content">'+coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+
+ renderFullVillagePlan(state)+renderBuilderNudge(state)+renderResearchNudges(state)+renderFacilityAudit(state)+
  '<div class="command-grid"><div>'+builderBoard(state)+'</div><div class="command-side">'+
- '<section class="card"><div class="panel-heading"><div><span class="kicker">NEXT MOVES</span><h2>Upgrade quest path</h2></div><button class="btn secondary small" data-action="goto-roadmap">Full roadmap ›</button></div>'+
- '<p class="subtext">Tap a quest to inspect its cost and change its status. These are suggested steps, not automatic game actions.</p>'+
- questTrail(state.roadmap)+'</section>'+
- '<section class="card"><div class="panel-heading"><div><span class="kicker">RESOURCE CONTROL</span><h2>Adjust balances</h2></div></div>'+
- '<p class="subtext">These amounts are entered manually. Gold and Elixir in the Loot Cart are tracked separately.</p>'+resourcePanel()+'</section></div></div>'+
- '<div class="grid two space"><section class="card"><h2>Account status</h2><div class="grid two">'+
- card('Home base','TH '+th,'','Imported snapshot')+card('Builder base','BH '+bh,'','Imported snapshot')+'</div>'+
- '<p class="smallmuted">Player: '+enc(state.playerTag)+'<br>Latest import: '+enc(state.importedAt?new Date(state.importedAt).toLocaleString():'Not imported yet')+'</p>'+
- '<div class="row wrap"><button class="btn" data-action="paste-shortcut">Import fresh JSON</button>'+
- '<button class="btn secondary" data-action="goto-roadmap">Plan next upgrades</button></div></section>'+
- '<section class="card"><h2>How progress works</h2><p class="note">Upgrade timer bars track from the earliest observed snapshot for a continuing job, not necessarily the entire build. Remaining time and estimated completion use the latest dated game JSON. Known helper assignments and countdowns also come from each imported JSON.</p>'+
- '<p class="subtext space">Storage gauges infer maximum capacity from your imported buildings. In-game balances still require manual entry, and no game resources are spent automatically.</p></section></div>';
+ '<section class="card"><h2>Full roadmap</h2>'+questTrail(state.roadmap)+
+ '<button class="btn secondary" data-action="goto-roadmap">Open roadmap</button></section>'+
+ '<section class="card" id="advanced-resources"><h2>Edit saved balances</h2>'+resourcePanel()+'</section></div></div>'+
+ '</div></details>';
+}
+function openCommandDetail(selection){
+ commandSelection=selection;
+ const d=el('command-dialog');
+ el('command-dialog-body').innerHTML=renderCommandDetail(state,selection)+
+ '<button class="btn secondary" data-action="command-close">Close</button>';
+ if(!d.open)d.showModal();
 }
 function recommendations(){
  const targets=state.roadmap.filter(x=>x.status==='planned').slice(0,5);
