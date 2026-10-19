@@ -77,20 +77,26 @@ export function rankCandidates(profile,candidates){
   const hero=rows(snap,'buildings').find(x=>x.data===1000071)?.lvl;
   const th=rows(snap,'buildings').find(x=>x.data===1000001)?.lvl;
   const bh=rows(snap,'buildings2').find(x=>x.data===1000034)?.lvl;
+  const petLevel=rows(snap,'buildings').find(x=>x.data===1000068)?.lvl;
   const requirements=[['TH',ref?.th,th],['BH',ref?.bh,bh],['Lab',ref?.lab,lab],
-    ['Star Lab',ref?.sl,star],['Hero Hall',ref?.hh,hero]];
+    ['Star Lab',ref?.sl,star],['Hero Hall',ref?.hh,hero],['Pet House',ref?.ph,petLevel]];
   const unmet=requirements.find(([name,needed,have])=>Number.isFinite(needed)&&needed>0&&Number.isFinite(have)&&have<needed);
   if(unmet)return null;
   const quote=group&&t.targetLevel?quoteInfo(profile,group,t.id,t.targetLevel):null;
   const boost=group?discountFor(profile,group):null;
   const factor=quote?.beforeBoost&&Number.isFinite(boost)?(100-boost)/100:1;
   const cost=Number.isFinite(quote?.price)?Math.ceil(quote.price*factor):null;
-  const funded=Number.isFinite(cost)&&Number.isFinite(r[quote?.currency])?r[quote.currency]>=cost:null;
+  const ore=ref?.ore?.some(x=>x>0)?ref.ore:null;
+  const oreKnown=ore&&['shiny','glowy','starry'].every(key=>Number.isFinite(r[key]));
+  const oreAffordable=oreKnown?ore.every((n,i)=>r[['shiny','glowy','starry'][i]]>=n):null;
+  const funded=ore?oreAffordable:
+    Number.isFinite(cost)&&Number.isFinite(r[quote?.currency])?r[quote.currency]>=cost:null;
   const hours=quote?.hours?quote.hours*factor:null;
-  const priority=(t.weight??(80-i*2))+(funded===true?5:funded===false?-10:0)+
+  const priority=(t.weight??(80-i*2))+(funded===true?6:funded===false?-18:0)+
     (hours?Math.max(-3,3-Math.log2(1+hours)):0);
   return {...t,priority,recordedAffordable:funded,
-   eligibilityNote:ref?'Reference level requirements checked; game confirmation required':'Prerequisites not verified in catalog'};
+   eligibilityNote:funded===false?'Saved resources appear insufficient; check actual game balance':
+    ref?'Reference level requirements checked; game confirmation required':'Prerequisites not verified in catalog'};
  }).filter(Boolean).sort((a,b)=>b.priority-a.priority);
 }
 const snapshotFinish=(x,r)=>{
