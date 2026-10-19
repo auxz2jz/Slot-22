@@ -241,7 +241,8 @@ function showQueuedBuilderPrompt(){
  const tag=queuedBuilderPrompt;queuedBuilderPrompt=null;
  if(tag!==state.playerTag)return;
  const rec=nextHomeBuilderRecommendations(state);
- const hasBuilder=rec.availability?.availableAtLeast>0&&rec.recommendations.length>0;
+ const highPriority=fullVillagePlan(state)?.queues.find(q=>q.id==='homeBuilders')?.next||[];
+ const hasBuilder=rec.availability?.availableAtLeast>0&&highPriority.length>0;
  const research=availableResearchQueues(state).filter(q=>q.status==='idle'&&q.recommendations.length);
  const assistantActions=helperActionRecommendations(state);
  if(!hasBuilder&&!research.length&&!assistantActions.length)return;
@@ -251,7 +252,7 @@ function showQueuedBuilderPrompt(){
  const builderHtml=hasBuilder?'<section class="builder-popup-queue" data-alert-queue="home-builders">'+
   '<h3>Home Village builders · at least '+n+' free</h3>'+
   '<p class="subtext">Priority construction upgrades:</p>'+
-  '<div class="builder-choice-list">'+rec.recommendations.map(renderBuilderRecommendationCard).join('')+'</div></section>':'';
+  '<div class="builder-choice-list">'+highPriority.slice(0,4).map(renderBuilderRecommendationCard).join('')+'</div></section>':'';
  const researchHtml=research.map(q=>'<section class="builder-popup-queue" data-alert-queue="'+enc(q.key)+'">'+
   '<h3>'+enc(q.name)+' · idle in JSON</h3>'+
   '<p class="subtext">Recommended research, independent of construction builders:</p>'+
