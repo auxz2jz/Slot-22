@@ -371,7 +371,7 @@ function submitAction(e){
   e.preventDefault();
   const f=new FormData(e.target);
   try{
-   state=saveRewardDefinition(state,{id:f.get('id'),track:f.get('track'),kind:f.get('kind'),optionA:f.get('optionA'),optionB:f.get('optionB'),note:f.get('note')});
+   state=saveRewardDefinition(state,{id:f.get('rewardId'),track:f.get('track'),kind:f.get('kind'),optionA:f.get('optionA'),optionB:f.get('optionB'),note:f.get('note')});
    editingRewardId=null;saveLocal('reward-definition');render();notify('Reward saved in the selected account’s checklist. No game item was collected.');
   }catch(err){notify(err.message,'error');log('reward-definition','FAILED',err.message);}
   return;
