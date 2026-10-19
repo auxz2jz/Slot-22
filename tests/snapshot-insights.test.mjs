@@ -17,3 +17,51 @@ test('all original export sections remain visible, including helper and cosmetic
  const a=snapshotCoverage(x);assert.equal(a.find(v=>v.key==='obstacles2').quantity,5);
  assert.ok(a.some(v=>v.key==='boosts'));assert.ok(a.some(v=>v.key==='house_parts'));assert.ok(a.some(v=>v.key==='helpers'));
 });
+
+test('Builder Apprentice assignment is read from Archer Queen rather than helper row',()=>{
+ const timestamp=1792401610;
+ const x={timestamp,
+  helpers:[{data:93000000,lvl:7,helper_cooldown:82787},{data:93000001,lvl:8}],
+  heroes:[{data:28000001,lvl:47,timer:48152,helper_timer:3587,helper_recurrent:true}],
+  buildings:[{data:1000014,lvl:9,timer:50000}]
+ };
+ const [builder,lab]=helperSummary(x);
+ assert.equal(builder.assignmentCount,1);
+ assert.equal(builder.assignment?.name,'Archer Queen');
+ assert.equal(builder.assignment?.category,'heroes');
+ assert.equal(builder.assignment?.level,47);
+ assert.equal(builder.assignment?.workSeconds,3587);
+ assert.equal(builder.assignment?.workEndsAt,(timestamp+3587)*1000);
+ assert.equal(builder.assignment?.recurrent,true);
+ assert.equal(builder.cooldownSeconds,82787);
+ assert.equal(builder.snapshotEnd,(timestamp+82787)*1000);
+ assert.equal(lab.assignment,null);
+ assert.equal(lab.assignmentCount,0);
+});
+test('Lab Assistant can be linked to research, but recurring assignment alone is not a live working session',()=>{
+ const x={timestamp:2000,helpers:[{data:93000000,lvl:7},{data:93000001,lvl:8}],
+  heroes:[{data:28000001,lvl:47,helper_recurrent:true}],
+  units:[{data:4000000,lvl:12,helper_timer:0,helper_recurrent:false}]
+ };
+ const [builder,lab]=helperSummary(x);
+ assert.equal(builder.assignment?.name,'Archer Queen');
+ assert.equal(builder.assignment?.workSeconds,null);
+ assert.equal(builder.assignment?.recurrent,true);
+ assert.equal(lab.assignment?.category,'units');
+ assert.equal(lab.assignment?.workEndsAt,2000000);
+ assert.equal(lab.assignment?.recurrent,false);
+});
+test('ambiguous helper targets and unrelated timers are never assigned to a guessed helper',()=>{
+ const x={timestamp:100,helpers:[{data:93000000,lvl:7},{data:93000001,lvl:8},{data:93000002,lvl:3}],
+ heroes:[{data:28000001,lvl:45,helper_timer:1200}],
+ buildings:[{data:1000000,lvl:10,helper_timer:600}],
+ units2:[{data:4000000,lvl:3,helper_timer:1000}],
+ units:[{data:4000001,lvl:8,timer:500}]
+ };
+ const [builder,lab,third]=helperSummary(x);
+ assert.equal(builder.assignment,null);
+ assert.equal(builder.assignmentCount,2);
+ assert.equal(lab.assignment,null);
+ assert.equal(lab.assignmentCount,0);
+ assert.equal(third.assignment,null);
+});
