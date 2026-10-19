@@ -23,3 +23,16 @@ Checks are user-confirmed, not passed automatically. On failure preserve report,
 6. Download a full backup; restore it and verify both accounts survive. Old single-account backup should migrate into one v2 profile.
 7. Optional public GitHub sync: save and load the **entire** multi-profile bundle, after reviewing privacy warning and backing up locally. Verify remote file includes both accounts and passwords/tokens do not appear.
 Only the automation listed in browser smoke run 39190994116 is verified; actual phone interactions still require the user's confirmation.
+
+## Version 0.3.0 – Smartphone acceptance
+
+1. On Overview, see Hall banner, vault gauges and queue tiles rather than a loading screen.
+2. Enter an actual Gold storage capacity; its gauge should show correctly rounded fullness and persist after refresh. Unknown capacity must not show a guessed percent.
+3. Tap a queue tile; confirm correct building name and snapshot timer. Progress means since last imported export, not total construction completion.
+4. Open Upgrade Roadmap; tap a step and inspect status, cost estimate, resource preview and notes.
+5. Mark a task active; its status should change but balances must not be deducted.
+6. Only for a real in-game upgrade already started, test Record upgrade & spend; explicitly confirm and verify exact one-time tracker-only subtraction, no Gems.
+7. In Village Inventory, switch gallery/table views and tap an item in each. Test portrait Android.
+8. Switch between profiles; capacities, balances and task statuses must stay separated.
+9. Optionally use backup and explicit public GitHub Save/Load; review before publishing any account data.
+10. Export diagnostics and report the specific test step if a screen fails. CI success is not user acceptance.
