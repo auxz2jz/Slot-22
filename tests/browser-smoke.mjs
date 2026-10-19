@@ -42,12 +42,12 @@ try{
  console.log('UPGRADE ETA / PROGRESS UI:',estimateResult);
 
  const audited=await cmd('Runtime.evaluate',{expression:`(async()=>{
-  const f=document.querySelector('.factory-audit'),b=document.querySelector('.builder-nudge:not(.research-nudge)');
+  const f=document.querySelector('.factory-audit'),b=document.querySelector('.builder-nudge:not(.research-nudge)'),h=document.querySelector('.helper-next-actions');
   const {availableResearchQueues}=await import('./experience.mjs');
   const saved=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
   const profile=saved.profiles[saved.activeProfileId];
   const q=availableResearchQueues(profile);
-  return {factory:!!f,darkSpell:f?.textContent.includes('Dark Spell Factory'),workshop:f?.textContent.includes('Workshop'),
+  return {factory:!!f,helpers:!!h,helperCount:h?.querySelectorAll('[data-helper-advice]').length===4,darkSpell:f?.textContent.includes('Dark Spell Factory'),workshop:f?.textContent.includes('Workshop'),
     starLab:f?.textContent.includes('Star Laboratory'),petHouse:f?.textContent.includes('Pet House'),
     pet:q.some(z=>z.key==='petHouse'&&z.status==='idle'&&z.recommendations[0]?.title==='Electro Owl 2 → 3'),
     star:q.some(z=>z.key==='starLaboratory'&&z.status==='idle'&&z.recommendations[0]?.title==='Raged Barbarian 13 → 14'),
@@ -56,7 +56,7 @@ try{
  })()`,awaitPromise:true,returnByValue:true});
  const auditedResult=audited.result?.result?.value||{};
  console.log('FACTORY AUDIT AND IDLE PET/STAR RESEARCH:',auditedResult);
- if(!['factory','darkSpell','workshop','starLab','petHouse','pet','star','notHog','noFreeHomeBuilder','modal'].every(k=>auditedResult[k]===true))process.exitCode=1;
+ if(!['factory','helpers','helperCount','darkSpell','workshop','starLab','petHouse','pet','star','notHog','noFreeHomeBuilder','modal'].every(k=>auditedResult[k]===true))process.exitCode=1;
  const builderPopup=await cmd('Runtime.evaluate',{expression:`(async()=>{
   const bundle=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
   const player=bundle.profiles[bundle.activeProfileId],newer=structuredClone(player.export);
@@ -73,6 +73,7 @@ try{
   const starLab=dialog.textContent.includes('Raged Barbarian 13 → 14');
   const pet=dialog.textContent.includes('Electro Owl 2 → 3');
   const notHog=!dialog.textContent.includes('Hog Glider 15 → 16');
+  const helperAdvice=!!dialog.querySelector('[data-alert-queue="helpers"]')&&dialog.textContent.includes('Lab Assistant')&&dialog.textContent.includes('Alchemist')&&dialog.textContent.includes('Prospector');
   const separateQueues=['home-builders','laboratory','starLaboratory','petHouse'].every(k=>
     !!dialog.querySelector('[data-alert-queue="'+k+'"]'));
   const petButton=!!dialog.querySelector('[data-action="view-pets"]');
@@ -83,13 +84,13 @@ try{
   const acknowledged=saved.builderPromptDismissedAt===newer.timestamp;
   input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));
   await new Promise(r=>setTimeout(r,180));
-  return {shown,homeLab,starLab,pet,notHog,separateQueues,petButton,
+  return {shown,homeLab,starLab,pet,notHog,separateQueues,petButton,helperAdvice,
     acknowledged,notRepeated:!dialog.open,untouchedResources:saved.resources.gold===player.resources.gold,
     freshSnapshot:saved.export.timestamp===newer.timestamp};
  })()`,awaitPromise:true,returnByValue:true});
  const popupResult=builderPopup.result?.result?.value||{};
  console.log('FOUR-QUEUE POPUP AFTER FRESH JSON:',popupResult);
- if(!['shown','homeLab','starLab','pet','notHog','separateQueues','petButton','acknowledged','notRepeated','untouchedResources','freshSnapshot'].every(k=>popupResult[k]===true))process.exitCode=1;
+ if(!['shown','homeLab','starLab','pet','notHog','separateQueues','petButton','helperAdvice','acknowledged','notRepeated','untouchedResources','freshSnapshot'].every(k=>popupResult[k]===true))process.exitCode=1;
  const researchOnly=await cmd('Runtime.evaluate',{expression:`(async()=>{
   const saved=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
   const p=saved.profiles[saved.activeProfileId],newer=structuredClone(p.export);
