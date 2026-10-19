@@ -2,11 +2,11 @@
 <html lang="en"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#111b32">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://api.github.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://api.github.com; img-src 'self' data: https://assets.clashk.ing; object-src 'none'; base-uri 'self'; form-action 'self';">
   <title>Clash Village Planner — Slot-22</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=2">
 </head>
 <body>
   <div class="shell">
@@ -28,10 +28,10 @@
       </header>
       <div id="notice" role="status" aria-live="polite"></div>
       <main id="main" tabindex="-1"><div class="card">Loading village tracker…</div></main>
-      <footer class="foot">Independent fan-made planner · Not affiliated with Supercell · No automatic game account access</footer>
+      <footer class="foot"><p>This material is unofficial and is not endorsed by Supercell. <a href="https://supercell.com/en/fan-content-policy/" target="_blank" rel="noopener noreferrer">Supercell Fan Content Policy</a>.</p><p class="credit">Game images © Supercell · Images provided by <a href="https://github.com/ClashKingInc/ClashKingAssets" target="_blank" rel="noopener noreferrer">ClashKing Assets</a>. Independent, free guide; no connection to game account.</p></footer>
     </div>
   </div>
   <input id="game-file" type="file" accept=".json,application/json" hidden>
   <input id="backup-file" type="file" accept=".json,application/json" hidden>
-  <script type="module" src="./app.js"></script>
+  <script type="module" src="./app.js?v=2"></script>
 </body></html>
