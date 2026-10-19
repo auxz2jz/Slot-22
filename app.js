@@ -1,7 +1,7 @@
 import {names,categories,moneyKeys,itemGroups,labelFor} from './catalog.mjs';
 import {artworkUrl,artForResource} from './artwork.mjs';
 import {coverFor,gaugeDeck,builderBoard,questTrail,gallery,detailContent} from './dashboard.mjs';
-import {planPreview,snapshotCountdown,remainingTime,nextHomeBuilderRecommendations} from './experience.mjs';
+import {planPreview,snapshotCountdown,remainingTime,nextHomeBuilderRecommendations,availableResearchQueues} from './experience.mjs';
 import {renderPassRewards,updatePassState,saveRewardDefinition,removeCustomReward} from './pass-rewards.mjs';
 import {renderInsights,renderHelperStrip,helperCountdown} from './insights-view.mjs';
 import {ensureHelperRoadmap} from './helper-plan.mjs';
@@ -112,13 +112,14 @@ function applyGameExport(raw){
  const improved=ensureHelperRoadmap(state);
  if(improved.added){state=improved.profile;bundle.profiles[bundle.activeProfileId]=state;}
  const advice=nextHomeBuilderRecommendations(state);
+ const research=availableResearchQueues(state).filter(q=>q.status==='idle'&&q.recommendations.length);
+ const hasBuilder=advice.availability?.availableAtLeast>0&&advice.recommendations.length>0;
  const shouldPrompt=Number.isFinite(x.timestamp)&&x.timestamp>oldSnapshot&&
-   advice.availability?.availableAtLeast>0&&advice.recommendations.length>0&&
-   state.builderPromptLastShownAt!==x.timestamp;
+   (hasBuilder||research.length>0)&&state.builderPromptLastShownAt!==x.timestamp;
  if(shouldPrompt){
    state.builderPromptLastShownAt=x.timestamp;
    queuedBuilderPrompt=state.playerTag;
-   log('builder-free-detected','OK','Free builders: '+advice.availability.availableAtLeast+'; next: '+advice.recommendations[0].taskId);
+   log('open-upgrade-slots','OK','Home builder: '+(hasBuilder?'yes':'no')+'; idle research: '+research.map(q=>q.key).join(','));
  }
  const snapshotTime=Number.isFinite(x.timestamp)?new Date(x.timestamp*1000).toLocaleString():'unknown';
  notify('Imported '+x.tag+' (game snapshot: '+snapshotTime+'). Countdown and estimated finish times refreshed. Resources, Magic Items and roadmap preserved.');
@@ -196,28 +197,49 @@ function renderBuilderNudge(profile){
  '<p>No verified next upgrade in your current roadmap. Review the roadmap and in-game availability.</p>')+
  '<p class="smallmuted">Estimate counts your Builder Huts and active Home building, hero and trap timers. The JSON does not report actual builder assignments, and current resources are manually recorded.</p></section>';
 }
+function renderResearchNudges(profile){
+ const idle=availableResearchQueues(profile).filter(q=>q.status==='idle');
+ if(!idle.length||profile.builderPromptDismissedAt===profile.export?.timestamp)return '';
+ return '<section class="card builder-nudge research-nudge" aria-label="Research queue recommendations">'+
+ '<span class="kicker">RESEARCH AVAILABLE · FROM LAST GAME JSON</span>'+
+ '<h2>'+idle.length+' research queue'+(idle.length===1?'':'s')+' idle at snapshot</h2>'+
+ idle.map(q=>'<div class="research-nudge-row"><strong>'+enc(q.name)+'</strong> · '+
+  (q.recommendations.length?'<span>Recommended: '+enc(q.recommendations[0].title)+'</span>'+
+   '<button class="btn secondary small" data-action="builder-view-task" data-task-id="'+encodeURIComponent(q.recommendations[0].taskId)+'">Review</button>':
+   '<span>No verified next upgrade in the saved roadmap</span>')+'</div>').join('')+
+ '<p class="smallmuted">Laboratory, Star Laboratory, and Pet House research run independently from construction builders. Idle status is based on the dated game JSON, not live syncing.</p></section>';
+}
 function showQueuedBuilderPrompt(){
  const tag=queuedBuilderPrompt;queuedBuilderPrompt=null;
  if(tag!==state.playerTag)return;
  const rec=nextHomeBuilderRecommendations(state);
- if(!rec.availability||rec.availability.availableAtLeast<1||!rec.recommendations.length)return;
+ const hasBuilder=rec.availability?.availableAtLeast>0&&rec.recommendations.length>0;
+ const research=availableResearchQueues(state).filter(q=>q.status==='idle'&&q.recommendations.length);
+ if(!hasBuilder&&!research.length)return;
  const dialog=el('builder-dialog');
  builderDialogProfile=state.playerTag;builderDialogSnapshot=state.export.timestamp;
- const n=rec.availability.availableAtLeast;
- el('builder-dialog-body').innerHTML='<div class="kicker">NEW GAME JSON · BUILDER AVAILABLE</div>'+
- '<h2 id="builder-dialog-title">Your next upgrade is ready to review</h2>'+
- '<p>At least '+n+' Home Village builder'+(n===1?' was':'s were')+' available in the '+enc(new Date(rec.availability.snapshotAt).toLocaleString())+' snapshot.</p>'+
- '<p class="subtext">Priority recommendations from your roadmap:</p>'+
- '<div class="builder-choice-list">'+rec.recommendations.map(renderBuilderRecommendationCard).join('')+'</div>'+
- '<p class="smallmuted">Suggestions only. Confirm the builder is still free and verify actual costs in Clash. Nothing starts or deducts resources automatically.</p>'+
- '<button class="btn secondary" data-action="builder-dismiss">Not now</button>';
- log('builder-recommendation','OK','Displayed '+rec.recommendations.map(t=>t.taskId).join(','));
+ const n=rec.availability?.availableAtLeast||0;
+ const builderHtml=hasBuilder?'<section class="builder-popup-queue" data-alert-queue="home-builders">'+
+  '<h3>Home Village builders · at least '+n+' free</h3>'+
+  '<p class="subtext">Priority construction upgrades:</p>'+
+  '<div class="builder-choice-list">'+rec.recommendations.map(renderBuilderRecommendationCard).join('')+'</div></section>':'';
+ const researchHtml=research.map(q=>'<section class="builder-popup-queue" data-alert-queue="'+enc(q.key)+'">'+
+  '<h3>'+enc(q.name)+' · idle in JSON</h3>'+
+  '<p class="subtext">Recommended research, independent of construction builders:</p>'+
+  '<div class="builder-choice-list">'+q.recommendations.map(renderBuilderRecommendationCard).join('')+'</div></section>').join('');
+ el('builder-dialog-body').innerHTML='<div class="kicker">NEW GAME JSON · UPGRADE SLOTS AVAILABLE</div>'+
+  '<h2 id="builder-dialog-title">Your next upgrades are ready to review</h2>'+
+  '<p>Based on the '+enc(new Date(state.export.timestamp*1000).toLocaleString())+' village snapshot:</p>'+
+  builderHtml+researchHtml+
+  '<p class="smallmuted">Verify that each queue is still idle, and check actual costs and balances in Clash. A Lab Assistant speeds research but does not create a second research slot. No game actions or deductions happen automatically.</p>'+
+  '<button class="btn secondary" data-action="builder-dismiss">Not now</button>';
+ log('upgrade-recommendation','OK','Displayed builder '+(hasBuilder?'yes':'no')+' research '+research.map(q=>q.key).join(','));
  if(!dialog.open)dialog.showModal();
 }
 function renderOverview(){
  const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
- return coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+renderBuilderNudge(state)+
+ return coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+renderBuilderNudge(state)+renderResearchNudges(state)+
  '<div class="command-grid"><div>'+builderBoard(state)+'</div><div class="command-side">'+
  '<section class="card"><div class="panel-heading"><div><span class="kicker">NEXT MOVES</span><h2>Upgrade quest path</h2></div><button class="btn secondary small" data-action="goto-roadmap">Full roadmap ›</button></div>'+
  '<p class="subtext">Tap a quest to inspect its cost and change its status. These are suggested steps, not automatic game actions.</p>'+
