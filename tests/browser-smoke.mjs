@@ -110,7 +110,48 @@ try{
  console.log('VISUAL WORKERS AND DRILL-DOWNS:',wp);
  if(!['village','onlyOne','assistantsEarly','jumpWorks','five','base','assistants','stations','queue','resourceImages','pictured','progress',
       'builderDetail','helperDetail','actualJob'].every(k=>wp[k]===true))process.exitCode=1;
-  const strategic=await cmd('Runtime.evaluate',{expression:`(()=>{
+  const guideAndReference=await cmd('Runtime.evaluate',{expression:`(()=>{
+  const before=localStorage.getItem('clash-slot22-state-v2');
+  document.querySelector('[data-tab="upgrades"]')?.click();
+  const panel=document.querySelector('.upgrade-library');
+  const lines=[...panel?.querySelectorAll('.ul-upgrade')||[]];
+  const populated=lines.length>=175;
+  const coverage=panel?.textContent.includes('222')||panel?.textContent.includes('game types');
+  const finder=panel?.querySelector('[data-upgrade-search]');
+  finder.value='Freeze Spell';
+  finder.dispatchEvent(new Event('input',{bubbles:true}));
+  const matches=lines.filter(r=>!r.hidden);
+  const filtered=matches.length>=1&&matches.length<lines.length&&matches.every(r=>r.textContent.includes('Freeze Spell'));
+  finder.value='';
+  finder.dispatchEvent(new Event('input',{bubbles:true}));
+  const sel=panel.querySelector('[data-upgrade-status]');
+  sel.value='ready';
+  sel.dispatchEvent(new Event('change',{bubbles:true}));
+  const ready=lines.filter(r=>!r.hidden);
+  const statusFilter=ready.length>0&&ready.length<lines.length&&ready.every(r=>r.dataset.ulStatus==='ready');
+  sel.value='';
+  sel.dispatchEvent(new Event('change',{bubbles:true}));
+  panel.querySelector('[data-command-structure="spells:26000005"]')?.click();
+  const drawer=document.getElementById('command-dialog');
+  const linked=!!drawer?.open&&drawer.textContent.includes('Freeze Spell')&&
+    drawer.textContent.includes('game-data reference');
+  drawer.querySelector('[data-action="command-close"]')?.click();
+  document.querySelector('[data-tab="guides"]')?.click();
+  const guide=document.querySelector('.strategy-guides');
+  const external=[...guide?.querySelectorAll('a[href^="https://www.clash.ninja"]')||[]];
+  const linkCount=external.length>=12;
+  const credited=!!guide&&guide.textContent.includes('Clash Ninja')&&
+    guide.textContent.includes('B.O.B')&&guide.textContent.includes('Hero Equipment');
+  const safe=localStorage.getItem('clash-slot22-state-v2')===before;
+  document.querySelector('[data-tab="overview"]')?.click();
+  return {populated,coverage,filtered,statusFilter,linked,linkCount,credited,safe,
+    back:!!document.querySelector('.visual-command')};
+ })()`,returnByValue:true});
+ const result=guideAndReference.result?.result?.value||{};
+ console.log('UPGRADE DATABASE AND GUIDE LIBRARY:',result);
+ if(!['populated','coverage','filtered','statusFilter','linked','linkCount','credited','safe','back']
+ .every(k=>result[k]===true))process.exitCode=1;
+ const strategic=await cmd('Runtime.evaluate',{expression:`(()=>{
   const root=document.querySelector('.command-center');
   const ids=['homeBuilders','builderBuilders','homeLab','starLab','pets','equipment','assistants'];
   const lanes=ids.every(id=>!!root?.querySelector('[data-command-lane="'+id+'"]'));
