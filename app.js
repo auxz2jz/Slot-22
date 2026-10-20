@@ -10,6 +10,7 @@ import {fullVillagePlan} from './full-plan.mjs';
 import {renderCommandCenter,renderCommandDetail,rankCandidates} from './command-center.mjs';
 import {renderUpgradeDirectory,filterUpgradeDirectory} from './upgrade-directory.mjs';
 import {renderStrategyGuides} from './strategy-guides.mjs';
+import {renderResourceScanner,mountResourceScanner} from './resource-scan.mjs';
 import {helperSummary} from './snapshot-insights.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
@@ -19,7 +20,7 @@ const enc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 let bundle=normalizeBundle(seedState()),state=bundle.profiles[bundle.activeProfileId],view='overview',filter='all',invGroup='buildings',ghSha=null;
 let inventoryMode='gallery',activeDialog=null,passFilter='unclaimed',editingRewardId=null;
 let diagnostics=[],manualTests={},queuedBuilderPrompt=null,builderDialogProfile=null,builderDialogSnapshot=null;
-let commandSelection=null;
+let commandSelection=null,stopResourceScanner=null;
 const testSteps=[
  'Overview lists current resource values.',
  'Changing a Gold balance survives a page reload.',
@@ -434,7 +435,7 @@ function trackUpgradeAction(action,encodedId){
  }catch(err){notify(err.message,'error');log('upgrade-action','FAILED',err.message);}
 }
 
-const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'Village inventory',items:'Magic Items & ores',pass:'Season Pass prizes',insights:'JSON insights & helpers',upgrades:'Upgrade database',guides:'Strategy guides',sync:'GitHub & backups',testing:'Testing & diagnostics'};
+const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'Village inventory',items:'Magic Items & ores',pass:'Season Pass prizes',insights:'JSON insights & helpers',upgrades:'Upgrade database',guides:'Strategy guides',scan:'Scan resources',sync:'GitHub & backups',testing:'Testing & diagnostics'};
 function render() {
  for(const b of document.querySelectorAll('[data-tab]'))b.classList.toggle('active',b.dataset.tab===view);
  el('section-title').textContent=titles[view];el('player-tag').textContent=state.playerTag;
@@ -442,7 +443,14 @@ function render() {
  const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
  el('village-subtitle').textContent='TOWN HALL '+th+' · BUILDER HALL '+bh;
- el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter,editingRewardId),insights:()=>renderInsights(state),upgrades:()=>renderUpgradeDirectory(state),guides:()=>renderStrategyGuides(state),sync:renderSync,testing:renderTesting}[view])();
+ if(stopResourceScanner){stopResourceScanner();stopResourceScanner=null;}
+ el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter,editingRewardId),insights:()=>renderInsights(state),upgrades:()=>renderUpgradeDirectory(state),guides:()=>renderStrategyGuides(state),scan:()=>renderResourceScanner(state),sync:renderSync,testing:renderTesting}[view])();
+ if(view==='scan')stopResourceScanner=mountResourceScanner(el('main').querySelector('.resource-scanner'),state,(tag,resources)=>{
+   if(state.playerTag!==tag||bundle.activeProfileId!==tag)throw Error('The active village changed. Nothing saved; reopen the scanner.');
+   for(const [key,value] of Object.entries(resources))state.resources[key]=value;
+   saveLocal('verified-screenshot-resources');
+   notify('Saved '+Object.keys(resources).length+' confirmed resource balance(s) for '+tag+'. Other village data unchanged.');
+ });
  updateVisualTimers();
 }
 function commaInput(e){
@@ -500,6 +508,7 @@ function clickAction(e){
  if(target.dataset.openRecord!==undefined){openDetail({recordIndex:Number(target.dataset.openRecord),fromQueue:true});return;}
  if(target.dataset.openInventory!==undefined){openDetail({recordIndex:Number(target.dataset.openInventory),category:invGroup});return;}
  const action=target.dataset.action;
+ if(action==='scan-resources'){view='scan';render();return;}
  if(action==='go-upgrades'){view='upgrades';render();return;}
  if(action==='go-guides'){view='guides';render();return;}
  if(action==='jump-assistants'){
