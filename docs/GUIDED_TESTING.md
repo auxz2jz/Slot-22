@@ -162,3 +162,12 @@ All automated tests and browser CI are distinct from physical user confirmation 
 4. Select other counters individually as needed. Switch to Builder Base and use its screenshot and counter names. Confirm saved balances remain unchanged throughout scanning.
 5. Verify exact displayed digits; check only intended rows; tap Save checked balances. Expected: only those balances update locally in the active profile. Conflicting checked Gems must be rejected. Never tap GitHub Load just to refresh the UI.
 6. Choose a new screenshot with same aspect ratio; box position should be recalled. Reset box to upper right should restore the default. Compare preview against selected numbers and report any touch/zoom/OCR mismatch. Automated tests cannot PASS this physical phone inspection.
+
+
+## V29 real Home HUD digit recognition (pending Samsung visual check)
+1. On the Samsung phone open the newly released v29 app (not GitHub Load). Select the intended Clash player account and **Scan resources**.
+2. Choose the full original Home Village screenshot showing all four top-right counters; tap **Auto-read the four Home counters**. Feature requires landscape game screenshot and may reject a cropped/rotated image.
+3. Inspect the four newly shown independent Gold/Elixir/Dark/Gems number-only crop previews. For the supplied 1536×716 reference, displayed image numbers are 19,000,000 / 5,943,020 / 310,000 / 4,182. Do not assume a newer screenshot has the same balances.
+4. Verify each proposed amount character by character. If one crop is wrong or blank, use existing draw-box plus an individual counter selection and optional **Bright white game digits** filter. Zero/multiple OCR candidates must stay unselected; never guess a missing number from its row order.
+5. Confirm that scanning alone has not changed resources; only check correct rows and tap **Save checked balances** if desired. Check other profile, rewards, magic items unchanged. Never GitHub Load to obtain v29.
+6. Repeat Builder Base using its separate screenshot and manual box until actual Builder HUD layout is supplied. Samsung touch/UI success and real OCR reading are MANUAL acceptance steps not established by CI.
