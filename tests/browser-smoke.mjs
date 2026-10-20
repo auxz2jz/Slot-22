@@ -353,6 +353,41 @@ try{
  const eventResult=event.result?.result?.value||{};
  console.log('CUSTOM EVENT & MAGIC ITEMS:',eventResult);
  if(!['customSaved','choiceClaimed','inventorySeparate','edited','overLimitSaved','customItem','otherUnaffected'].every(k=>eventResult[k]===true))process.exitCode=1;
+ const modularImport=await cmd('Runtime.evaluate',{expression:`(()=>{
+  const stored=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
+  const previous=stored.profiles['#QVLP9RVV'];
+  const snapshot=structuredClone(previous.export);
+  const crafted={data:1000097,types:[
+    {data:103000011,modules:[{data:102000033,lvl:1},{data:102000034,lvl:1},{data:102000035,lvl:1}]},
+    {data:103000012,modules:[{data:102000036,lvl:1},{data:102000037,lvl:1},{data:102000038,lvl:1}]},
+    {data:103000013,modules:[{data:102000039,lvl:1},{data:102000040,lvl:1},{data:102000041,lvl:1}]}
+  ]};
+  snapshot.timestamp=1792477573;
+  snapshot.buildings=[...snapshot.buildings.filter(r=>r.data!==1000068&&r.data!==1000097),
+    {data:1000068,lvl:4},crafted];
+  snapshot.heroes=snapshot.heroes.map(r=>r.data===28000002?{...r,timer:51361}:r);
+  snapshot.spells=snapshot.spells.map(r=>r.data===26000005?{...r,timer:18043,helper_recurrent:true}:r);
+  snapshot.pets=[...snapshot.pets.filter(r=>r.data!==73000003),{data:73000003,lvl:1}];
+  document.querySelector('[data-tab="sync"]').click();
+  document.getElementById('paste-export').value=JSON.stringify(snapshot);
+  document.querySelector('[data-action="import-pasted"]').click();
+  const updated=JSON.parse(localStorage.getItem('clash-slot22-state-v2'));
+  const next=updated.profiles['#QVLP9RVV'];
+  const imported=next.export.timestamp===1792477573;
+  const nested=JSON.stringify(next.export.buildings.find(r=>r.data===1000097))===JSON.stringify(crafted);
+  const unicorn=next.export.pets.some(r=>r.data===73000003&&r.lvl===1);
+  const petHouse=next.export.buildings.some(r=>r.data===1000068&&r.lvl===4);
+  const warden=next.export.heroes.some(r=>r.data===28000002&&r.timer===51361);
+  const preserved=['resources','items','roadmap','seasonalPlan'].every(k=>
+    JSON.stringify(next[k])===JSON.stringify(previous[k]));
+  const other=Object.keys(stored.profiles).filter(tag=>tag!=='#QVLP9RVV')
+    .every(tag=>JSON.stringify(stored.profiles[tag])===JSON.stringify(updated.profiles[tag]));
+  return {imported,nested,unicorn,petHouse,warden,preserved,other,selected:updated.activeProfileId};
+ })()`,returnByValue:true});
+ const modularResult=modularImport.result?.result?.value||{};
+ console.log('CRAFTED DEFENSE REAL PASTE IMPORT:',modularResult);
+ if(!['imported','nested','unicorn','petHouse','warden','preserved','other']
+  .every(k=>modularResult[k]===true)||modularResult.selected!=='#QVLP9RVV')process.exitCode=1;
  console.log('BROWSER ERRORS:',failures);
  if(!body.toLowerCase().includes('village command center')||!body.toLowerCase().includes('builder gold')||body.toLowerCase().includes('loading village tracker'))process.exitCode=1;
 }catch(e){console.error(e);process.exitCode=1;}finally{ws?.close();chrome.kill('SIGKILL');}
