@@ -178,22 +178,23 @@ export function mountResourceScanner(panel,profile,onCommit){
  const begin=async(kind)=>{
   const section=panel.querySelector('[data-scan-village="'+kind+'"]');
   if(busy||!loaded.get(kind))return;
+  const selectedImage=loaded.get(kind);
   busy=true;
   panel.querySelectorAll('[data-scan-read]').forEach(b=>b.disabled=true);
   tell(kind,'Preparing OCR. The first scan may take a minute while language data downloads…');
   try{
    const engine=await ocrEngine();
-   if(disposed)return;
+   if(disposed||loaded.get(kind)!==selectedImage)return;
    if(!worker)worker=await engine.createWorker('eng',1,{
     workerPath:WORKER_URL,langPath:LANGUAGE_URL,
     logger:e=>{if(e.status==='recognizing text')tell(kind,'Reading resource numbers: '+Math.round((e.progress||0)*100)+'%');}
    });
-   if(disposed)return;
+   if(disposed||loaded.get(kind)!==selectedImage)return;
    await worker.setParameters({tessedit_pageseg_mode:'11'});
    const canvas=section.querySelector('[data-scan-crop]');
    updateCrop(kind);
    const result=await worker.recognize(canvas);
-   if(disposed)return;
+   if(disposed||loaded.get(kind)!==selectedImage)return;
    const raw=result?.data?.text||'';
    const guess=suggestCounters(extractCounterCandidates(raw),kind);
    showProposals(section,guess,raw);
@@ -252,6 +253,7 @@ export function mountResourceScanner(panel,profile,onCommit){
   if(button.dataset.scanRead)void begin(button.dataset.scanRead);
   if(button.hasAttribute('data-scan-save'))save();
   if(button.hasAttribute('data-scan-clear')){
+   if(busy){status('Wait for OCR to finish before clearing screenshots.');return;}
    for(const v of loaded.values())URL.revokeObjectURL(v.url);
    loaded.clear();
    for(const section of panel.querySelectorAll('.scan-village')){
