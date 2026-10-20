@@ -2,6 +2,8 @@
 // Source: latest dated game JSON + optional manually entered/confirmed quotes and boosts.
 // This module never changes the village, resources, or existing roadmap.
 import {fullVillagePlan} from './full-plan.mjs';
+import {artForResource} from './artwork.mjs';
+import {renderVisualCommand,renderVisualWorkerDetail} from './visual-command.mjs';
 import {labelFor} from './catalog.mjs';
 import {REFERENCE_CATALOG} from './upgrade-reference.mjs';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -135,11 +137,13 @@ export function commandOverview(profile){
 }
 const resources=(p)=>{
  const r=p.resources||{}, list=[
- ['gold','Gold'],['elixir','Elixir'],['dark','Dark'],
+ ['gold','Gold'],['elixir','Elixir'],['dark','Dark Elixir'],['gems','Gems'],
  ['builderGold','Builder Gold'],['builderElixir','Builder Elixir'],
  ['shiny','Shiny Ore'],['glowy','Glowy Ore'],['starry','Starry Ore']
  ];
- return '<div class="command-resource-grid">'+list.map(([k,n])=>'<div><small>'+n+'</small><b>'+fmt(r[k]??0)+'</b></div>').join('')+'</div>';
+ return '<div class="command-resource-grid">'+list.map(([k,n])=>'<div class="vc-resource">'+
+  (artForResource(k)?'<img class="vc-resource-art" src="'+esc(artForResource(k))+'" alt="" loading="lazy" decoding="async">':'')+
+  '<span><small>'+n+'</small><b>'+fmt(r[k]??0)+'</b></span></div>').join('')+'</div>';
 };
 const optionPct=(current)=>
  [['','Not confirmed'],['0','0%'],['10','10%'],['15','15%'],['20','20%']].map(([v,n])=>
@@ -154,7 +158,7 @@ export function renderCommandCenter(profile){
  '<button class="btn secondary small" data-action="go-sync">Backup / GitHub</button></div></div>'+
  '<p class="smallmuted">Snapshot: '+esc(new Date(data.snapshotAt).toLocaleString())+
  '. Recommendations update when you import newer game data. Costs and balances are not live.</p>'+
- resources(profile)+
+ resources(profile)+renderVisualCommand(profile,data)+
  '<details class="command-settings"><summary>Update balances or confirm Gold Pass boosts</summary>'+
  '<p class="smallmuted">Gold Pass is '+(profile.seasonalPlan?.goldPassPurchased?'recorded as purchased':'not confirmed')+
  ', but active discount levels are not in the exported JSON. Select what your game actually shows. Discounts apply only to quotes marked BEFORE boost.</p>'+
@@ -167,13 +171,6 @@ export function renderCommandCenter(profile){
  esc(profile.boostEnd?new Date(profile.boostEnd).toLocaleString():'not recorded')+
  ' — if you confirm 50%, estimates use that single effective percentage, not an additional stacked discount. Confirm expiry in game.</p>'+
  '<button class="btn secondary small" data-action="command-edit-resources">Edit saved resource balances</button></details>'+
- '<div class="command-queue-grid">'+data.queueStates.map(q=>'<button class="command-queue" type="button" data-command-lane="'+q.id+'">'+
- '<span class="command-queue-title">'+esc(q.label)+'</span>'+
- '<span class="command-queue-status">'+esc(q.status==='idle'?'Open in last JSON':q.status==='busy'?'Working':
- q.status==='on-demand'?'Spend ore when worthwhile':q.status==='verify'?'Check helpers':'Check in game')+'</span>'+
- '<small>Now: '+esc(q.inProgress)+'</small>'+
- '<strong>Next: '+esc(q.nextTitle)+'</strong>'+
- '<span class="command-more">Open details and following upgrades →</span></button>').join('')+'</div>'+
  '<details class="command-structures"><summary>Find any building, Hero, trap or factory</summary>'+
  '<p class="smallmuted">Tap a structure to see its building upgrade and any separate research, pets, equipment or Helper Hut work it controls.</p>'+
  [['Home Village buildings','buildings'],['Home Heroes','heroes'],['Builder Base buildings','buildings2'],
@@ -223,6 +220,7 @@ function candidateList(profile,list,max=7){
 export function renderCommandDetail(profile,selection){
  const overview=commandOverview(profile);
  if(!overview)return '<h2>No snapshot yet</h2>';
+ if(selection?.startsWith('worker:'))return renderVisualWorkerDetail(profile,selection,overview);
  const e=profile.export;
  if(selection?.startsWith('structure:')){
   const [,group,idString]=selection.split(':');const id=Number(idString);
