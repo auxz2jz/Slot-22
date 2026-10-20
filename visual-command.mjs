@@ -51,7 +51,7 @@ export function visualWorkforce(profile,overview,now=Date.now()){
  const ranked=id=>overview.queueStates.find(q=>q.id===id)?.next||[];
  const homeNext=ranked('homeBuilders'),builderNext=ranked('builderBuilders');
  const createSlots=(count,jobs,next,kind)=>Array.from({length:count},(_,i)=>({
-  kind,slot:i+1,job:jobs[i]||null,next:next[i]||next[0]||null
+  kind,slot:i+1,job:jobs[i]||null,next:next[i]||null
  }));
  const helpers=helperSummary(x),advice=helperActionRecommendations(profile);
  return {snapshotAt:x.timestamp*1000,
@@ -79,8 +79,9 @@ const helperIcons={93000000:'🛠️',93000001:'🧪',93000002:'⚖️',93000003
 function assistantCard(h,now,snapshotAt){
  const hasCooldown=Number.isFinite(h.snapshotEnd);
  const activeAssignment=h.assignment?.name||null;
- const assignment=activeAssignment?(h.assignment.workEndsAt?'Assigned: ':'Repeat target: ')+activeAssignment:
-  (h.advice?.target||'Task not reported');
+ const assignment=activeAssignment?(h.assignment.workEndsAt?'Recorded target: ':'Repeat target: ')+activeAssignment:
+  'Current task not reported';
+ const suggested=h.advice?.target||'Check Helper Hut';
  const state=hasCooldown?'Cooldown at export':'Use today unconfirmed';
  const pctStart=hasCooldown?snapshotAt:null;
  return '<button class="vc-card vc-assistant" type="button" data-command-worker="helper:'+h.id+'">'+
@@ -90,7 +91,7 @@ function assistantCard(h,now,snapshotAt){
  (hasCooldown?liveBar(pctStart,h.snapshotEnd,now,'Recorded helper cooldown')+
    '<span class="vc-eta" data-helper-cooldown-end="'+h.snapshotEnd+'">'+esc(remaining(h.snapshotEnd,now))+'</span>':
    '<span class="vc-eta">Check Helper Hut for availability</span>')+
- '<span class="vc-next">Tap for next recommended use</span></button>';
+ '<span class="vc-next"><b>Next:</b> '+esc(suggested)+'</span></button>';
 }
 const laneIcons={
  homeLab:['buildings','Laboratory',12,'⚗️'],
