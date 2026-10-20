@@ -70,3 +70,17 @@ CRITICAL GAME-DATA HONESTY: Clash's exported builder huts show count, but not na
 S22-098 check: Latest saved GitHub bundle still had SHA 42f60b9a5a6e97191cc8f6ce0e87ed41ff0b4370, bundle revision 37, two profiles #QVLP9RVV and #GVPCRLJQ8, dated October 19, 2026 15:35 Pacific. Do NOT mutate or reset; phone-local saved profile may be newer. User asked for minimal text on main dashboard; preserve detail behind tap-open cards.
 
 NEXT: verify all four GitHub Actions for the FINAL v23 code/docs commit, and only then call web release verified. S22-099 physical Android visual tap-through is pending and cannot be claimed passed solely from Chrome headless tests. If user reports a problem, address one small atomic issue rather than resuming large design plans. No need for a different chat to continue Slot-22.
+
+
+## V24 SCREENSHOT FEEDBACK: Main Village header and assistant visibility
+User shared two real Samsung Android screenshots after v23 release. Screenshot 1 showed old `Advanced panels` expanded, with an attractive "Main village" hero displaying Town Hall icon, Town Hall 14, Builder Hall 9, player tag and roadmap milestones. Screenshot 2 showed the new v23 resource-first Village Command Center. User likes v23 but asked to combine the old Main Village portrait/header with the new dashboard and make four assistants easy to find.
+
+Changes implemented for v24:
+- `command-center.mjs` imports and renders the EXISTING `dashboard.mjs` `coverFor(profile)` atop the compact Command Center, preserving the visual Town Hall hero and roadmap summary without copying or rewriting counts. Header now contains a small `Assistants (4) ↓` button.
+- `app.js` removes `coverFor(state)` from the older collapsed Advanced panel so hero appears only once, and handles `jump-assistants` by scrolling and focusing `#vc-assistants`.
+- `visual-command.mjs` reorders cards: 5 Home builders → 4 assistants → 2 Builder Base slots → non-builder upgrade cards → next-up list. The assistant section has id `vc-assistants` and tabindex=-1.
+- `styles.css` adds scoped mobile-friendly compact rules for the royal hero within the Command Center, avoiding the earlier giant standalone box.
+- Tests expanded in `tests/visual-command.test.mjs` and `tests/browser-smoke.mjs` to verify only one Main Village art banner, village identity/TH/BH, and working assistant navigation. HTML and service-worker cache version bumped to 24.
+- The 4 assistants were already present in v23, formerly below Builder Base upgrades, which is why the user could not spot them on a long phone page.
+
+No edits or overwrites to player data, resources, rewards, existing upgrades, discounts, or unrelated functionality. User has not yet confirmed v24 Android appearance. Continue from v24, not v22/v23; do not rebuild and do not request another chat. Next task: show user https://auxz2jz.github.io/Slot-22/?v=24 after CI passes, ask them to evaluate the compact header and assistants shortcut.
