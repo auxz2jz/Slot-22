@@ -1,0 +1,53 @@
+name: Refresh licensed upgrade reference
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refresh-upgrade-data.yml'
+      - 'scripts/generate-upgrade-reference.mjs'
+permissions:
+  contents: write
+concurrency:
+  group: licensed-upgrade-reference
+  cancel-in-progress: false
+jobs:
+  compile-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run catalog compiler unit tests
+        run: node --test tests/generate-upgrade-reference.test.mjs
+      - name: Obtain upstream MIT-licensed JSON only
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE_DIR="$(mktemp -d)/clash-data"
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/chiefpansancolt/clash-of-clans-data.git "$SOURCE_DIR"
+          git -C "$SOURCE_DIR" sparse-checkout set data
+          SOURCE_SHA="$(git -C "$SOURCE_DIR" rev-parse HEAD)"
+          node scripts/generate-upgrade-reference.mjs "$SOURCE_DIR" extended-reference.mjs "$SOURCE_SHA"
+          echo "UPSTREAM_REFERENCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
+      - name: Validate static reference
+        run: |
+          node --check extended-reference.mjs
+          node --input-type=module -e "import {EXTENDED_REFERENCE_CATALOG as c,EXTENDED_REFERENCE_META as m} from './extended-reference.mjs'; if(Object.keys(c).length<120 || m.entryCount<120 || !c['buildings:1000008']?.levels?.length || !c['units:4000000']?.levels?.length || !c['equipment:90000004']?.levels?.length) throw Error('Reference missing required records'); console.log('Ready:',m.entryCount,'categories from',m.sourceRevision)"
+      - name: Commit only updated reference, if changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- extended-reference.mjs
+          if git diff --cached --quiet; then
+            echo "Licensed reference already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "data: refresh MIT-licensed game upgrade reference from upstream"
+          git push origin HEAD:main
