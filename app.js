@@ -480,8 +480,10 @@ function changeAction(e){
  if(t.dataset.test!==undefined){manualTests[t.dataset.test]=t.checked;localStorage.setItem(TESTS,JSON.stringify(manualTests));log('guided-test','MANUAL',t.dataset.test+' '+(t.checked?'checked':'unchecked'));}
 }
 function clickAction(e){
- const target=e.target.closest('[data-command-lane],[data-command-structure],[data-action],[data-filter],[data-category],[data-open-task],[data-open-record],[data-open-inventory],[data-inventory-mode],[data-pass-filter],[data-pass-toggle],[data-edit-reward]');
+ const target=e.target.closest('[data-command-worker],[data-command-next],[data-command-lane],[data-command-structure],[data-action],[data-filter],[data-category],[data-open-task],[data-open-record],[data-open-inventory],[data-inventory-mode],[data-pass-filter],[data-pass-toggle],[data-edit-reward]');
  if(!target)return;
+ if(target.dataset.commandWorker){openCommandDetail('worker:'+target.dataset.commandWorker);return;}
+ if(target.dataset.commandNext){openCommandDetail('lane:'+target.dataset.commandNext);return;}
  if(target.dataset.commandLane){openCommandDetail('lane:'+target.dataset.commandLane);return;}
  if(target.dataset.commandStructure){openCommandDetail('structure:'+target.dataset.commandStructure);return;}
  if(target.dataset.editReward){editingRewardId=target.dataset.editReward;view='pass';render();el('pass-reward-form')?.scrollIntoView({block:'center',behavior:'smooth'});return;}
