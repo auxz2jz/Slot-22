@@ -96,3 +96,23 @@ test('time bars only track since first observation, and an elapsed ETA does not 
  assert.match(html,/progress starts when an upgrade was first observed, NOT when construction actually began/i);
  assert.match(html,/expired ETA does not prove a builder is free/);
 });
+
+test('original village identity is restored inside new Command Center without crowding assistants',()=>{
+ const p=makeProfile();
+ p.displayName='Main village';
+ p.playerTag='#VISUAL';
+ p.roadmap=[{status:'active'},{status:'done'},{status:'planned'}];
+ const html=renderCommandCenter(p);
+ assert.equal((html.match(/class="royal-hero"/g)||[]).length,1);
+ assert.match(html,/Main village/);
+ assert.match(html,/Town Hall 14/);
+ assert.match(html,/Builder Hall 9/);
+ assert.match(html,/#VISUAL/);
+ assert.match(html,/tracked upgrades/);
+ assert.match(html,/data-action="jump-assistants"/);
+ assert.match(html,/id="vc-assistants" tabindex="-1"/);
+ const home=html.indexOf('Home builders · Heroes use builders');
+ const helpers=html.indexOf('Helper Hut · four assistants');
+ const base=html.indexOf('Builder Base construction');
+ assert.ok(home>0 && helpers>home && base>helpers,'assistants appear immediately after Home builders');
+});
