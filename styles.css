@@ -397,3 +397,50 @@ summary{cursor:pointer;font-weight:750}
  .command-center>.royal-hero .royal-stats strong{font-size:15px}
  .command-center .command-header-actions .vc-assistant-jump{order:-1}
 }
+
+/* S22-102: searchable licensed upgrade catalog and linked original guides. */
+.vc-tool-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.upgrade-library{display:grid;gap:15px}
+.upgrade-library h2,.sg-intro h2{margin:4px 0 0}
+.ul-summary{display:flex;flex-wrap:wrap;gap:7px 15px;align-items:center}
+.ul-summary span{font-size:11px;color:#c4d7eb}
+.ul-summary b{font-size:14px;color:#f9d89d;margin-right:3px}
+.ul-filters{display:grid;grid-template-columns:minmax(160px,1.8fr) minmax(120px,1fr) minmax(130px,1fr);gap:9px}
+.ul-filters label{font-size:11px;color:#b9d9f0;display:grid;gap:5px}
+.ul-filters input,.ul-filters select{min-width:0;width:100%;border:1px solid #587290;border-radius:7px;background:#10283c;padding:10px;color:#ebf4ff;font-size:13px;font-family:inherit}
+.ul-filters input:focus-visible,.ul-filters select:focus-visible{outline:2px solid #edc786;outline-offset:1px}
+.ul-cards{display:grid;gap:6px;max-height:70vh;overflow:auto;overscroll-behavior:contain;padding-right:2px}
+.ul-upgrade{display:grid;grid-template-columns:48px minmax(0,1.25fr) minmax(0,1fr) 16px;align-items:center;gap:10px;text-align:left;border:1px solid #405d78;background:#172b42;color:#e9f4ff;padding:10px;border-radius:9px;cursor:pointer;font:inherit;min-width:0}
+.ul-upgrade:hover,.ul-upgrade:focus-visible{background:#27465e;border-color:#ecc890}
+.ul-upgrade[hidden]{display:none!important}
+.ul-icon{width:45px;height:45px;object-fit:contain;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#263b52;font-size:22px}
+.ul-description{min-width:0;display:grid;gap:3px}
+.ul-description strong{font-size:13px;color:#ffe1a3;overflow-wrap:anywhere}
+.ul-description small{font-size:11px;color:#abc9e1;line-height:1.4}
+.ul-description .ul-status{color:#cee0eb}
+.ul-price{font-size:11px;line-height:1.5;text-align:right;overflow-wrap:anywhere}
+.ul-price small{display:block;color:#eecf94}
+.ul-empty{padding:22px;text-align:center;border:1px dashed #526e89;border-radius:9px;color:#b9d3e9}
+.sg-intro p{font-size:13px;line-height:1.6;color:#d2e3f0}
+.strategy-guides{display:grid;gap:14px}
+.sg-section h3{color:#f7d6a0;margin:0 0 11px}
+.sg-grid,.sg-priorities{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sg-card,.sg-priorities article{padding:13px;background:#172d42;border:1px solid #3a5877;border-radius:11px;display:flex;flex-direction:column;gap:9px}
+.sg-card h4{margin:0;font-size:14px;color:#ffdf9e}
+.sg-card p,.sg-priorities p{font-size:12px;line-height:1.55;margin:0;color:#c9dbea}
+.sg-card a,.sg-priorities a{font-size:12px;color:#b3dfff;font-weight:750;margin-top:auto;text-decoration:underline;text-underline-offset:3px}
+.sg-priorities b{font-size:13px;color:#ffe0a5}
+@media(max-width:720px){
+ .ul-filters{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ul-filters label:first-child{grid-column:1/-1}
+ .ul-cards{max-height:64dvh}
+ .sg-grid,.sg-priorities{grid-template-columns:1fr}
+}
+@media(max-width:430px){
+ .ul-upgrade{grid-template-columns:37px minmax(0,1.1fr) minmax(0,.9fr) 9px;gap:6px;padding:8px}
+ .ul-icon{width:36px;height:36px}
+ .ul-description strong{font-size:12px}
+ .ul-description small,.ul-price{font-size:10px}
+ .ul-filters{grid-template-columns:1fr}
+ .ul-filters label:first-child{grid-column:1}
+}
