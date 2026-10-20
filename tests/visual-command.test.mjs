@@ -72,7 +72,7 @@ test('home builder slot IDs are display positions; job order is by estimated com
 test('assistant cards show actual recorded cooldowns without claiming readiness or invented assignments',()=>{
  const p=makeProfile();
  const html=renderVisualCommand(p,commandOverview(p),snapshot*1000);
- assert.match(html,/Builder.s Apprentice/);
+ assert.match(html,/Builder&#39;s Apprentice/);
  assert.match(html,/Lab Assistant/);
  assert.match(html,/Alchemist/);
  assert.match(html,/Prospector/);
@@ -91,6 +91,6 @@ test('time bars only track since first observation, and an elapsed ETA does not 
  assert.ok(v.home.every(s=>s.job));
  assert.match(v.home[0].job.remaining,/ETA passed · refresh JSON/);
  const html=renderVisualCommand(p,commandOverview(p),(snapshot+250000)*1000);
- assert.match(html,/Progress starts when an upgrade was first observed, NOT when construction actually began/);
+ assert.match(html,/progress starts when an upgrade was first observed, NOT when construction actually began/i);
  assert.match(html,/expired ETA does not prove a builder is free/);
 });
