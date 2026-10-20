@@ -1,0 +1,22 @@
+name: Live screenshot OCR browser check
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/browser-ocr-live.mjs'
+      - '.github/workflows/ocr-browser-live.yml'
+jobs:
+  browser-ocr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start static server
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/clash-ocr-server.log 2>&1 &
+          sleep 2
+      - name: Exercise actual OCR CDN and WebAssembly worker in Chrome
+        run: node tests/browser-ocr-live.mjs
