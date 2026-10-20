@@ -66,6 +66,8 @@ test('home builder slot IDs are display positions; job order is by estimated com
  assert.match(detail,/actual start not supplied/);
  assert.match(detail,/Estimated completion:/);
  assert.match(detail,/Grand Warden 28 → 29/);
+ assert.match(detail,/Elixir/);
+ assert.match(detail,/h estimated/);
  assert.match(detail,/See other ranked upgrades/);
 });
 
