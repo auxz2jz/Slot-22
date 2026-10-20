@@ -8,6 +8,8 @@ import {ensureHelperRoadmap} from './helper-plan.mjs';
 import {helperActionRecommendations} from './helper-advice.mjs';
 import {fullVillagePlan} from './full-plan.mjs';
 import {renderCommandCenter,renderCommandDetail,rankCandidates} from './command-center.mjs';
+import {renderUpgradeDirectory,filterUpgradeDirectory} from './upgrade-directory.mjs';
+import {renderStrategyGuides} from './strategy-guides.mjs';
 import {helperSummary} from './snapshot-insights.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
 
@@ -432,7 +434,7 @@ function trackUpgradeAction(action,encodedId){
  }catch(err){notify(err.message,'error');log('upgrade-action','FAILED',err.message);}
 }
 
-const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'Village inventory',items:'Magic Items & ores',pass:'Season Pass prizes',insights:'JSON insights & helpers',sync:'GitHub & backups',testing:'Testing & diagnostics'};
+const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'Village inventory',items:'Magic Items & ores',pass:'Season Pass prizes',insights:'JSON insights & helpers',upgrades:'Upgrade database',guides:'Strategy guides',sync:'GitHub & backups',testing:'Testing & diagnostics'};
 function render() {
  for(const b of document.querySelectorAll('[data-tab]'))b.classList.toggle('active',b.dataset.tab===view);
  el('section-title').textContent=titles[view];el('player-tag').textContent=state.playerTag;
@@ -440,11 +442,12 @@ function render() {
  const th=state.export?.buildings?.find(b=>b.data===1000001)?.lvl||'—';
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
  el('village-subtitle').textContent='TOWN HALL '+th+' · BUILDER HALL '+bh;
- el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter,editingRewardId),insights:()=>renderInsights(state),sync:renderSync,testing:renderTesting}[view])();
+ el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter,editingRewardId),insights:()=>renderInsights(state),upgrades:()=>renderUpgradeDirectory(state),guides:()=>renderStrategyGuides(state),sync:renderSync,testing:renderTesting}[view])();
  updateVisualTimers();
 }
 function commaInput(e){
  const field=e.target;
+ if(field.matches?.('[data-upgrade-search]')){filterUpgradeDirectory(field.closest('.upgrade-library'));return;}
  if(!field.matches?.('[data-money],[data-item],[data-cap]'))return;
  const original=field.value;
  const start=field.selectionStart??original.length;
@@ -460,6 +463,7 @@ function commaInput(e){
 }
 function changeAction(e){
  const t=e.target;
+ if(t.matches?.('[data-upgrade-group],[data-upgrade-status]')){filterUpgradeDirectory(t.closest('.upgrade-library'));return;}
  if(t.dataset.passChoice){try{state=updatePassState(state,t.dataset.passChoice,'choose',t.value);saveLocal('pass-choice-selection');render();}catch(err){notify(err.message,'error');render();}return;}
  if(t.dataset.commandBoost){
   const value=t.value===''?null:Number(t.value);
@@ -496,6 +500,8 @@ function clickAction(e){
  if(target.dataset.openRecord!==undefined){openDetail({recordIndex:Number(target.dataset.openRecord),fromQueue:true});return;}
  if(target.dataset.openInventory!==undefined){openDetail({recordIndex:Number(target.dataset.openInventory),category:invGroup});return;}
  const action=target.dataset.action;
+ if(action==='go-upgrades'){view='upgrades';render();return;}
+ if(action==='go-guides'){view='guides';render();return;}
  if(action==='jump-assistants'){
   const section=el('vc-assistants');
   section?.scrollIntoView({block:'start',behavior:'smooth'});
