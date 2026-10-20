@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {seedState,validateExport,importVillage,rowsFromExport,ongoingFromExport,setTaskStatus,budget,validateState,integer} from '../core.mjs';
+import {seedState,validateExport,importVillage,importIntoBundle,rowsFromExport,ongoingFromExport,setTaskStatus,budget,validateState,integer} from '../core.mjs';
+import {readFileSync} from 'node:fs';
 
 const snapshot={tag:'#QVLP9RVV',timestamp:1000000,buildings:[{data:1000000,lvl:10,cnt:3},{data:1000068,lvl:3,timer:3600}],buildings2:[{data:1000044,lvl:7,timer:60}],heroes:[{data:28000001,lvl:47,timer:200}]};
 test('game import preserves currency and Magic Items',()=>{
@@ -98,4 +99,47 @@ test('reimporting an identical snapshot does not reset an existing first-seen an
  const current=importVillage(older,second);
  const repeated=importVillage(current,second);
  assert.deepEqual(current.upgradeTracking,repeated.upgradeTracking);
+});
+
+test('fresh October 19 game export supports level-less Crafted Defense types/modules, preserving them intact',()=>{
+  const modules={
+    data:1000097,
+    types:[
+      {data:103000011,modules:[{data:102000033,lvl:1},{data:102000034,lvl:1},{data:102000035,lvl:1}]},
+      {data:103000012,modules:[{data:102000036,lvl:1},{data:102000037,lvl:1},{data:102000038,lvl:1}]},
+      {data:103000013,modules:[{data:102000039,lvl:1},{data:102000040,lvl:1},{data:102000041,lvl:1}]}
+    ]
+  };
+  const latest={
+    ...snapshot, timestamp:1792477573,
+    buildings:[{data:1000001,lvl:14},modules,{data:1000015,lvl:2,cnt:5},{data:1000068,lvl:4}],
+    heroes:[{data:28000002,lvl:28,timer:51361}],
+    pets:[{data:73000003,lvl:1},{data:73000002,lvl:3,timer:72544}],
+    spells:[{data:26000005,lvl:4,timer:18043,helper_recurrent:true}],
+    helpers:[{data:93000000,lvl:7,helper_cooldown:7005},{data:93000001,lvl:8,helper_cooldown:7005}]
+  };
+  const validated=validateExport(latest);
+  assert.equal(validated.buildings[1],modules);
+  const saved=JSON.parse(readFileSync(new URL('../data/player-state.json',import.meta.url),'utf8'));
+  const before=structuredClone(saved);
+  const next=importIntoBundle(saved,latest,'2026-10-19T23:27:00-07:00');
+  assert.equal(next.profiles['#QVLP9RVV'].export.timestamp,1792477573);
+  assert.deepEqual(next.profiles['#QVLP9RVV'].export.buildings[1],modules);
+  assert.equal(next.profiles['#QVLP9RVV'].export.pets.find(x=>x.data===73000003).lvl,1);
+  assert.equal(next.profiles['#QVLP9RVV'].export.buildings.find(x=>x.data===1000068).lvl,4);
+  assert.equal(next.profiles['#QVLP9RVV'].export.heroes[0].timer,51361);
+  assert.deepEqual(next.profiles['#QVLP9RVV'].resources,before.profiles['#QVLP9RVV'].resources);
+  assert.deepEqual(next.profiles['#QVLP9RVV'].items,before.profiles['#QVLP9RVV'].items);
+  assert.deepEqual(next.profiles['#QVLP9RVV'].roadmap,before.profiles['#QVLP9RVV'].roadmap);
+  assert.deepEqual(next.profiles['#GVPCRLJQ8'],before.profiles['#GVPCRLJQ8']);
+  assert.deepEqual(saved,before,'test does not mutate original stored bundle');
+  assert.equal(rowsFromExport(latest,'buildings').some(r=>r.id===1000097),false);
+  assert.equal(ongoingFromExport(latest).some(r=>r.id===1000097),false);
+});
+test('only known level-less modular Crafted Defense is allowed; ordinary malformed buildings are rejected',()=>{
+  const base={...snapshot,buildings2:[]};
+  assert.throws(()=>validateExport({...base,buildings:[{data:1000008,types:[]}]}),/Invalid entity/);
+  assert.throws(()=>validateExport({...base,buildings:[{data:1000097}]}),/crafted defense/);
+  assert.throws(()=>validateExport({...base,buildings:[{data:1000097,types:[{data:103000011,modules:[{data:102000033,lvl:'wrong'}]}]}]}),/crafted defense/);
+  assert.throws(()=>validateExport({...base,buildings2:[{data:1000097,types:[{data:103000011,modules:[]}]}]}),/Invalid entity/);
 });
