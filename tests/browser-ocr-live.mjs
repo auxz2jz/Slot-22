@@ -81,5 +81,8 @@ try{
  if(!last||last?.message.startsWith('OCR failed')||!last?.recognized?.trim())
   throw Error('Live browser OCR failed: '+JSON.stringify(last));
  if(last.stored)throw Error('OCR changed resources without user confirmation.');
- console.log('LIVE OCR WARNINGS:',issues.slice(-7));
+ const expected=['19,000,000','17,504,427','408,530','4,049'];
+ if(last.selected!==4||JSON.stringify(last.numbers)!==JSON.stringify(expected))
+  throw Error('OCR did not identify each synthetic counter correctly: '+JSON.stringify(last));
+ console.log('LIVE OCR WARNINGS:',issues.slice(-4));
 }catch(err){console.error(err);process.exitCode=1}finally{ws?.close();chrome.kill('SIGKILL');}
