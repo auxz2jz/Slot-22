@@ -41,7 +41,7 @@ export function compileUpgradeRecord(raw,path=''){
  const root=bits[i+1],kind=bits[i+2],group=GROUPS[root]?.[kind];
  if(!group||!Number.isInteger(raw?.dataId)||raw.dataId<0||
   !Array.isArray(raw.levels)||raw.levels.length<1||raw.levels.length>200)return null;
- const rows=raw.levels.map(v=>{
+ const compactLevel=v=>{
   const level=num(v?.level),price=num(v.buildCost??v.upgradeCost??v.researchCost);
   if(!Number.isInteger(level)||level<1||level>200)return null;
   const resource=v.buildCostResource??v.upgradeCostResource??v.researchCostResource;
@@ -53,9 +53,14 @@ export function compileUpgradeRecord(raw,path=''){
    hh:required(v,'heroHallLevelRequired'),ph:required(v,'petHouseLevelRequired'),
    bs:required(v,'blacksmithLevelRequired'),
    ore:ore.some(n=>n!==null)?ore.map(n=>n??0):null};
- }).filter(Boolean).sort((a,b)=>a.l-b.l);
+ };
+ const rows=raw.levels.filter(v=>!v?.supercharge).map(compactLevel)
+  .filter(Boolean).sort((a,b)=>a.l-b.l);
+ const superchargeLevels=raw.levels.filter(v=>v?.supercharge).map(compactLevel)
+  .filter(Boolean).sort((a,b)=>a.l-b.l);
  if(!rows.length)return null;
  const records=new Set(rows.map(x=>x.l));if(records.size!==rows.length)return null;
+ if(new Set(superchargeLevels.map(x=>x.l)).size!==superchargeLevels.length)return null;
  const availability=(root==='home'?raw.availablePerTownHall:
    raw.availablePerBuilderHall);
  const maxCount=Array.isArray(availability)?availability.map(row=>[
@@ -64,6 +69,7 @@ export function compileUpgradeRecord(raw,path=''){
  ]).filter(pair=>Number.isInteger(pair[0])&&Number.isInteger(pair[1])):null;
  return {key:group+':'+raw.dataId,id:raw.dataId,
   name:String(raw.name||'Unknown').slice(0,120),group,levels:rows,
+  superchargeLevels:superchargeLevels.length?superchargeLevels:null,
   maxCount:maxCount?.length?maxCount:null};
 }
 async function jsonFiles(folder){
