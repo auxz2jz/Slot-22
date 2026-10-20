@@ -73,7 +73,36 @@ try{
  const commandResult=commandCenter.result?.result?.value||{};
  console.log('COMPACT COMMAND CENTER:',commandResult);
  if(!['main','seven','resource','finder','drawerBefore','correct','quote','safe','closed','discount'].every(k=>commandResult[k]===true))process.exitCode=1;
- const strategic=await cmd('Runtime.evaluate',{expression:`(()=>{
+ const workerPreview=await cmd('Runtime.evaluate',{expression:`(()=>{
+  const root=document.querySelector('.visual-command');
+  const home=[...root?.querySelectorAll('[data-command-worker^="home:"]')||[]];
+  const base=[...root?.querySelectorAll('[data-command-worker^="builder:"]')||[]];
+  const helpers=[...root?.querySelectorAll('[data-command-worker^="helper:"]')||[]];
+  const independent=[...root?.querySelectorAll('.vc-station')||[]];
+  const next=[...root?.querySelectorAll('.vc-next-item')||[]];
+  const resources=document.querySelectorAll('.vc-resource-art').length;
+  const job=home[0]?.querySelector('.vc-job')?.textContent||'';
+  const progress=!!home[0]?.querySelector('[data-timer-progress]')&&
+    !!home[0]?.querySelector('[data-timer-end]');
+  home[0]?.click();
+  const dialog=document.getElementById('command-dialog');
+  const builderDetail=!!dialog?.open&&dialog.textContent.includes('First observed')&&
+    dialog.textContent.includes('Estimated completion')&&dialog.textContent.includes('What to upgrade next');
+  dialog.querySelector('[data-action="command-close"]')?.click();
+  helpers[1]?.click();
+  const helperDetail=!!dialog?.open&&dialog.textContent.includes('Lab Assistant')&&
+    dialog.textContent.includes('Recommended next use');
+  dialog.querySelector('[data-action="command-close"]')?.click();
+  return {five:home.length===5,base:base.length===2,assistants:helpers.length===4,
+    stations:independent.length===4,queue:next.length===6,resourceImages:resources===9,
+    pictured:home.some(c=>!!c.querySelector('.vc-picture img')),progress,
+    builderDetail,helperDetail,actualJob:job.includes('Pet House')};
+ })()`,returnByValue:true});
+ const wp=workerPreview.result?.result?.value||{};
+ console.log('VISUAL WORKERS AND DRILL-DOWNS:',wp);
+ if(!['five','base','assistants','stations','queue','resourceImages','pictured','progress',
+      'builderDetail','helperDetail','actualJob'].every(k=>wp[k]===true))process.exitCode=1;
+  const strategic=await cmd('Runtime.evaluate',{expression:`(()=>{
   const root=document.querySelector('.command-center');
   const ids=['homeBuilders','builderBuilders','homeLab','starLab','pets','equipment','assistants'];
   const lanes=ids.every(id=>!!root?.querySelector('[data-command-lane="'+id+'"]'));
