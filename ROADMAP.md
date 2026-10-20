@@ -177,3 +177,14 @@ All positions and recommendations are defined in pass-rewards.mjs and claim reco
 - [x] Add tests/visual-command.test.mjs and targeted Chrome browser checks for five pictured workers, two Builder Base slots, four assistants, four non-builder stations, six next-up items, nine resource icons, worker/assistant dialog navigation and honest time labeling; responsive CSS, cache/site v23.
 - [ ] S22-099: Physical Android (Samsung) visual acceptance for https://auxz2jz.github.io/Slot-22/?v=23. Confirm pictures load and cards are tappable; import a fresh game JSON when convenient so completed jobs do not persist as unconfirmed historical timers. Do not use GitHub Load only to refresh code; phone-local state can be newer.
 **Data safety:** no changes to data/player-state.json or saved reward, resource, helper, boost, inventory, equipment and roadmap records. User's existing two profiles and phone-local edits must remain unchanged.
+
+
+## October 19 — v24 Main Village banner and visible assistants
+- [x] User verified v23 on Samsung Android with screenshots, liked the new resource-first visual Command Center but could not easily locate the four assistants, and requested the old Main Village Town Hall image, profile identity, and 9/2/40 roadmap milestone bar restored *inside* the new dashboard.
+- [x] S22-100: Reuse existing `dashboard.mjs:coverFor(profile)` as a compact card at the TOP of the new Command Center. Display actual selected profile name, Town Hall picture/level, Builder Hall level, player tag, and existing roadmap count/progress. No new village facts inferred.
+- [x] Remove the old duplicate `coverFor(state)` from the expanded Advanced panel, while preserving resource vaults, timelines, extra editing and all data.
+- [x] Move four Helper Hut assistant tiles immediately after the five Home builder tiles, ahead of Builder Base construction. Add an obvious Assistants (4) shortcut in the top controls which scrolls/focuses the assistant cards. Keep all individual assistant detail behavior.
+- [x] Responsive compact styles and unit/browser acceptance assertions verify a single village banner, correct identity/levels, correct assistant order and working shortcut.
+- [x] Release PWA and HTML assets as v24: https://auxz2jz.github.io/Slot-22/?v=24
+- [ ] S22-101: User visual/touch acceptance on Android for v24. Confirm that banner dimensions are comfortable and Assistants (4) navigation is easy to use; adjust only what user identifies as necessary.
+**Data preservation:** never change `data/player-state.json` or auto-overwrite newer phone-local state. Keep importing fresh game JSON separate from code/PWA updates.
