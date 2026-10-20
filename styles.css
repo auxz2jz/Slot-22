@@ -469,7 +469,7 @@ summary{cursor:pointer;font-weight:750}
    The box is positioned in normalized image coordinates; touch drag cannot
    accidentally scroll or select the image while drawing. */
 .scan-editor-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;border:1px solid #415f7c;border-radius:8px;background:#081627}
-.scan-crop-editor{position:relative;width:100%;min-width:440px;line-height:0;user-select:none;-webkit-user-select:none}
+.scan-crop-editor{position:relative;width:100%;min-width:0;line-height:0;user-select:none;-webkit-user-select:none}
 .scan-images .scan-crop-editor img{display:block;width:100%;height:auto;min-height:0;max-height:none;object-fit:fill;border-radius:0;pointer-events:none}
 .scan-crop-layer{position:absolute;inset:0;touch-action:none;cursor:crosshair}
 .scan-crop-box{position:absolute;box-sizing:border-box;border:3px solid #ffc669;background:rgba(252,188,65,.15);box-shadow:0 0 0 9999px rgba(2,11,28,.25);border-radius:3px;cursor:move}
