@@ -1,6 +1,15 @@
 name: Live screenshot OCR browser check
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'resource-scan.mjs'
+      - 'resource-ocr.mjs'
+      - 'resource-crop.mjs'
+      - 'index.html'
+      - 'styles.css'
+      - 'tests/browser-ocr-live.mjs'
+      - '.github/workflows/ocr-browser-live.yml'
   push:
     branches: [main]
     paths:

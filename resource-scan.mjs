@@ -2,20 +2,34 @@
 // saved in localStorage, GitHub, or sent to the planner's backend (there is none).
 // Open-source Tesseract.js (Apache 2.0) is loaded on demand via an external CDN.
 // OCR must always be reviewed and explicitly confirmed before balances change.
-import {SCAN_FIELDS,numberText,extractCounterCandidates,suggestCounters,validateResourceUpdates} from './resource-ocr.mjs';
+import {SCAN_FIELDS,numberText,extractCounterCandidates,suggestCounters,suggestOneCounter,validateResourceUpdates} from './resource-ocr.mjs';
+import {CROP_PRESETS,normalizeCrop,draggedCrop,movedCrop,sizedCrop,cropPixels} from './resource-crop.mjs';
 
 const SCRIPT_URL='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
 const WORKER_URL='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js';
 const LANGUAGE_URL='https://tessdata.projectnaptha.com/4.0.0';
 const fmt=n=>numberText(Number.isFinite(n)?n:0);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
-const AREAS={
-  hud:[.52,0,.48,.54],
-  right:[.42,0,.58,1],
-  full:[0,0,1,1]
-};
+const CROP_PREF_KEY='slot22-resource-crop-layout-v1';
+// Only a normalized rectangle and image aspect ratio are remembered. No screenshots, OCR
+// text, resource amounts, file names or image bytes are saved with this preference.
+function readCropPrefs(){
+ try{
+  const p=JSON.parse(localStorage.getItem(CROP_PREF_KEY)||'{}');
+  return p&&typeof p==='object'&&!Array.isArray(p)?p:{};
+ }catch{return {};}
+}
+function rememberCrop(kind,rect,image){
+ if(!image)return;
+ try{
+  const prefs=readCropPrefs();
+  prefs[kind]={rect:normalizeCrop(rect).map(n=>+n.toFixed(5)),ratio:+(image.naturalWidth/image.naturalHeight).toFixed(3)};
+  localStorage.setItem(CROP_PREF_KEY,JSON.stringify(prefs));
+ }catch{/* Storage unavailable: the rectangle still works for this tab. */}
+}
 const areaOptions='<option value="hud">Top-right resource counters (recommended)</option>'+
- '<option value="right">Entire right side</option><option value="full">Whole screenshot</option>';
+ '<option value="right">Entire right side</option><option value="full">Whole screenshot</option>'+
+ '<option value="custom" hidden>My drawn box</option>';
 const filterOptions='<option value="normal">Normal screenshot</option>'+
  '<option value="contrast">High contrast (retry if text is missed)</option>';
 const kinds=[['home','Home Village','Gold, Elixir, Dark Elixir and Gems'],
@@ -51,10 +65,20 @@ function sourceCard(profile,kind,title,what){
    '<input type="file" data-scan-file="'+kind+'" accept="image/png,image/jpeg,image/webp,image/*" aria-label="'+esc(title)+' screenshot"></label>'+
   '<div class="scan-settings">'+
    '<label class="field">Crop area<select data-scan-area="'+kind+'">'+areaOptions+'</select></label>'+
+   '<label class="field">Read which counter?<select data-scan-target="'+kind+'">'+
+   '<option value="stack">All counters in selected box</option>'+
+   values.map(([key,label])=>'<option value="'+key+'">Only '+esc(label)+'</option>').join('')+
+   '</select></label>'+
    '<label class="field">Text appearance<select data-scan-filter="'+kind+'">'+filterOptions+'</select></label></div>'+
-  '<div class="scan-images" hidden><div><small>Original screenshot</small>'+
-   '<img data-scan-preview="'+kind+'" alt="Your selected screenshot; processed only on this device"></div>'+
-   '<div><small>What the scanner reads</small><canvas data-scan-crop="'+kind+'" aria-label="Selected screenshot crop"></canvas></div></div>'+
+  '<div class="scan-images" hidden><div><small>Draw or move the box on the screenshot</small>'+
+   '<div class="scan-editor-scroll"><div class="scan-crop-editor" data-scan-editor="'+kind+'">'+
+   '<img data-scan-preview="'+kind+'" draggable="false" alt="Your screenshot with adjustable selection box">'+
+   '<div class="scan-crop-layer" data-scan-layer="'+kind+'" aria-label="Drag to choose a resource area">'+
+   '<div class="scan-crop-box" data-scan-selection="'+kind+'"><span class="scan-crop-handle" data-scan-handle aria-hidden="true"></span></div>'+
+   '</div></div></div>'+
+   '<p class="smallmuted scan-crop-help">Draw a box on the screenshot. Drag inside it to move; drag the bottom-right corner to resize. For just one number choose it above. A crop layout is remembered on this device.</p>'+
+   '<button type="button" class="btn secondary scan-reset" data-scan-reset-box="'+kind+'">Reset box to upper right</button></div>'+
+   '<div><small>Enlarged crop sent to OCR (not uploaded)</small><canvas data-scan-crop="'+kind+'" aria-label="Enlarged selected screenshot crop"></canvas></div></div>'+
   '<button type="button" class="btn secondary scan-read" data-scan-read="'+kind+'" disabled>Read '+esc(title)+' screenshot</button>'+
   '<p class="scan-message smallmuted" data-scan-message="'+kind+'" role="status" aria-live="polite">Select an image to begin.</p>'+
   '<details class="scan-recognized" hidden><summary>Recognized text and numbers</summary><pre data-scan-raw="'+kind+'"></pre>'+
@@ -68,7 +92,7 @@ export function renderResourceScanner(profile){
   '<section class="card scan-intro"><span class="kicker">SCREENSHOT RESOURCE SCANNER</span>'+
    '<h2>Read your Clash resource counters</h2>'+
    '<p>Take a screenshot in each village, then choose it here. The scanner reads the upper-right counters on your phone. '+
-   'It can also scan the entire right side if the new game layout moves them.</p>'+
+   'Draw a rectangle tightly around the numbers, move or resize it, or select a single resource line to scan.</p>'+
    '<p class="smallmuted">Your images are processed inside your browser, never saved in your planner or sent to GitHub. '+
    'The open-source OCR engine downloads on first use, so an internet connection is needed. '+
    'OCR can misread digits or rounded amounts. You always approve edits first.</p>'+
@@ -97,11 +121,10 @@ async function imageForFile(file){
   return {image,url};
  }catch(e){URL.revokeObjectURL(url);throw Error('Could not open screenshot. Try a normal PNG or JPEG. '+(e?.message||''));}
 }
-function croppedCanvas(canvas,image,area,filter){
- const [fx,fy,fw,fh]=AREAS[area]||AREAS.hud;
- const sx=Math.round(image.naturalWidth*fx),sy=Math.round(image.naturalHeight*fy);
- const sw=Math.max(1,Math.round(image.naturalWidth*fw)),sh=Math.max(1,Math.round(image.naturalHeight*fh));
- const scale=Math.min(2.5,2000/sw,1750/sh);
+function croppedCanvas(canvas,image,rect,filter){
+ const {sx,sy,sw,sh}=cropPixels(image.naturalWidth,image.naturalHeight,rect);
+ // Upscaling improves OCR input visibility; it cannot recreate blurry digits.
+ const scale=Math.min(4,2400/sw,1700/sh);
  canvas.width=Math.max(1,Math.round(sw*scale));canvas.height=Math.max(1,Math.round(sh*scale));
  const ctx=canvas.getContext('2d',{willReadFrequently:filter==='contrast'});
  if(!ctx)throw Error('Image processing is unavailable in this browser.');
@@ -118,9 +141,10 @@ function croppedCanvas(canvas,image,area,filter){
  }
  return canvas;
 }
-function showProposals(section,guess,raw){
+function showProposals(section,guess,raw,onlyKey=null){
  const rows=section.querySelectorAll('[data-scan-row]');
  for(const row of rows){
+  if(onlyKey&&row.dataset.scanRow!==onlyKey)continue;
   const field=row.querySelector('[data-scan-value]'),checkbox=row.querySelector('[data-scan-use]');
   const approx=row.querySelector('.scan-approx'),confirm=row.querySelector('[data-scan-approx]');
   const proposal=guess.proposed[row.dataset.scanRow];
@@ -134,7 +158,7 @@ function showProposals(section,guess,raw){
  section.querySelector('[data-scan-raw]').textContent=raw||'(OCR did not recognize any text)';
  section.querySelector('[data-scan-candidates]').textContent=guess.candidates.length?
   'Found: '+guess.candidates.map(row=>row.display+(row.label?' ['+row.label+']':'')).join(' · '):
-  'No numbers recognized. Try the Entire right side crop or High contrast.';
+  'No clear number recognized. Draw a tighter box, try High contrast, or enter it manually.';
  const warning=guess.issues.join(' ');
  const proposed=Object.keys(guess.proposed).length;
  section.querySelector('[data-scan-message]').textContent=proposed+
@@ -142,15 +166,41 @@ function showProposals(section,guess,raw){
 }
 export function mountResourceScanner(panel,profile,onCommit){
  if(!panel)throw Error('Missing screenshot scanner panel.');
- const tag=profile.playerTag,loaded=new Map();
- let worker=null,busy=false,disposed=false;
+ const tag=profile.playerTag,loaded=new Map(),regions=new Map();
+ let worker=null,busy=false,disposed=false,drag=null;
  const status=(text)=>{if(!disposed){const el=panel.querySelector('[data-scan-status]');if(el)el.textContent=text;}};
  const tell=(kind,text)=>{if(!disposed){const el=panel.querySelector('[data-scan-message="'+kind+'"]');if(el)el.textContent=text;}};
+ const paintBox=(kind)=>{
+  const box=panel.querySelector('[data-scan-selection="'+kind+'"]');
+  if(!box)return;
+  const [x,y,w,h]=regions.get(kind)||CROP_PRESETS.hud;
+  box.style.left=(x*100)+'%';box.style.top=(y*100)+'%';
+  box.style.width=(w*100)+'%';box.style.height=(h*100)+'%';
+ };
  const updateCrop=(kind)=>{
   const v=loaded.get(kind);if(!v)return;
   const section=panel.querySelector('[data-scan-village="'+kind+'"]');
+  paintBox(kind);
   croppedCanvas(section.querySelector('[data-scan-crop]'),v.image,
-   section.querySelector('[data-scan-area]').value,section.querySelector('[data-scan-filter]').value);
+   regions.get(kind)||CROP_PRESETS.hud,section.querySelector('[data-scan-filter]').value);
+ };
+ const changeRegion=(kind,rect,finished=false)=>{
+  regions.set(kind,normalizeCrop(rect));
+  paintBox(kind);
+  const section=panel.querySelector('[data-scan-village="'+kind+'"]');
+  section.querySelector('[data-scan-area]').value='custom';
+  if(finished){
+   rememberCrop(kind,regions.get(kind),loaded.get(kind)?.image);
+   updateCrop(kind);
+   tell(kind,'Box updated. Choose which counter to read and tap Read screenshot. Previous results remain editable; verify every checked value.');
+  }
+ };
+ const resetRegion=(kind)=>{
+  regions.set(kind,[...CROP_PRESETS.hud]);
+  panel.querySelector('[data-scan-area="'+kind+'"]').value='hud';
+  rememberCrop(kind,regions.get(kind),loaded.get(kind)?.image);
+  updateCrop(kind);
+  tell(kind,'Selection reset to upper right. Tap Read screenshot to scan.');
  };
  const choose=async(kind,file)=>{
   const section=panel.querySelector('[data-scan-village="'+kind+'"]');
@@ -167,6 +217,16 @@ export function mountResourceScanner(panel,profile,onCommit){
    const info=await imageForFile(file);
    if(disposed){URL.revokeObjectURL(info.url);return;}
    loaded.set(kind,info);
+   const remembered=readCropPrefs()[kind],ratio=info.image.naturalWidth/info.image.naturalHeight;
+   if(remembered?.rect&&Number.isFinite(remembered.ratio)&&
+       Math.abs(Math.log(ratio/remembered.ratio))<.15){
+    regions.set(kind,normalizeCrop(remembered.rect));
+    section.querySelector('[data-scan-area]').value='custom';
+   }else{
+    const area=section.querySelector('[data-scan-area]').value;
+    regions.set(kind,[...(CROP_PRESETS[area]||CROP_PRESETS.hud)]);
+    if(area==='custom')section.querySelector('[data-scan-area]').value='hud';
+   }
    section.querySelector('[data-scan-preview]').src=info.url;
    section.querySelector('.scan-images').hidden=false;
    updateCrop(kind);
@@ -190,14 +250,17 @@ export function mountResourceScanner(panel,profile,onCommit){
     logger:e=>{if(e.status==='recognizing text')tell(kind,'Reading resource numbers: '+Math.round((e.progress||0)*100)+'%');}
    });
    if(disposed||loaded.get(kind)!==selectedImage)return;
-   await worker.setParameters({tessedit_pageseg_mode:'11'});
+   const target=section.querySelector('[data-scan-target]').value;
+   await worker.setParameters({tessedit_pageseg_mode:target==='stack'?'11':'7'});
    const canvas=section.querySelector('[data-scan-crop]');
    updateCrop(kind);
    const result=await worker.recognize(canvas);
    if(disposed||loaded.get(kind)!==selectedImage)return;
    const raw=result?.data?.text||'';
-   const guess=suggestCounters(extractCounterCandidates(raw),kind);
-   showProposals(section,guess,raw);
+   const found=extractCounterCandidates(raw);
+   const guess=target==='stack'?suggestCounters(found,kind):
+    suggestOneCounter(found,kind,target);
+   showProposals(section,guess,raw,target==='stack'?null:target);
    status('OCR is finished. Check every proposed amount before saving.');
   }catch(e){
    if(!disposed){tell(kind,'OCR failed: '+(e?.message||'Unknown error')+'. Check the internet connection, try High contrast, or enter values manually.');status('Nothing was saved.');}
@@ -229,14 +292,57 @@ export function mountResourceScanner(panel,profile,onCommit){
    status('Saved locally: '+summary+'. Your screenshots were not stored.');
   }catch(e){status('Not saved: '+(e?.message||'Unknown error'));}
  };
+ // Pointer Events cover finger and mouse; no image content is stored by the editor.
+ const pointerPoint=(layer,event)=>{
+  const b=layer.getBoundingClientRect();
+  return {x:Math.min(1,Math.max(0,(event.clientX-b.left)/Math.max(b.width,1))),
+   y:Math.min(1,Math.max(0,(event.clientY-b.top)/Math.max(b.height,1)))};
+ };
+ panel.addEventListener('pointerdown',event=>{
+  const layer=event.target.closest('[data-scan-layer]');
+  if(!layer||busy||event.button!==0)return;
+  const kind=layer.dataset.scanLayer;
+  if(!loaded.has(kind))return;
+  const start=pointerPoint(layer,event),origin=[...(regions.get(kind)||CROP_PRESETS.hud)];
+  const type=event.target.closest('[data-scan-handle]')?'resize':
+   event.target.closest('[data-scan-selection]')?'move':'draw';
+  drag={kind,id:event.pointerId,type,start,origin,layer};
+  layer.setPointerCapture(event.pointerId);event.preventDefault();
+ });
+ panel.addEventListener('pointermove',event=>{
+  if(!drag||drag.id!==event.pointerId)return;
+  const p=pointerPoint(drag.layer,event),dx=p.x-drag.start.x,dy=p.y-drag.start.y;
+  const rect=drag.type==='move'?movedCrop(drag.origin,dx,dy):
+   drag.type==='resize'?sizedCrop(drag.origin,dx,dy):draggedCrop(drag.start,p);
+  changeRegion(drag.kind,rect);
+ });
+ const endDrag=(event,cancel=false)=>{
+  if(!drag||drag.id!==event.pointerId)return;
+  const prev=drag;drag=null;
+  if(cancel){regions.set(prev.kind,prev.origin);paintBox(prev.kind);return;}
+  const p=pointerPoint(prev.layer,event),dx=p.x-prev.start.x,dy=p.y-prev.start.y;
+  const rect=prev.type==='move'?movedCrop(prev.origin,dx,dy):
+   prev.type==='resize'?sizedCrop(prev.origin,dx,dy):draggedCrop(prev.start,p);
+  changeRegion(prev.kind,rect,true);
+ };
+ panel.addEventListener('pointerup',event=>endDrag(event));
+ panel.addEventListener('pointercancel',event=>endDrag(event,true));
  panel.addEventListener('change',event=>{
   const target=event.target;
   if(target.matches('[data-scan-file]'))void choose(target.dataset.scanFile,target.files?.[0]);
-  else if(target.matches('[data-scan-area],[data-scan-filter]')){
-   const kind=target.dataset.scanArea||target.dataset.scanFilter;
+  else if(target.matches('[data-scan-area]')){
+   const kind=target.dataset.scanArea;
+   if(loaded.has(kind)&&CROP_PRESETS[target.value]){
+    regions.set(kind,[...CROP_PRESETS[target.value]]);
+    rememberCrop(kind,regions.get(kind),loaded.get(kind).image);
+    updateCrop(kind);
+    tell(kind,'Crop preset changed. Tap Read screenshot to scan the new area.');
+   }
+  }else if(target.matches('[data-scan-filter],[data-scan-target]')){
+   const kind=target.dataset.scanFilter||target.dataset.scanTarget;
    if(loaded.has(kind)){
-    try{updateCrop(kind);tell(kind,'Crop updated. Tap Read screenshot again to refresh the suggestions.');}
-    catch(e){tell(kind,e.message);}
+    if(target.matches('[data-scan-filter]'))updateCrop(kind);
+    tell(kind,'Setting updated. Tap Read screenshot to read this selection.');
    }
   }
  });
@@ -251,11 +357,12 @@ export function mountResourceScanner(panel,profile,onCommit){
   const button=event.target.closest('button');
   if(!button)return;
   if(button.dataset.scanRead)void begin(button.dataset.scanRead);
+  if(button.dataset.scanResetBox&&loaded.has(button.dataset.scanResetBox))resetRegion(button.dataset.scanResetBox);
   if(button.hasAttribute('data-scan-save'))save();
   if(button.hasAttribute('data-scan-clear')){
    if(busy){status('Wait for OCR to finish before clearing screenshots.');return;}
    for(const v of loaded.values())URL.revokeObjectURL(v.url);
-   loaded.clear();
+   loaded.clear();regions.clear();
    for(const section of panel.querySelectorAll('.scan-village')){
     section.querySelector('[data-scan-file]').value='';
     section.querySelector('.scan-images').hidden=true;
@@ -268,5 +375,5 @@ export function mountResourceScanner(panel,profile,onCommit){
    status('Scans cleared. Existing saved balances have not changed.');
   }
  });
- return ()=>{disposed=true;for(const v of loaded.values())URL.revokeObjectURL(v.url);loaded.clear();if(worker)void worker.terminate().catch(()=>{});};
+ return ()=>{disposed=true;for(const v of loaded.values())URL.revokeObjectURL(v.url);loaded.clear();regions.clear();if(worker)void worker.terminate().catch(()=>{});};
 }

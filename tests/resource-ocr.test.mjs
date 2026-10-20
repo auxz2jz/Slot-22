@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {SCAN_FIELDS,parseCounterAmount,extractCounterCandidates,suggestCounters,validateResourceUpdates} from '../resource-ocr.mjs';
+import {SCAN_FIELDS,parseCounterAmount,extractCounterCandidates,suggestCounters,suggestOneCounter,validateResourceUpdates} from '../resource-ocr.mjs';
 
 test('read whole numbers with normal commas, spaces and periods',()=>{
  for(const variant of ['19,000,000','19.000.000','19 000 000','19000000']){
@@ -63,4 +63,19 @@ test('confirm enforces checked valid fields and conflicting shared gems',()=>{
  assert.deepEqual(validateResourceUpdates(profile,[{key:'gold',value:'1.5M',acceptApproximate:true}]),{gold:1500000});
  assert.throws(()=>validateResourceUpdates(profile,[{key:'gems',value:'1,000'},{key:'gems',value:'1,001'}]),/disagree/);
  assert.deepEqual(validateResourceUpdates(profile,[{key:'gems',value:'1,000'},{key:'gems',value:'1000'}]),{gems:1000});
+});
+
+test('one-counter selection assigns only its chosen resource with a single clean reading',()=>{
+ const found=extractCounterCandidates('19,000,000');
+ const r=suggestOneCounter(found,'home','gold');
+ assert.equal(r.proposed.gold.value,19000000);
+ assert.deepEqual(Object.keys(r.proposed),['gold']);
+ assert.deepEqual(suggestOneCounter(found,'home','elixir').proposed.elixir.value,19000000);
+ assert.deepEqual(suggestOneCounter(extractCounterCandidates('Gold 19,000,000'),'home','elixir').proposed,{});
+ assert.deepEqual(suggestOneCounter(extractCounterCandidates('19,000,000\\n123'),'home','gold').proposed,{});
+ assert.deepEqual(suggestOneCounter([],'home','gold').proposed,{});
+ assert.throws(()=>suggestOneCounter(found,'builder','dark'),/Invalid/);
+ const rounded=suggestOneCounter(extractCounterCandidates('19M'),'home','gold');
+ assert.equal(rounded.proposed.gold.approximate,true);
+ assert.ok(rounded.issues.some(x=>x.includes('rounded')));
 });

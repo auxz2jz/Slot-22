@@ -84,6 +84,20 @@ export function suggestCounters(candidates,mode){
  if(rows.some(r=>r.approximate))issues.push('K/M/B values are rounded displays, not guaranteed exact.');
  return {proposed,issues,candidates:rows};
 }
+// A tight crop has an explicit target chosen by the user. Never assign multiple
+// candidates to a single field or allow an OCR label that contradicts that target.
+export function suggestOneCounter(candidates,mode,key){
+ const slots=SCAN_FIELDS[mode];
+ if(!slots||!slots.some(([field])=>field===key))throw Error('Invalid selected counter.');
+ const rows=(candidates||[]).filter(c=>c&&Number.isSafeInteger(c.value)&&c.value>=0);
+ const proposed={},issues=[];
+ if(rows.length!==1)issues.push('Expected one clear number in the selected box; adjust it or type the amount.');
+ else if(rows[0].label&&rows[0].label!==key)
+  issues.push('Recognized label does not match the counter selected; adjust the box.');
+ else proposed[key]={...rows[0],method:'selected-crop'};
+ if(rows.some(r=>r.approximate))issues.push('K/M/B values are rounded and must be explicitly accepted.');
+ return {proposed,issues,candidates:rows};
+}
 // Validate all requested changes together, without mutating the user's data.
 // A checked field with no valid value aborts, rather than being saved as zero.
 export function validateResourceUpdates(profile,updates){

@@ -218,3 +218,11 @@ All positions and recommendations are defined in pass-rewards.mjs and claim reco
 - [ ] Future optional: scan Ore inventory screen separately if user requests it; no equipment ore figures are currently inferred from Home/Builder upper-right HUD.
 
 **Data safety:** No source release or screenshot OCR code changed `data/player-state.json`; preserve existing two profiles, user-entered resources, gems, ores, rewards, Magic Items and progress until an explicit per-account review/save. The source public GitHub state is older than possible Samsung-local edits.
+
+
+## October 20 — v28 user-drawn resource crop (S22-107)
+- [x] S22-107a: small bounded rectangle helpers and unit tests, existing v27 main stays intact.
+- [x] S22-107b: touch/mouse draw/move/resize selection around HUD resources, optional single-resource OCR target, normalized crop zoom up to 4×, and preset fallback. Saving layout stores only per-village normalized box coordinates and aspect ratio on this device; no screenshot or recognized text is persisted.
+- [x] S22-107c: reject zero/multiple or contradictory-label single-target OCR results. Only explicit checked + confirmed field updates can modify the active profile.
+- [ ] S22-107d: GitHub browser/unit/live-OCR checks and Samsung Android visual acceptance; distinguish CI from hardware confirmation. Keep v27 as last candidate until new version works on device.
+- [ ] S22-108: on actual Samsung screenshot test Home and Builder separately with upper-right box, one-row targeting if full stack fails, compare every OCR digit, and verify no balance changes before Save checked balances. No automatic GitHub Load and never write data/player-state.json during release.

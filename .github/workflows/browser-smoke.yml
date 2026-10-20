@@ -2,6 +2,7 @@ name: Browser startup smoke test
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 jobs:
   browser:
