@@ -173,7 +173,7 @@ export function renderVisualWorkerDetail(profile,selection,overview,now=Date.now
    (kind==='home'?['buildings','heroes','traps'].includes(row.group):
     ['buildings2','heroes2','traps2'].includes(row.group))):null;
  const price=estimate?estimate.priceText+(Number.isFinite(estimate.totalSeconds)?
-  ' · '+Math.round(estimate.totalSeconds/3600)+'h base/discounted estimate':' · duration unknown'):
+  ' · '+Math.round(estimate.totalSeconds/3600)+'h estimated (verify in Clash)':' · duration unknown'):
   'Confirm price and available level in game';
  return '<div class="command-detail vc-worker-detail" data-focus="'+esc(selection)+'">'+
   '<h2>'+label+' '+slot.slot+'</h2>'+
