@@ -137,12 +137,22 @@ function croppedCanvas(canvas,image,rect,filter){
  const ctx=canvas.getContext('2d',{willReadFrequently:filter!=='normal'});
  if(!ctx)throw Error('Image processing is unavailable in this browser.');
  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
- ctx.drawImage(image,sx,sy,sw,sh,0,0,canvas.width,canvas.height);
  if(filter==='white'){
-  const data=ctx.getImageData(0,0,canvas.width,canvas.height);
-  data.data.set(whiteTextPixels(data.data));
-  ctx.putImageData(data,0,0);
- }else if(filter==='contrast'){
+  // Threshold the original-resolution pixels BEFORE upscaling: thresholding
+  // interpolated pixels blurs the white glyphs into their dark outlines.
+  const native=document.createElement('canvas');
+  native.width=sw;native.height=sh;
+  const nctx=native.getContext('2d',{willReadFrequently:true});
+  if(!nctx)throw Error('White text filter is unavailable in this browser.');
+  nctx.drawImage(image,sx,sy,sw,sh,0,0,sw,sh);
+  const original=nctx.getImageData(0,0,sw,sh);
+  original.data.set(whiteTextPixels(original.data));
+  nctx.putImageData(original,0,0);
+  ctx.drawImage(native,0,0,sw,sh,0,0,canvas.width,canvas.height);
+ }else{
+  ctx.drawImage(image,sx,sy,sw,sh,0,0,canvas.width,canvas.height);
+ }
+ if(filter==='contrast'){
   const data=ctx.getImageData(0,0,canvas.width,canvas.height),pixels=data.data;
   for(let i=0;i<pixels.length;i+=4){
    const bright=.299*pixels[i]+.587*pixels[i+1]+.114*pixels[i+2];
