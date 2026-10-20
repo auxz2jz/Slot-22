@@ -216,6 +216,14 @@ export function mountResourceScanner(panel,profile,onCommit){
    const values=validateResourceUpdates(profile,changes);
    if(tag!==panel.dataset.scanAccount)throw Error('Selected player account changed. Try again.');
    onCommit(tag,values);
+   // Prevent accidental repeat saves from a second scan or a stale checkbox.
+   for(const input of panel.querySelectorAll('[data-scan-use]:checked'))input.checked=false;
+   for(const [key,value] of Object.entries(values)){
+    for(const row of panel.querySelectorAll('[data-scan-row="'+key+'"]')){
+     const savedLabel=row.querySelector('small');
+     if(savedLabel)savedLabel.textContent='Saved: '+fmt(value);
+    }
+   }
    const summary=Object.entries(values).map(([k,v])=>k+' '+fmt(v)).join(', ');
    status('Saved locally: '+summary+'. Your screenshots were not stored.');
   }catch(e){status('Not saved: '+(e?.message||'Unknown error'));}
