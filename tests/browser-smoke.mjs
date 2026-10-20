@@ -93,14 +93,22 @@ try{
   const helperDetail=!!dialog?.open&&dialog.textContent.includes('Lab Assistant')&&
     dialog.textContent.includes('Recommended next use');
   dialog.querySelector('[data-action="command-close"]')?.click();
-  return {five:home.length===5,base:base.length===2,assistants:helpers.length===4,
+  const banner=document.querySelector('.command-center > .royal-hero');
+  const village=!!banner?.querySelector('.royal-hall img')&&
+    banner.textContent.includes('Main village')&&banner.textContent.includes('Town Hall 14')&&
+    banner.textContent.includes('Builder Hall 9')&&banner.textContent.includes('tracked upgrades');
+  const onlyOne=document.querySelectorAll('.royal-hero').length===1;
+  const assistantsEarly=root?.querySelectorAll(':scope > .vc-section')[1]?.id==='vc-assistants';
+  document.querySelector('[data-action="jump-assistants"]')?.click();
+  const jumpWorks=document.activeElement?.id==='vc-assistants';
+  return {village,onlyOne,assistantsEarly,jumpWorks,five:home.length===5,base:base.length===2,assistants:helpers.length===4,
     stations:independent.length===4,queue:next.length===6,resourceImages:resources===9,
     pictured:home.some(c=>!!c.querySelector('.vc-picture img')),progress,
     builderDetail,helperDetail,actualJob:job.includes('Pet House')};
  })()`,returnByValue:true});
  const wp=workerPreview.result?.result?.value||{};
  console.log('VISUAL WORKERS AND DRILL-DOWNS:',wp);
- if(!['five','base','assistants','stations','queue','resourceImages','pictured','progress',
+ if(!['village','onlyOne','assistantsEarly','jumpWorks','five','base','assistants','stations','queue','resourceImages','pictured','progress',
       'builderDetail','helperDetail','actualJob'].every(k=>wp[k]===true))process.exitCode=1;
   const strategic=await cmd('Runtime.evaluate',{expression:`(()=>{
   const root=document.querySelector('.command-center');
