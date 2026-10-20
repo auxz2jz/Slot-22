@@ -280,7 +280,7 @@ function showQueuedBuilderPrompt(){
 function renderOverview(){
  return renderCommandCenter(state)+
  '<details class="command-legacy" id="advanced-panels"><summary>Advanced panels · timelines, full lists and resource editing</summary>'+
- '<div class="command-legacy-content">'+coverFor(state)+gaugeDeck(state)+renderHelperStrip(state)+
+ '<div class="command-legacy-content">'+gaugeDeck(state)+renderHelperStrip(state)+
  renderBuilderNudge(state)+renderResearchNudges(state)+renderFacilityAudit(state)+
  '<div class="command-grid"><div>'+builderBoard(state)+'</div><div class="command-side">'+
  '<section class="card"><h2>Full roadmap</h2>'+questTrail(state.roadmap)+
@@ -496,6 +496,12 @@ function clickAction(e){
  if(target.dataset.openRecord!==undefined){openDetail({recordIndex:Number(target.dataset.openRecord),fromQueue:true});return;}
  if(target.dataset.openInventory!==undefined){openDetail({recordIndex:Number(target.dataset.openInventory),category:invGroup});return;}
  const action=target.dataset.action;
+ if(action==='jump-assistants'){
+  const section=el('vc-assistants');
+  section?.scrollIntoView({block:'start',behavior:'smooth'});
+  section?.focus({preventScroll:true});
+  return;
+ }
  if(action==='command-close'){el('command-dialog')?.close();return;}
  if(action==='command-edit-resources'){
   const panel=el('advanced-panels');if(panel)panel.open=true;
