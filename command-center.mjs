@@ -2,6 +2,7 @@
 // Source: latest dated game JSON + optional manually entered/confirmed quotes and boosts.
 // This module never changes the village, resources, or existing roadmap.
 import {fullVillagePlan} from './full-plan.mjs';
+import {coverFor} from './dashboard.mjs';
 import {artForResource} from './artwork.mjs';
 import {renderVisualCommand,renderVisualWorkerDetail} from './visual-command.mjs';
 import {labelFor} from './catalog.mjs';
@@ -153,8 +154,10 @@ export function renderCommandCenter(profile){
  if(!data)return '<section class="card"><h2>Village Command Center</h2>Import a dated game JSON to get started.</section>';
  const prefs=profile.upgradePreferences||{};
  return '<section class="card command-center" aria-label="Village Command Center">'+
+ coverFor(profile)+
  '<div class="command-header"><div><span class="kicker">ONE PLACE FOR EVERYTHING</span><h2>Village Command Center</h2></div>'+
- '<div class="command-header-actions"><button class="btn small" data-action="choose-file">Import fresh game JSON</button>'+
+ '<div class="command-header-actions"><button class="btn secondary small vc-assistant-jump" type="button" data-action="jump-assistants">Assistants (4) ↓</button>'+
+ '<button class="btn small" data-action="choose-file">Import fresh game JSON</button>'+
  '<button class="btn secondary small" data-action="go-sync">Backup / GitHub</button></div></div>'+
  '<p class="smallmuted">Snapshot: '+esc(new Date(data.snapshotAt).toLocaleString())+
  '. Recommendations update when you import newer game data. Costs and balances are not live.</p>'+
