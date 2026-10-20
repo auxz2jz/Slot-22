@@ -116,7 +116,7 @@ function researchCard(profile,q,now){
  '<span class="vc-next"><b>Next:</b> '+esc(q.nextTitle)+'</span></button>';
 }
 const section=(name,id,content,subtitle='')=>
- '<section class="vc-section"><header><div><h3>'+esc(name)+'</h3>'+
+ '<section class="vc-section"'+(id==='assistants'?' id="vc-assistants" tabindex="-1"':'')+'><header><div><h3>'+esc(name)+'</h3>'+
  (subtitle?'<small>'+esc(subtitle)+'</small>':'')+'</div>'+
  (id?'<button type="button" class="vc-section-link" data-command-lane="'+id+'">All options →</button>':'')+'</header>'+content+'</section>';
 export function renderVisualCommand(profile,overview,now=Date.now()){
@@ -139,7 +139,7 @@ export function renderVisualCommand(profile,overview,now=Date.now()){
   .filter(Boolean).map(q=>'<button class="vc-next-item" type="button" data-command-next="'+q.id+'">'+
    '<span>'+esc(q.label)+'</span><b>'+esc(q.nextTitle||'Check in game')+'</b><span aria-hidden="true">›</span></button>').join('');
  return '<div class="visual-command" aria-label="Visual worker assignments and upgrade queues">'+
-   home+builder+helpers+research+
+   home+helpers+builder+research+
    '<section class="vc-section"><header><div><h3>Next-up queue</h3><small>Suggested options, not scheduled jobs</small></div></header>'+
    '<div class="vc-next-grid">'+next+'</div></section>'+
    '<p class="vc-note">Timers are estimates from the dated JSON; progress starts when an upgrade was first observed, NOT when construction actually began. An expired ETA does not prove a builder is free. Import fresh JSON to confirm.</p>'+
