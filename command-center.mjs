@@ -163,6 +163,8 @@ export function renderCommandCenter(profile){
  '<button class="btn secondary small" data-action="go-sync">Backup / GitHub</button></div></div>'+
  '<p class="smallmuted">Snapshot: '+esc(new Date(data.snapshotAt).toLocaleString())+
  '. Recommendations update when you import newer game data. Costs and balances are not live.</p>'+
+ '<div class="vc-scan-shortcut"><span class="smallmuted">Gold, Elixir and Gems · saved amounts</span>'+
+ '<button class="btn secondary small" data-action="scan-resources" type="button">📷 Scan resources from screenshots</button></div>'+
  resources(profile)+renderVisualCommand(profile,data)+
  '<details class="command-settings vc-reference-tools"><summary>Upgrade database &amp; strategy guides</summary>'+
  '<div class="vc-tool-links"><button class="btn secondary small" type="button" data-action="go-upgrades">All upgrade costs &amp; times</button>'+
