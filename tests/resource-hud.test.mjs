@@ -24,6 +24,6 @@ test('auto HUD requires game-shaped landscape screenshot',()=>{
 test('bright glyph mask eliminates colored UI without retaining text values',()=>{
  const pixels=new Uint8ClampedArray([245,240,232,255,240,55,210,255,50,50,50,255,170,165,160,255]);
  assert.deepEqual([...whiteTextPixels(pixels)],
- [255,255,255,255,0,0,0,255,0,0,0,255,255,255,255]);
+ [255,255,255,255,0,0,0,255,0,0,0,255,255,255,255,255]);
  assert.throws(()=>whiteTextPixels([1,2,3]),/Invalid/);
 });
