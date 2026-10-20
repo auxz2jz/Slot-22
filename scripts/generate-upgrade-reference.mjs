@@ -93,15 +93,15 @@ export async function buildCatalog(source,version){
  const count=Object.keys(catalog).length;
  if(count<120)throw Error('Catalog unexpectedly small ('+count+') — refuse to overwrite released data');
  const record=Object.fromEntries(Object.entries(catalog).sort(([a],[b])=>a.localeCompare(b)));
- const head='// AUTO-GENERATED. Do not hand edit. License: MIT, Christopher Pezza, 2026.\\n'+
-  '// Numerical game reference from chiefpansancolt/clash-of-clans-data.\\n'+
-  '// NOT copied from clash.ninja; verify all values inside Clash of Clans.\\n';
+ const head='// AUTO-GENERATED. Do not hand edit. License: MIT, Christopher Pezza, 2026.\n'+
+  '// Numerical game reference from chiefpansancolt/clash-of-clans-data.\n'+
+  '// NOT copied from clash.ninja; verify all values inside Clash of Clans.\n';
  const module=head+
-  'export const EXTENDED_REFERENCE_CATALOG='+JSON.stringify(record)+';\\n'+
+  'export const EXTENDED_REFERENCE_CATALOG='+JSON.stringify(record)+';\n'+
   'export const EXTENDED_REFERENCE_META='+JSON.stringify({
    license:'MIT',source:'chiefpansancolt/clash-of-clans-data',
    sourceRevision:version,entryCount:count,skipped,invalid
-  })+';\\n';
+  })+';\n';
  return {module,meta:{count,skipped,invalid,version,groups:
   Object.values(record).reduce((m,r)=>{m[r.group]=(m[r.group]||0)+1;return m},{})}};
 }
