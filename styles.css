@@ -501,3 +501,7 @@ summary{cursor:pointer;font-weight:750}
  .scan-field{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);padding:8px;gap:6px}
  .scan-field .scan-choice{font-size:11px}
 }
+
+.vc-scan-shortcut{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin:9px 0 12px}
+.vc-scan-shortcut .btn{white-space:normal;text-align:center}
+@media(max-width:430px){.vc-scan-shortcut{display:grid;gap:7px}.vc-scan-shortcut .btn{width:100%}}
