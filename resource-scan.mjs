@@ -4,6 +4,7 @@
 // OCR must always be reviewed and explicitly confirmed before balances change.
 import {SCAN_FIELDS,numberText,extractCounterCandidates,suggestCounters,suggestOneCounter,validateResourceUpdates} from './resource-ocr.mjs';
 import {CROP_PRESETS,normalizeCrop,draggedCrop,movedCrop,sizedCrop,cropPixels} from './resource-crop.mjs';
+import {homeHudRects,whiteTextPixels} from './resource-hud.mjs';
 
 const SCRIPT_URL='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
 const WORKER_URL='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js';
@@ -31,7 +32,8 @@ const areaOptions='<option value="hud">Top-right resource counters (recommended)
  '<option value="right">Entire right side</option><option value="full">Whole screenshot</option>'+
  '<option value="custom" hidden>My drawn box</option>';
 const filterOptions='<option value="normal">Normal screenshot</option>'+
- '<option value="contrast">High contrast (retry if text is missed)</option>';
+ '<option value="white">Bright white game digits (best for gold)</option>'+
+ '<option value="contrast">Old inverted contrast (fallback)</option>';
 const kinds=[['home','Home Village','Gold, Elixir, Dark Elixir and Gems'],
  ['builder','Builder Base','Builder Gold, Builder Elixir and Gems']];
 let scriptPromise=null;
@@ -63,6 +65,8 @@ function sourceCard(profile,kind,title,what){
   '<h3>'+esc(title)+'</h3><p class="smallmuted">'+esc(what)+'.</p>'+
   '<label class="field"><span>Choose a screenshot from your phone</span>'+
    '<input type="file" data-scan-file="'+kind+'" accept="image/png,image/jpeg,image/webp,image/*" aria-label="'+esc(title)+' screenshot"></label>'+
+  (kind==='home'?'<button type="button" class="btn scan-auto" data-scan-auto="home" disabled>Auto-read the four Home counters</button>'+
+   '<p class="smallmuted">Recommended for a full landscape Home Village screenshot. Reads each white number separately; manually review before saving.</p>':'')+
   '<div class="scan-settings">'+
    '<label class="field">Crop area<select data-scan-area="'+kind+'">'+areaOptions+'</select></label>'+
    '<label class="field">Read which counter?<select data-scan-target="'+kind+'">'+
@@ -78,7 +82,11 @@ function sourceCard(profile,kind,title,what){
    '</div></div></div>'+
    '<p class="smallmuted scan-crop-help">Draw a box on the screenshot. Drag inside it to move; drag the bottom-right corner to resize. For just one number choose it above. A crop layout is remembered on this device.</p>'+
    '<button type="button" class="btn secondary scan-reset" data-scan-reset-box="'+kind+'">Reset box to upper right</button></div>'+
-   '<div><small>Enlarged crop sent to OCR (not uploaded)</small><canvas data-scan-crop="'+kind+'" aria-label="Enlarged selected screenshot crop"></canvas></div></div>'+
+   '<div><small>Enlarged crop for manual box reading (not uploaded)</small><canvas data-scan-crop="'+kind+'" aria-label="Enlarged selected screenshot crop"></canvas></div></div>'+
+  (kind==='home'?'<div class="scan-auto-previews" data-scan-auto-previews="home" hidden>'+
+   SCAN_FIELDS.home.map(([key,label])=>'<div><small>'+esc(label)+' — exact area read automatically</small>'+
+    '<canvas data-scan-auto-canvas="'+key+'" aria-label="'+esc(label)+' automatic OCR crop"></canvas></div>').join('')+
+   '</div>':'')+
   '<button type="button" class="btn secondary scan-read" data-scan-read="'+kind+'" disabled>Read '+esc(title)+' screenshot</button>'+
   '<p class="scan-message smallmuted" data-scan-message="'+kind+'" role="status" aria-live="polite">Select an image to begin.</p>'+
   '<details class="scan-recognized" hidden><summary>Recognized text and numbers</summary><pre data-scan-raw="'+kind+'"></pre>'+
@@ -92,7 +100,7 @@ export function renderResourceScanner(profile){
   '<section class="card scan-intro"><span class="kicker">SCREENSHOT RESOURCE SCANNER</span>'+
    '<h2>Read your Clash resource counters</h2>'+
    '<p>Take a screenshot in each village, then choose it here. The scanner reads the upper-right counters on your phone. '+
-   'Draw a rectangle tightly around the numbers, move or resize it, or select a single resource line to scan.</p>'+
+   'For the Home Village, try Auto-read first: it examines each upper-right counter separately. You can also draw or resize a box and scan one number at a time.</p>'+
    '<p class="smallmuted">Your images are processed inside your browser, never saved in your planner or sent to GitHub. '+
    'The open-source OCR engine downloads on first use, so an internet connection is needed. '+
    'OCR can misread digits or rounded amounts. You always approve edits first.</p>'+
@@ -126,10 +134,24 @@ function croppedCanvas(canvas,image,rect,filter){
  // Upscaling improves OCR input visibility; it cannot recreate blurry digits.
  const scale=Math.min(4,2400/sw,1700/sh);
  canvas.width=Math.max(1,Math.round(sw*scale));canvas.height=Math.max(1,Math.round(sh*scale));
- const ctx=canvas.getContext('2d',{willReadFrequently:filter==='contrast'});
+ const ctx=canvas.getContext('2d',{willReadFrequently:filter!=='normal'});
  if(!ctx)throw Error('Image processing is unavailable in this browser.');
  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
- ctx.drawImage(image,sx,sy,sw,sh,0,0,canvas.width,canvas.height);
+ if(filter==='white'){
+  // Threshold the original-resolution pixels BEFORE upscaling: thresholding
+  // interpolated pixels blurs the white glyphs into their dark outlines.
+  const native=document.createElement('canvas');
+  native.width=sw;native.height=sh;
+  const nctx=native.getContext('2d',{willReadFrequently:true});
+  if(!nctx)throw Error('White text filter is unavailable in this browser.');
+  nctx.drawImage(image,sx,sy,sw,sh,0,0,sw,sh);
+  const original=nctx.getImageData(0,0,sw,sh);
+  original.data.set(whiteTextPixels(original.data));
+  nctx.putImageData(original,0,0);
+  ctx.drawImage(native,0,0,sw,sh,0,0,canvas.width,canvas.height);
+ }else{
+  ctx.drawImage(image,sx,sy,sw,sh,0,0,canvas.width,canvas.height);
+ }
  if(filter==='contrast'){
   const data=ctx.getImageData(0,0,canvas.width,canvas.height),pixels=data.data;
   for(let i=0;i<pixels.length;i+=4){
@@ -208,6 +230,10 @@ export function mountResourceScanner(panel,profile,onCommit){
   if(previous)URL.revokeObjectURL(previous.url);
   loaded.delete(kind);
   section.querySelector('[data-scan-read]').disabled=true;
+  const autoButton=section.querySelector('[data-scan-auto]');
+  if(autoButton)autoButton.disabled=true;
+  const autoPreviews=section.querySelector('[data-scan-auto-previews]');
+  if(autoPreviews)autoPreviews.hidden=true;
   section.querySelector('.scan-images').hidden=true;
   section.querySelector('.scan-recognized').hidden=true;
   const blank={proposed:{},candidates:[],issues:[]};
@@ -231,16 +257,18 @@ export function mountResourceScanner(panel,profile,onCommit){
    section.querySelector('.scan-images').hidden=false;
    updateCrop(kind);
    section.querySelector('[data-scan-read]').disabled=false;
-   tell(kind,'Screenshot opened. Check the cropped resource counters, then tap Read screenshot.');
+   if(autoButton)autoButton.disabled=false;
+   tell(kind,kind==='home'?'Screenshot opened. Try Auto-read the four Home counters; each number is read separately.':
+    'Screenshot opened. Select a counter area, then tap Read screenshot.');
    status('No resource balances have been changed.');
   }catch(e){tell(kind,e.message);status(e.message);}
  };
- const begin=async(kind)=>{
+ const begin=async(kind,auto=false)=>{
   const section=panel.querySelector('[data-scan-village="'+kind+'"]');
   if(busy||!loaded.get(kind))return;
   const selectedImage=loaded.get(kind);
   busy=true;
-  panel.querySelectorAll('[data-scan-read]').forEach(b=>b.disabled=true);
+  panel.querySelectorAll('[data-scan-read],[data-scan-auto]').forEach(b=>b.disabled=true);
   tell(kind,'Preparing OCR. The first scan may take a minute while language data downloads…');
   try{
    const engine=await ocrEngine();
@@ -250,23 +278,58 @@ export function mountResourceScanner(panel,profile,onCommit){
     logger:e=>{if(e.status==='recognizing text')tell(kind,'Reading resource numbers: '+Math.round((e.progress||0)*100)+'%');}
    });
    if(disposed||loaded.get(kind)!==selectedImage)return;
-   const target=section.querySelector('[data-scan-target]').value;
-   await worker.setParameters({tessedit_pageseg_mode:target==='stack'?'11':'7'});
-   const canvas=section.querySelector('[data-scan-crop]');
-   updateCrop(kind);
-   const result=await worker.recognize(canvas);
-   if(disposed||loaded.get(kind)!==selectedImage)return;
-   const raw=result?.data?.text||'';
-   const found=extractCounterCandidates(raw);
-   const guess=target==='stack'?suggestCounters(found,kind):
-    suggestOneCounter(found,kind,target);
-   showProposals(section,guess,raw,target==='stack'?null:target);
+   if(auto && kind==='home'){
+    const rows=homeHudRects(selectedImage.image.naturalWidth,selectedImage.image.naturalHeight);
+    const proposed={},issues=[],candidates=[],rawParts=[];
+    for(const row of rows){
+     const label=SCAN_FIELDS.home.find(([key])=>key===row.key)?.[1]||row.key;
+     tell(kind,'Reading '+label+' separately from its resource bar…');
+     await worker.setParameters({tessedit_pageseg_mode:'7',tessedit_char_whitelist:'0123456789'});
+     const one=section.querySelector('[data-scan-auto-canvas="'+row.key+'"]');
+     croppedCanvas(one,selectedImage.image,row.rect,row.filter);
+     const data=await worker.recognize(one);
+     if(disposed||loaded.get(kind)!==selectedImage)return;
+     const text=data?.data?.text||'';
+     rawParts.push(label+': '+(text.trim()||'(unreadable)'));
+     const guess=suggestOneCounter(extractCounterCandidates(text),kind,row.key);
+     if(guess.proposed[row.key]){
+      proposed[row.key]=guess.proposed[row.key];
+      candidates.push({...guess.proposed[row.key],label:row.key});
+     }else issues.push(label+' unreadable or ambiguous. Crop this number manually, or enter it by hand.');
+    }
+    const previews=section.querySelector('[data-scan-auto-previews]');
+    if(previews)previews.hidden=false;
+    // Highlight the complete region but never overwrite the user's saved crop preference.
+    const minX=Math.min(...rows.map(r=>r.rect[0])),minY=Math.min(...rows.map(r=>r.rect[1]));
+    const maxX=Math.max(...rows.map(r=>r.rect[0]+r.rect[2]));
+    const maxY=Math.max(...rows.map(r=>r.rect[1]+r.rect[3]));
+    regions.set(kind,normalizeCrop([minX,minY,maxX-minX,maxY-minY]));
+    section.querySelector('[data-scan-area]').value='custom';
+    updateCrop(kind);
+    showProposals(section,{proposed,issues,candidates},rawParts.join('\n'));
+    tell(kind,Object.keys(proposed).length+' of '+rows.length+
+     ' Home counters proposed. Inspect the four exact OCR crops and compare every digit. No amount has been saved. '+issues.join(' '));
+   }else{
+    const target=section.querySelector('[data-scan-target]').value;
+    await worker.setParameters({tessedit_pageseg_mode:target==='stack'?'11':'7',
+      tessedit_char_whitelist:target==='stack'?'':'0123456789'});
+    const canvas=section.querySelector('[data-scan-crop]');
+    updateCrop(kind);
+    const result=await worker.recognize(canvas);
+    if(disposed||loaded.get(kind)!==selectedImage)return;
+    const raw=result?.data?.text||'';
+    const found=extractCounterCandidates(raw);
+    const guess=target==='stack'?suggestCounters(found,kind):
+     suggestOneCounter(found,kind,target);
+    showProposals(section,guess,raw,target==='stack'?null:target);
+   }
    status('OCR is finished. Check every proposed amount before saving.');
   }catch(e){
    if(!disposed){tell(kind,'OCR failed: '+(e?.message||'Unknown error')+'. Check the internet connection, try High contrast, or enter values manually.');status('Nothing was saved.');}
   }finally{
    busy=false;
-   if(!disposed)panel.querySelectorAll('[data-scan-read]').forEach(b=>b.disabled=!loaded.has(b.dataset.scanRead));
+   if(!disposed)panel.querySelectorAll('[data-scan-read],[data-scan-auto]').forEach(b=>
+    b.disabled=!loaded.has(b.dataset.scanRead||b.dataset.scanAuto));
   }
  };
  const save=()=>{
@@ -357,6 +420,7 @@ export function mountResourceScanner(panel,profile,onCommit){
   const button=event.target.closest('button');
   if(!button)return;
   if(button.dataset.scanRead)void begin(button.dataset.scanRead);
+  if(button.dataset.scanAuto)void begin(button.dataset.scanAuto,true);
   if(button.dataset.scanResetBox&&loaded.has(button.dataset.scanResetBox))resetRegion(button.dataset.scanResetBox);
   if(button.hasAttribute('data-scan-save'))save();
   if(button.hasAttribute('data-scan-clear')){
@@ -368,6 +432,10 @@ export function mountResourceScanner(panel,profile,onCommit){
     section.querySelector('.scan-images').hidden=true;
     section.querySelector('.scan-recognized').hidden=true;
     section.querySelector('[data-scan-read]').disabled=true;
+    const auto=section.querySelector('[data-scan-auto]');
+    if(auto)auto.disabled=true;
+    const previews=section.querySelector('[data-scan-auto-previews]');
+    if(previews)previews.hidden=true;
     section.querySelector('[data-scan-message]').textContent='Select an image to begin.';
     showProposals(section,{proposed:{},candidates:[],issues:[]},'');
     section.querySelector('.scan-recognized').hidden=true;

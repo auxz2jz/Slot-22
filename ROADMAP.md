@@ -226,3 +226,10 @@ All positions and recommendations are defined in pass-rewards.mjs and claim reco
 - [x] S22-107c: reject zero/multiple or contradictory-label single-target OCR results. Only explicit checked + confirmed field updates can modify the active profile.
 - [ ] S22-107d: GitHub browser/unit/live-OCR checks and Samsung Android visual acceptance; distinguish CI from hardware confirmation. Keep v27 as last candidate until new version works on device.
 - [ ] S22-108: on actual Samsung screenshot test Home and Builder separately with upper-right box, one-row targeting if full stack fails, compare every OCR digit, and verify no balance changes before Save checked balances. No automatic GitHub Load and never write data/player-state.json during release.
+
+
+## October 20 — v29 real HUD OCR fix (S22-109, candidate)
+- [x] User reported v28 screenshot has a clean preview but OCR recognizes no reliable digits. Supplied **private screenshot** 1536×716 (NOT committed, no derived image saved to repo). Direct visual reading: Gold 19,000,000; Elixir 5,943,020; Dark Elixir 310,000; Gems 4,182. Spoken longer elixir amount conflicts with visible image.
+- [x] S22-109a: measured separate Home Village HUD digit rows, anchored to screenshot height/right edge and limited to suitable full landscape images; add resource-hud.mjs pure rectangle and color-mask tests. Use normal OCR for Elixir/Dark/Gems and white-letter mask **before upscaling** for Gold; desktop local OCR isolated those four fields successfully. This is a local diagnostic, not Android Tesseract.js acceptance.
+- [x] S22-109b: add Auto-read the four Home counters button and four per-row enlarged preview canvases, with strict one-candidate fail-closed parsing. Keep manual crop/target/review and Builder Base manual mode. No image upload, OCR persistence, other-account writes, or automatic saving.
+- [ ] S22-109c: GitHub unit, Chrome smoke, and OCR live checks for v29; screenshot remains off public git. Android user verification still pending. If geometry does not match a different game layout, use manual crop; do NOT infer/swap balances.

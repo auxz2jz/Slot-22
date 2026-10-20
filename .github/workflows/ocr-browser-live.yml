@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'resource-scan.mjs'
+      - 'resource-hud.mjs'
       - 'resource-ocr.mjs'
       - 'resource-crop.mjs'
       - 'index.html'
