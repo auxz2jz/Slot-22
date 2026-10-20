@@ -7,6 +7,8 @@ import {artForResource} from './artwork.mjs';
 import {renderVisualCommand,renderVisualWorkerDetail} from './visual-command.mjs';
 import {labelFor} from './catalog.mjs';
 import {REFERENCE_CATALOG} from './upgrade-reference.mjs';
+import {EXTENDED_REFERENCE_CATALOG} from './extended-reference.mjs';
+const catalogFor=(group,id)=>EXTENDED_REFERENCE_CATALOG[group+':'+id]||REFERENCE_CATALOG[group+':'+id];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Number(n).toLocaleString('en-US');
 const categories=[
@@ -33,13 +35,13 @@ const quoteInfo=(p,group,id,next)=>{
   (t.title||'').toLowerCase().includes((labelFor(id)||'UNKNOWN').toLowerCase()));
  if(data?.price>0)return {price:data.price,hours:data.hours??null,currency:data.currency,
   beforeBoost:data.beforeBoost===true,source:'user-verified game quote',key};
- const source=REFERENCE_CATALOG[group+':'+id];
+ const source=catalogFor(group,id);
  const actual=source?.levels.find(x=>x.l===next);
  if(actual&&actual.c!==null&&actual.c>0)return {price:actual.c,hours:actual.s?actual.s/3600:null,
-  currency:actual.r,beforeBoost:true,source:'Oct 17 game-data reference; verify in Clash',key,
+  currency:actual.r,beforeBoost:true,source:'MIT-licensed game-data reference; verify in Clash',key,
   requirement:actual,ore:actual.ore};
  if(actual?.ore?.some(n=>n>0))return {price:null,hours:null,currency:null,beforeBoost:false,
-  source:'Oct 17 ore data; verify in Clash',key,ore:actual.ore,requirement:actual};
+  source:'MIT-licensed equipment ore reference; verify in Clash',key,ore:actual.ore,requirement:actual};
  if(roadmap?.cost>0)return {price:roadmap.cost,hours:null,currency:roadmap.costType,
   beforeBoost:false,source:'saved roadmap estimate (discount status unknown)',key};
  return {price:null,hours:null,currency:null,beforeBoost:false,source:'not recorded',key};
@@ -74,7 +76,7 @@ export function rankCandidates(profile,candidates){
  const current=(g,id)=>rows(snap,g).some(x=>x.data===id);
  return (candidates||[]).map((t,i)=>{
   const group=['heroes','buildings','heroes2','buildings2','spells','units','pets','equipment','units2','siege_machines'].find(g=>current(g,t.id));
-  const ref=group&&REFERENCE_CATALOG[group+':'+t.id]?.levels.find(x=>x.l===t.targetLevel);
+  const ref=group&&catalogFor(group,t.id)?.levels.find(x=>x.l===t.targetLevel);
   const lab=rows(snap,'buildings').find(x=>x.data===1000007)?.lvl;
   const star=rows(snap,'buildings2').find(x=>x.data===1000046)?.lvl;
   const hero=rows(snap,'buildings').find(x=>x.data===1000071)?.lvl;
