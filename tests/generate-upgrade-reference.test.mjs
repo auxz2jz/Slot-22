@@ -42,3 +42,17 @@ test('invalid, unfamiliar or ambiguous raw files do not enter the catalog',()=>{
  assert.equal(compileUpgradeRecord({dataId:11,levels:[{level:0}]},'data/home/defenses/foo.json'),null);
  assert.equal(compileUpgradeRecord({dataId:11,levels:[{level:1},{level:1}]},'data/home/defenses/foo.json'),null);
 });
+
+test('Supercharge costs and times remain separate from normal numbered building levels',()=>{
+ const raw={dataId:1000013,name:'Mortar',levels:[
+  {level:1,buildCost:5000,buildCostResource:'Gold',buildTime:d(0,0,30)},
+  {level:2,buildCost:25000,buildCostResource:'Gold',buildTime:d(0,1)},
+  {level:1,supercharge:true,buildCost:9000000,buildCostResource:'Gold',buildTime:d(4)},
+  {level:2,supercharge:true,buildCost:7000000,buildCostResource:'Gold',buildTime:d(6)}]};
+ const result=compileUpgradeRecord(raw,'data/home/defenses/mortar.json');
+ assert.equal(result.levels.length,2);
+ assert.equal(result.superchargeLevels.length,2);
+ assert.equal(result.levels[0].c,5000);
+ assert.equal(result.superchargeLevels[0].c,9000000);
+ assert.equal(result.superchargeLevels[0].s,4*86400);
+});
