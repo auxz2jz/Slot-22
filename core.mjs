@@ -10,6 +10,18 @@ export function integer(value, fallback=0) {
   return Number.isFinite(n) ? Math.max(0,Math.min(1e12,Math.floor(n))) : fallback;
 }
 export function format(n) {return new Intl.NumberFormat('en-US').format(integer(n));}
+// 2026 Crafted Defense exports have a modular "types" collection instead of
+// the lvl field of a normal structure. Preserve their full raw module payload
+// without synthesizing a nonexistent level or treating them as builder jobs.
+function isCraftedDefenseRecord(entry,key) {
+  if(key!=='buildings'||entry?.data!==1000097||Object.hasOwn(entry,'lvl')||
+    !Array.isArray(entry.types)||entry.types.length<1||entry.types.length>60)return false;
+  return entry.types.every(type=>
+    type&&Number.isInteger(type.data)&&type.data>=0&&
+    Array.isArray(type.modules)&&type.modules.length<=60&&
+    type.modules.every(module=>module&&Number.isInteger(module.data)&&module.data>=0&&
+      Number.isInteger(module.lvl)&&module.lvl>=0&&module.lvl<=1000));
+}
 export function validateExport(input) {
   const x=typeof input==='string'?JSON.parse(input):input;
   if(!x||typeof x!=='object'||Array.isArray(x)||!/^#[A-Z0-9]{4,15}$/.test(x.tag||'')) throw Error('Not a Clash of Clans village JSON export (missing player tag).');
@@ -18,7 +30,13 @@ export function validateExport(input) {
     const values=x[key];
     if(values !== undefined && (!Array.isArray(values)||values.length>3000)) throw Error('Invalid collection: '+key);
     for(const entry of values||[]) {
-      if(!entry||!Number.isInteger(entry.data)||!Number.isInteger(entry.lvl)||entry.lvl<0||entry.lvl>1000) throw Error('Invalid entity in '+key);
+      if(!entry||!Number.isInteger(entry.data)||entry.data<0)throw Error('Invalid entity in '+key);
+      if(isCraftedDefenseRecord(entry,key))continue;
+      if(!Number.isInteger(entry.lvl)||entry.lvl<0||entry.lvl>1000)
+        throw Error('Invalid entity in '+key+
+          (key==='buildings'&&entry.data===1000097?
+           ': crafted defense needs a valid types/modules payload':
+           ': missing or invalid level for ID '+entry.data));
     }
   }
   if (JSON.stringify(x).length>1200000) throw Error('Export is too large.');
@@ -71,7 +89,9 @@ export function importVillage(state, input, now=new Date().toISOString()) {
 }
 export function rowsFromExport(x,category) {
   if(!x||!Array.isArray(x[category]))return [];
-  return x[category].map((e,i)=>({
+  // Special modular records have no ordinary building level; omit them from
+   // level-based inventories and upgrade timers, not from the saved raw export.
+   return x[category].filter(e=>Number.isInteger(e?.lvl)).map((e,i)=>({
     key:category+'-'+e.data+'-'+e.lvl+'-'+i,
     id:e.data,name:labelFor(e.data),level:e.lvl,count:integer(e.cnt,1)||1,
     timer:Number.isFinite(e.timer)?Math.max(0,e.timer):null,
