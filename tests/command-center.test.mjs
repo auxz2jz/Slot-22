@@ -75,7 +75,7 @@ test('verified undiscouted quote applies only confirmed boost once',()=>{
 });
 test('uncovered upgrade levels remain unknown rather than guessed',()=>{
  const d=renderCommandDetail(p(),'structure:buildings:1000007');
- assert.match(d,/Price and total duration not recorded/);
+ assert.match(d,/MIT-licensed game-data reference/);
  assert.match(renderCommandCenter({export:{}}),/Import a dated game JSON/);
 });
 
@@ -86,7 +86,7 @@ test('reference game costs and durations apply only confirmed discounts',()=>{
  const spell=renderCommandDetail(profile,'structure:spells:26000005');
  const tome=renderCommandDetail(profile,'structure:equipment:90000004');
  assert.match(camp,/7,200,000 Elixir/);
- assert.match(spell,/Oct 17 game-data reference/);
+ assert.match(spell,/MIT-licensed game-data reference/);
  assert.match(spell,/51\.0h/); // Freeze 4->5 = 60h base, research 15% set by user
  assert.match(tome,/Shiny 1,800/);
  assert.match(tome,/Glowy 200/);
@@ -111,4 +111,22 @@ test('current Shiny Ore shortage makes affordable Rage Vial better immediate spe
  const tome=equipment.next.find(t=>t.title==='Eternal Tome 8 → 9');
  assert.equal(tome.recordedAffordable,false);
  assert.ok(equipment.next[0].priority>tome.priority);
+});
+
+test('previously uncovered structures and troops now carry licensed costs and gating',()=>{
+ const profile=p();
+ profile.export.buildings.push({data:1000008,lvl:10});
+ profile.export.units.push({data:4000000,lvl:7});
+ const cannon=renderCommandDetail(profile,'structure:buildings:1000008');
+ const troop=renderCommandDetail(profile,'structure:units:4000000');
+ assert.match(cannon,/Cannon/);
+ assert.match(cannon,/MIT-licensed game-data reference/);
+ assert.match(troop,/Barbarian/);
+ assert.match(troop,/MIT-licensed game-data reference/);
+});
+
+test('unknown future identifiers do not gain invented prices',()=>{
+ const profile=p();
+ profile.export.buildings.push({data:123456789,lvl:2});
+ assert.match(renderCommandDetail(profile,'structure:buildings:123456789'),/Price and total duration not recorded/);
 });
