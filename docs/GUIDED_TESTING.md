@@ -153,3 +153,12 @@ All automated tests and browser CI are distinct from physical user confirmation 
 4. Record a test quote on one building and confirm resources do not change. Select confirmed 20% Builder/15% Research; source base quotes should discount once, already discounted game prices should NOT. Optionally select user-verified 50% returning-player effective boost and verify it is not stacked twice; its expiry is unknown unless user records it elsewhere.
 5. Reference Oct17 game-data covers 21 owned/high-priority types but not every game item; missing prices/times must remain explicit. Verify actual prices and unlock requirements in Clash and report discrepancies with screenshots.
 6. Import a newer game JSON and confirm changed active queues / priorities; the same imported snapshot should not repeatedly prompt. Check advanced panels stay collapsed and legacy roadmap/rewards/tools remain available. Mobile device acceptance is pending.
+
+
+## V28 Samsung test — draw and resize screenshot resource box
+1. Open Scan resources for the intended account, select a Home Village screenshot; expected: original image, gold adjustable rectangle and enlarged crop appear. Neither loading nor box movement changes saved balances.
+2. Use a finger to draw a tight rectangle around all upper-right resources, move it by dragging inside, and resize via bottom-right handle. Expected: enlarged crop follows the final selection. Scroll the screenshot pane horizontally if needed.
+3. Set Read which counter? to Only Gold, draw a tight box around the GOLD NUMBER (not max storage), tap Read Home Village screenshot. Expected: ONLY Gold gets a suggested value. If OCR finds multiple/zero numbers, it refuses to guess and you can edit the field manually.
+4. Select other counters individually as needed. Switch to Builder Base and use its screenshot and counter names. Confirm saved balances remain unchanged throughout scanning.
+5. Verify exact displayed digits; check only intended rows; tap Save checked balances. Expected: only those balances update locally in the active profile. Conflicting checked Gems must be rejected. Never tap GitHub Load just to refresh the UI.
+6. Choose a new screenshot with same aspect ratio; box position should be recalled. Reset box to upper right should restore the default. Compare preview against selected numbers and report any touch/zoom/OCR mismatch. Automated tests cannot PASS this physical phone inspection.
