@@ -5,6 +5,7 @@ import {artworkUrl} from './artwork.mjs';
 import {labelFor} from './catalog.mjs';
 import {helperSummary} from './snapshot-insights.mjs';
 import {helperActionRecommendations} from './helper-advice.mjs';
+import {inventoryUpgradeRows} from './upgrade-directory.mjs';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const timed=r=>Number.isFinite(r?.timer)&&r.timer>=0;
@@ -167,6 +168,13 @@ export function renderVisualWorkerDetail(profile,selection,overview,now=Date.now
  if(!slot||String(Number(id))!==id)return '<h2>Builder slot unavailable</h2>';
  const job=slot.job,qid=kind==='home'?'homeBuilders':'builderBuilders';
  const label=kind==='home'?'Home builder':'Builder Base slot';
+ const estimate=Number.isFinite(slot.next?.id)&&Number.isInteger(slot.next?.targetLevel)?
+  inventoryUpgradeRows(profile).find(row=>row.id===slot.next.id&&row.target===slot.next.targetLevel&&
+   (kind==='home'?['buildings','heroes','traps'].includes(row.group):
+    ['buildings2','heroes2','traps2'].includes(row.group))):null;
+ const price=estimate?estimate.priceText+(Number.isFinite(estimate.totalSeconds)?
+  ' · '+Math.round(estimate.totalSeconds/3600)+'h base/discounted estimate':' · duration unknown'):
+  'Confirm price and available level in game';
  return '<div class="command-detail vc-worker-detail" data-focus="'+esc(selection)+'">'+
   '<h2>'+label+' '+slot.slot+'</h2>'+
   '<p class="smallmuted">Display slot assigned by the planner, not an identified in-game builder.</p>'+
@@ -178,6 +186,7 @@ export function renderVisualWorkerDetail(profile,selection,overview,now=Date.now
    '<p>No timed job recorded for this slot in the saved export.</p>')+
   '<h3>What to upgrade next</h3>'+
   '<p><b>'+esc(slot.next?.title||'Verify available upgrades in game')+'</b></p>'+
+  '<p>'+esc(price)+'</p>'+
   '<p>'+esc(slot.next?.reason||'Recommended order may change when new JSON is imported.')+'</p>'+
   '<button type="button" class="btn secondary small" data-command-lane="'+qid+'">See other ranked upgrades</button>'+
   '<p class="smallmuted">Snapshot from '+esc(at(v.snapshotAt))+'. Jobs and progress are not live. No automatic resource spending.</p></div>';
