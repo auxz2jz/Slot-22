@@ -164,6 +164,9 @@ export function renderCommandCenter(profile){
  '<p class="smallmuted">Snapshot: '+esc(new Date(data.snapshotAt).toLocaleString())+
  '. Recommendations update when you import newer game data. Costs and balances are not live.</p>'+
  resources(profile)+renderVisualCommand(profile,data)+
+ '<details class="command-settings vc-reference-tools"><summary>Upgrade database &amp; strategy guides</summary>'+
+ '<div class="vc-tool-links"><button class="btn secondary small" type="button" data-action="go-upgrades">All upgrade costs &amp; times</button>'+
+ '<button class="btn secondary small" type="button" data-action="go-guides">Read Clash guides</button></div></details>'+
  '<details class="command-settings"><summary>Update balances or confirm Gold Pass boosts</summary>'+
  '<p class="smallmuted">Gold Pass is '+(profile.seasonalPlan?.goldPassPurchased?'recorded as purchased':'not confirmed')+
  ', but active discount levels are not in the exported JSON. Select what your game actually shows. Discounts apply only to quotes marked BEFORE boost.</p>'+
