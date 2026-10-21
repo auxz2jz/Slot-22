@@ -127,7 +127,7 @@ export function browseHalls(profile,overrides={}){
 }
 function selectHall(village,personal,browsing){
  const prefix=village==='home'?'TH':'BH';
- const option=(n)=>'<option value="'+n+'"'+(n===browsing?' selected':'')+'>'+prefix+n+'</option>';
+ const option=(n)=>'<option value="'+n+'"'+(n===browsing&&browsing!==personal?' selected':'')+'>'+prefix+n+'</option>';
  return '<label class="layout-picker">Browse '+(village==='home'?'Town Hall':'Builder Hall')+
   '<select data-layout-hall="'+village+'" aria-label="Browse '+village+' hall layouts">'+
   '<option value="mine"'+(personal===browsing?' selected':'')+'>My account level'+
@@ -159,7 +159,7 @@ function section(name,icon,hall,items,village,personal){
    hall<=2?'<p class="smallmuted">Beginner '+escapeHtml(level)+': the layout editor and normal copy-link workflow are not yet available. Keep storages and defenses close to the Hall and upgrade until layout editing unlocks around level 3.</p>':
    cards?'<div class="layout-card-grid">'+cards+'</div>':
    '<p class="smallmuted">No individually confirmed one-tap layout is stored for '+escapeHtml(level)+' yet. Use the source gallery to preview designs at this level; do not copy a different Hall level.</p>')+
-  (collection?'<p class="layout-more"><a href="'+escapeHtml(collection)+'" target="_blank" rel="noopener noreferrer">Browse more '+escapeHtml(level)+' designs at ClashBuilder ↗</a></p>':'')+
+  (collection?'<p class="layout-more"><a href="'+escapeHtml(collection)+'" target="_blank" rel="noopener noreferrer">Browse more '+escapeHtml(level)+' designs at '+(hall===3?'BaseCoC':'ClashBuilder')+' ↗</a></p>':'')+
   (village==='builder'&&hall!==null&&hall<4?'<p class="smallmuted">Builder Base layouts are generally shared for later Builder Halls. Do not import a BH9 design into BH'+hall+'.</p>':'')+'</section>';
 }
 export function renderBaseLayouts(profile,overrides={}){
