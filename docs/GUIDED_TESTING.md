@@ -171,3 +171,11 @@ All automated tests and browser CI are distinct from physical user confirmation 
 4. Verify each proposed amount character by character. If one crop is wrong or blank, use existing draw-box plus an individual counter selection and optional **Bright white game digits** filter. Zero/multiple OCR candidates must stay unselected; never guess a missing number from its row order.
 5. Confirm that scanning alone has not changed resources; only check correct rows and tap **Save checked balances** if desired. Check other profile, rewards, magic items unchanged. Never GitHub Load to obtain v29.
 6. Repeat Builder Base using its separate screenshot and manual box until actual Builder HUD layout is supplied. Samsung touch/UI success and real OCR reading are MANUAL acceptance steps not established by CI.
+
+
+## V30 Gold-specific OCR acceptance — real Samsung phone
+1. Confirm intended player profile, open Scan resources on v30 and select the same full Home Village screenshot.
+2. Tap Auto-read the four Home counters. Verify Elixir, Dark Elixir and Gems unchanged compared with v29 behavior. Gold now uses word-mode OCR twice and cross-checks enhanced versus original crop.
+3. Expand Recognized text and numbers and inspect "Gold bright" and "Gold original". Both must report the same whole amount for Gold to be automatically checked. If they disagree, Gold must remain unchecked; manually correct Gold and check the desired row before saving.
+4. Verify the previous user screenshot's Gold visibly reads 19,000,000, but do not assume newer screenshots have the same amount. No auto-save: confirmation still required. Check both profiles and Magic Items/rewards untouched before Save checked balances.
+5. If automatic Gold still misreads or is rejected, report both Gold recognized strings and the crop screenshot. This is physical Android user acceptance, not established by passing CI.
