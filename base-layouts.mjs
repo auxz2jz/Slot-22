@@ -111,8 +111,8 @@ export function directoryLink(village,hall){
   return 'https://clashbuilder.com/builder-hall-bases/bh'+hall;
  // The TH3/BH3 galleries are hosted by other community publishers; no fake
  // ClashBuilder URL for an unsupported level is generated.
- if((village==='home'||village==='builder')&&hall===3)
-  return 'https://basecoc.com/';
+ if(village==='home'&&hall===3)return 'https://basecoc.com/th-3';
+ if(village==='builder'&&hall===3)return 'https://basecoc.com/builder-hall-3';
  return null;
 }
 export const HALL_MAX=Object.freeze({home:18,builder:10});
