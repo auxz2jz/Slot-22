@@ -546,3 +546,14 @@ summary{cursor:pointer;font-weight:750}
 .layout-choice small{font-size:11px;color:#a9c5d8;line-height:1.6}
 .layout-more{margin:13px 0 0!important;font-size:12px}
 @media(max-width:750px){.layout-card-grid{grid-template-columns:1fr}.layout-choice{padding:12px}}
+
+/* Previews are remote, attributable, one-to-one matches for the official links. */
+.layout-preview-link{display:block;border-radius:9px;overflow:hidden;background:#071327;aspect-ratio:4/3;border:1px solid #34516e}
+.layout-preview{display:block;width:100%;height:100%;object-fit:contain}
+.layout-preview-missing{font-size:11px;color:#adbfcd;background:#0c2035;padding:12px;border:1px dashed #35516a;border-radius:7px}
+.layout-picker-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:8px 0 14px}
+.layout-picker-row>.smallmuted{flex:1 1 220px;line-height:1.5}
+.layout-picker{font-size:12px;color:#e9d49e;display:grid;gap:5px;min-width:190px;font-weight:650}
+.layout-picker select{width:100%;border:1px solid #4c6781;background:#112940;color:#eef4fc;border-radius:8px;min-height:40px;padding:9px}
+.layout-choice .layout-preview-missing{flex:none}
+.layout-choice .layout-preview{max-height:none}

@@ -189,3 +189,13 @@ All automated tests and browser CI are distinct from physical user confirmation 
 5. Test **Copy layout link** then paste into a browser/notes field; it should be the exact official https link. Verify no balance, roadmap, rewards, other profile, or phone-only state changed from browsing/copying.
 6. Change the planner's selected account to the lower-level second account; correct TH4 options appear and incompatible TH14/BH9 links disappear. Early BH1 must not receive BH9 import links. If the phone account is more recently upgraded, imported hall levels override old seed ones.
 7. If a layout fails, record the link/card title, the game's precise error, Android steps and its hall level. CI cannot verify that the installed Clash client imported or saved a layout.
+
+
+## V32 Base Layouts — all level selectors, previews, and Android handoff
+1. Open the app using current selected account. Base layouts should default to the account's imported TH/BH levels (the repository's older seed has Main TH14/BH9, second TH4/BH1, but phone local state may be newer).
+2. Each card with a thumbnail must show the **same** layout as its credited publisher page and official OpenLayout link. If an image is missing, record its Hall and source URL; do not assume a generic picture identifies the base. Online connection required for thumbnail loading.
+3. Use Home Hall selector to browse TH1 and TH2: beginner guidance only, no fake game import. TH3: source link only if no confirmed direct layout. Browse every level TH4–TH18: at least one actual preview plus a link for a compatible Home/War slot. Check the slot type, which can be Home even if the publisher describes its strategy as war.
+4. Similarly browse Builder Hall BH1 and BH2 guidance, BH3 source link, and BH4–BH10 at least one preview/official BB2 link. Check BH10 opens Builder Base appropriate stage/slot.
+5. Browse TH18/BH10 from a TH14/BH9 player profile, then return selectors to My account level. No balances, progression, saved account level, upgrade task, Magic Items, rewards, other profiles or GitHub data change.
+6. On Samsung tap selected 'Open in Clash of Clans' card, review the layout in game, select an **unused** compatible slot and confirm only after checking buildings. Uninstalled game/unsupported level may block. Layout deep-link import is distinct from a building upgrade; no external link can guarantee opening Barracks' upgrade UI.
+7. Review on normal narrow-screen Android and landscape display. CI checks code and browser rendering, not successful installed-Clash Android acceptance.

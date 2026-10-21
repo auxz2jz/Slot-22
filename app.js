@@ -21,7 +21,7 @@ const enc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 let bundle=normalizeBundle(seedState()),state=bundle.profiles[bundle.activeProfileId],view='overview',filter='all',invGroup='buildings',ghSha=null;
 let inventoryMode='gallery',activeDialog=null,passFilter='unclaimed',editingRewardId=null;
 let diagnostics=[],manualTests={},queuedBuilderPrompt=null,builderDialogProfile=null,builderDialogSnapshot=null;
-let commandSelection=null,stopResourceScanner=null;
+let commandSelection=null,stopResourceScanner=null,layoutBrowse={home:null,builder:null};
 const testSteps=[
  'Overview lists current resource values.',
  'Changing a Gold balance survives a page reload.',
@@ -85,7 +85,7 @@ async function initialize(){
   el('download-backup').addEventListener('click',()=>download('clash-all-profiles-backup.json',bundle));
   el('game-file').addEventListener('change', async e=>readFile(e,'game'));
   el('backup-file').addEventListener('change',async e=>readFile(e,'backup'));
-  el('profile-select').addEventListener('change',e=>{try{bundle.profiles[bundle.activeProfileId]=state;useBundle(selectProfile(bundle,e.target.value));const next=ensureHelperRoadmap(state);if(next.added)state=next.profile;saveLocal('profile-switch');render();}catch(err){notify(err.message,'error');render();}});
+  el('profile-select').addEventListener('change',e=>{try{bundle.profiles[bundle.activeProfileId]=state;useBundle(selectProfile(bundle,e.target.value));const next=ensureHelperRoadmap(state);if(next.added)state=next.profile;layoutBrowse={home:null,builder:null};saveLocal('profile-switch');render();}catch(err){notify(err.message,'error');render();}});
   document.addEventListener('click',clickAction);
   setInterval(updateVisualTimers,10000);
   el('item-dialog').addEventListener('click',e=>{if(e.target===el('item-dialog'))el('item-dialog').close();});
@@ -446,7 +446,7 @@ function render() {
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
  el('village-subtitle').textContent='TOWN HALL '+th+' · BUILDER HALL '+bh;
  if(stopResourceScanner){stopResourceScanner();stopResourceScanner=null;}
- el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter,editingRewardId),insights:()=>renderInsights(state),upgrades:()=>renderUpgradeDirectory(state),guides:()=>renderStrategyGuides(state),layouts:()=>renderBaseLayouts(state),scan:()=>renderResourceScanner(state),sync:renderSync,testing:renderTesting}[view])();
+ el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter,editingRewardId),insights:()=>renderInsights(state),upgrades:()=>renderUpgradeDirectory(state),guides:()=>renderStrategyGuides(state),layouts:()=>renderBaseLayouts(state,layoutBrowse),scan:()=>renderResourceScanner(state),sync:renderSync,testing:renderTesting}[view])();
  if(view==='scan')stopResourceScanner=mountResourceScanner(el('main').querySelector('.resource-scanner'),state,(tag,resources)=>{
    if(state.playerTag!==tag||bundle.activeProfileId!==tag)throw Error('The active village changed. Nothing saved; reopen the scanner.');
    for(const [key,value] of Object.entries(resources))state.resources[key]=value;
@@ -473,6 +473,15 @@ function commaInput(e){
 }
 function changeAction(e){
  const t=e.target;
+ if(t.matches?.('[data-layout-hall]')){
+  const village=t.dataset.layoutHall,requested=t.value;
+  if(!['home','builder'].includes(village))return;
+  const max=village==='home'?18:10;
+  const level=requested==='mine'?null:Number(requested);
+  if(level!==null&&(!Number.isInteger(level)||level<1||level>max))return;
+  layoutBrowse={...layoutBrowse,[village]:level};render();
+  return;
+ }
  if(t.matches?.('[data-upgrade-group],[data-upgrade-status]')){filterUpgradeDirectory(t.closest('.upgrade-library'));return;}
  if(t.dataset.passChoice){try{state=updatePassState(state,t.dataset.passChoice,'choose',t.value);saveLocal('pass-choice-selection');render();}catch(err){notify(err.message,'error');render();}return;}
  if(t.dataset.commandBoost){
@@ -497,7 +506,7 @@ function clickAction(e){
  const target=e.target.closest('[data-command-worker],[data-command-next],[data-command-lane],[data-command-structure],[data-action],[data-filter],[data-category],[data-open-task],[data-open-record],[data-open-inventory],[data-inventory-mode],[data-pass-filter],[data-pass-toggle],[data-edit-reward],[data-layout-copy]');
  if(!target)return;
  if(target.dataset.layoutCopy){
-  const choice=chosenLayout(state,target.dataset.layoutCopy);
+  const choice=chosenLayout(state,target.dataset.layoutCopy,layoutBrowse);
   if(!choice){notify('This layout is no longer available for the selected hall level.','warn');return;}
   if(!navigator.clipboard?.writeText){
    window.prompt('Copy this official Clash of Clans link:',choice.url);

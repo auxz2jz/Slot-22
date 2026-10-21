@@ -50,13 +50,30 @@ try{
   await new Promise(resolve=>setTimeout(resolve,40));
   const copiedLink=copied.includes('TH14%3AHV')&&copied.startsWith('https://link.clashofclans.com/');
   const readOnly=localStorage.getItem(storage)===initial;
+  const homePicker=document.querySelector('[data-layout-hall="home"]');
+  homePicker.value='18';homePicker.dispatchEvent(new Event('change',{bubbles:true}));
+  const highTown=!!document.querySelector('[data-layout-copy="th18-gallery"]')&&
+    document.querySelector('.layout-village')?.textContent?.includes('TH18 layouts')&&
+    !!document.querySelector('.layout-village img.layout-preview');
+  const builderPicker=document.querySelector('[data-layout-hall="builder"]');
+  builderPicker.value='10';builderPicker.dispatchEvent(new Event('change',{bubbles:true}));
+  const highBuilder=!!document.querySelector('[data-layout-copy="bh10-gallery"]')&&
+    !!document.querySelectorAll('img.layout-preview').length;
+  const noSavedBrowsing=localStorage.getItem(storage)===initial;
+  const homeAgain=document.querySelector('[data-layout-hall="home"]');
+  homeAgain.value='mine';homeAgain.dispatchEvent(new Event('change',{bubbles:true}));
+  const builderAgain=document.querySelector('[data-layout-hall="builder"]');
+  builderAgain.value='mine';builderAgain.dispatchEvent(new Event('change',{bubbles:true}));
+  const backHome=!!document.querySelector('[data-layout-copy="th14-hybrid"]');
+  const backBuilder=!!document.querySelector('[data-layout-copy="bh9-anti3"]');
   document.querySelector('[data-tab="overview"]').click();
-  return {shortcut:!!shortcut,title:heading==='Base layouts',sevenLinks:links.length===7,
-   direct,home:!!mainLayout,builder:!!builderLayout,goldNoChange,copiedLink,readOnly,back:!!document.querySelector('.command-center')};
+  return {shortcut:!!shortcut,title:heading==='Base layouts',eightLinks:links.length===8,
+   direct,home:!!mainLayout,builder:!!builderLayout,goldNoChange,copiedLink,readOnly,
+   highTown,highBuilder,noSavedBrowsing,backHome,backBuilder,back:!!document.querySelector('.command-center')};
  })()`,awaitPromise:true,returnByValue:true});
  const layoutSmoke=layoutCheck.result?.result?.value||{};
  console.log('BASE LAYOUTS BROWSER CHECK:',layoutSmoke);
- if(!['shortcut','title','sevenLinks','direct','home','builder','goldNoChange','copiedLink','readOnly','back']
+ if(!['shortcut','title','eightLinks','direct','home','builder','goldNoChange','copiedLink','readOnly','highTown','highBuilder','noSavedBrowsing','backHome','backBuilder','back']
  .every(k=>layoutSmoke[k]===true))process.exitCode=1;
  const artwork=await cmd('Runtime.evaluate',{expression:"({overview:document.querySelectorAll('img.item-art').length,loaded:[...document.querySelectorAll('img.item-art')].filter(i=>i.complete&&i.naturalWidth>0).length,first:[...document.querySelectorAll('img.item-art')].slice(0,3).map(i=>i.src)})",returnByValue:true});
  const counts=artwork.result?.result?.value||{};
