@@ -30,6 +30,34 @@ try{
  const res=await cmd('Runtime.evaluate',{expression:'document.body.innerText.slice(0,2200)',returnByValue:true});
  const body=res.result?.result?.value||'';
  console.log('RENDERED TEXT:\n'+body.slice(0,1200));
+ const layoutCheck=await cmd('Runtime.evaluate',{expression:`(async()=>{
+  const storage='clash-slot22-state-v2';
+  const initial=localStorage.getItem(storage);
+  const shortcut=document.querySelector('[data-action="go-layouts"]');
+  document.querySelector('[data-tab="layouts"]').click();
+  const heading=document.querySelector('#section-title')?.textContent;
+  const links=[...document.querySelectorAll('.layout-choice a[href*="link.clashofclans.com"]')];
+  const direct=links.every(a=>{
+   const u=new URL(a.href);
+   return u.host==='link.clashofclans.com'&&u.searchParams.get('action')==='OpenLayout';
+  });
+  const mainLayout=document.querySelector('[data-layout-copy="th14-hybrid"]');
+  const builderLayout=document.querySelector('[data-layout-copy="bh9-anti3"]');
+  const goldNoChange=localStorage.getItem(storage)===initial;
+  let copied='';
+  Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>{copied=value;}}});
+  mainLayout?.click();
+  await new Promise(resolve=>setTimeout(resolve,40));
+  const copiedLink=copied.includes('TH14%3AHV')&&copied.startsWith('https://link.clashofclans.com/');
+  const readOnly=localStorage.getItem(storage)===initial;
+  document.querySelector('[data-tab="overview"]').click();
+  return {shortcut:!!shortcut,title:heading==='Base layouts',sevenLinks:links.length===7,
+   direct,home:!!mainLayout,builder:!!builderLayout,goldNoChange,copiedLink,readOnly,back:!!document.querySelector('.command-center')};
+ })()`,awaitPromise:true,returnByValue:true});
+ const layoutSmoke=layoutCheck.result?.result?.value||{};
+ console.log('BASE LAYOUTS BROWSER CHECK:',layoutSmoke);
+ if(!['shortcut','title','sevenLinks','direct','home','builder','goldNoChange','copiedLink','readOnly','back']
+ .every(k=>layoutSmoke[k]===true))process.exitCode=1;
  const artwork=await cmd('Runtime.evaluate',{expression:"({overview:document.querySelectorAll('img.item-art').length,loaded:[...document.querySelectorAll('img.item-art')].filter(i=>i.complete&&i.naturalWidth>0).length,first:[...document.querySelectorAll('img.item-art')].slice(0,3).map(i=>i.src)})",returnByValue:true});
  const counts=artwork.result?.result?.value||{};
  console.log('ARTWORK:',counts);

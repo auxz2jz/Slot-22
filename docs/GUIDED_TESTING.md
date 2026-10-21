@@ -179,3 +179,13 @@ All automated tests and browser CI are distinct from physical user confirmation 
 3. Expand Recognized text and numbers and inspect "Gold bright" and "Gold original". Both must report the same whole amount for Gold to be automatically checked. If they disagree, Gold must remain unchecked; manually correct Gold and check the desired row before saving.
 4. Verify the previous user screenshot's Gold visibly reads 19,000,000, but do not assume newer screenshots have the same amount. No auto-save: confirmation still required. Check both profiles and Magic Items/rewards untouched before Save checked balances.
 5. If automatic Gold still misreads or is rejected, report both Gold recognized strings and the crop screenshot. This is physical Android user acceptance, not established by passing CI.
+
+
+## V31 Base Layouts on Samsung phone — manual acceptance
+1. For the main account, open **Base layouts** from its navigation tab or the Overview shortcut. Confirm **TH14** Home and **BH9** Builder cards, and no guessed win-rate claims.
+2. Choose one Home Farming/Hybrid link and tap **Open in Clash of Clans**. Android should hand off to the installed game, offering a compatible Home layout slot. **Use a spare slot**, not the active base, and review all buildings/traps. Return to planner without saving if it looks incomplete.
+3. Choose **TH14 War** layout and confirm it is a **War Base** slot, not a Home slot. No game base may be overwritten without user approval in game.
+4. Try a BH9 Builder layout and check the Builder Base stage placement and incompatible/missing structures; the code is a real `TH9:BB2` Builder Base share link despite the unusual prefix.
+5. Test **Copy layout link** then paste into a browser/notes field; it should be the exact official https link. Verify no balance, roadmap, rewards, other profile, or phone-only state changed from browsing/copying.
+6. Change the planner's selected account to the lower-level second account; correct TH4 options appear and incompatible TH14/BH9 links disappear. Early BH1 must not receive BH9 import links. If the phone account is more recently upgraded, imported hall levels override old seed ones.
+7. If a layout fails, record the link/card title, the game's precise error, Android steps and its hall level. CI cannot verify that the installed Clash client imported or saved a layout.
