@@ -40,7 +40,7 @@ test('unrecognized hall does not show wrong-level layout, but can browse verifie
  assert.equal(directoryLink('home',1),null);
  const profile={playerTag:'#UNKNOWN',export:{buildings:[{data:1000001,lvl:3}],buildings2:[]}};
  const html=renderBaseLayouts(profile);
- assert.match(html,/No individually checked one-tap layouts/);
+ assert.match(html,/No individually confirmed one-tap layout/);
  assert.ok(!html.includes('Open in Clash of Clans ↗'));
  assert.match(html,/basecoc\.com/);
 });
