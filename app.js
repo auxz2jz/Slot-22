@@ -10,6 +10,7 @@ import {fullVillagePlan} from './full-plan.mjs';
 import {renderCommandCenter,renderCommandDetail,rankCandidates} from './command-center.mjs';
 import {renderUpgradeDirectory,filterUpgradeDirectory} from './upgrade-directory.mjs';
 import {renderStrategyGuides} from './strategy-guides.mjs';
+import {renderBaseLayouts,chosenLayout} from './base-layouts.mjs';
 import {renderResourceScanner,mountResourceScanner} from './resource-scan.mjs';
 import {helperSummary} from './snapshot-insights.mjs';
 import {REPO,STATE_PATH,seedState,validateExport,normalizeBundle,importIntoBundle,selectProfile,rowsFromExport,ongoingFromExport,setTaskStatus,format,integer,budget,makeTask} from './core.mjs';
@@ -281,7 +282,8 @@ function showQueuedBuilderPrompt(){
  if(!dialog.open)dialog.showModal();
 }
 function renderOverview(){
- return renderCommandCenter(state)+
+ return '<div class="layout-overview-shortcut"><button type="button" class="btn secondary" data-action="go-layouts">🏰 Find and copy base layouts for your Town Hall and Builder Hall</button></div>'+
+  renderCommandCenter(state)+
  '<details class="command-legacy" id="advanced-panels"><summary>Advanced panels · timelines, full lists and resource editing</summary>'+
  '<div class="command-legacy-content">'+gaugeDeck(state)+renderHelperStrip(state)+
  renderBuilderNudge(state)+renderResearchNudges(state)+renderFacilityAudit(state)+
@@ -435,7 +437,7 @@ function trackUpgradeAction(action,encodedId){
  }catch(err){notify(err.message,'error');log('upgrade-action','FAILED',err.message);}
 }
 
-const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'Village inventory',items:'Magic Items & ores',pass:'Season Pass prizes',insights:'JSON insights & helpers',upgrades:'Upgrade database',guides:'Strategy guides',scan:'Scan resources',sync:'GitHub & backups',testing:'Testing & diagnostics'};
+const titles={overview:'Village overview',roadmap:'Upgrade roadmap',inventory:'Village inventory',items:'Magic Items & ores',pass:'Season Pass prizes',insights:'JSON insights & helpers',upgrades:'Upgrade database',guides:'Strategy guides',layouts:'Base layouts',scan:'Scan resources',sync:'GitHub & backups',testing:'Testing & diagnostics'};
 function render() {
  for(const b of document.querySelectorAll('[data-tab]'))b.classList.toggle('active',b.dataset.tab===view);
  el('section-title').textContent=titles[view];el('player-tag').textContent=state.playerTag;
@@ -444,7 +446,7 @@ function render() {
  const bh=state.export?.buildings2?.find(b=>b.data===1000034)?.lvl||'—';
  el('village-subtitle').textContent='TOWN HALL '+th+' · BUILDER HALL '+bh;
  if(stopResourceScanner){stopResourceScanner();stopResourceScanner=null;}
- el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter,editingRewardId),insights:()=>renderInsights(state),upgrades:()=>renderUpgradeDirectory(state),guides:()=>renderStrategyGuides(state),scan:()=>renderResourceScanner(state),sync:renderSync,testing:renderTesting}[view])();
+ el('main').innerHTML=({overview:renderOverview,roadmap:renderRoadmap,inventory:renderInventory,items:renderItems,pass:()=>renderPassRewards(state,passFilter,editingRewardId),insights:()=>renderInsights(state),upgrades:()=>renderUpgradeDirectory(state),guides:()=>renderStrategyGuides(state),layouts:()=>renderBaseLayouts(state),scan:()=>renderResourceScanner(state),sync:renderSync,testing:renderTesting}[view])();
  if(view==='scan')stopResourceScanner=mountResourceScanner(el('main').querySelector('.resource-scanner'),state,(tag,resources)=>{
    if(state.playerTag!==tag||bundle.activeProfileId!==tag)throw Error('The active village changed. Nothing saved; reopen the scanner.');
    for(const [key,value] of Object.entries(resources))state.resources[key]=value;
@@ -492,8 +494,20 @@ function changeAction(e){
  if(t.dataset.test!==undefined){manualTests[t.dataset.test]=t.checked;localStorage.setItem(TESTS,JSON.stringify(manualTests));log('guided-test','MANUAL',t.dataset.test+' '+(t.checked?'checked':'unchecked'));}
 }
 function clickAction(e){
- const target=e.target.closest('[data-command-worker],[data-command-next],[data-command-lane],[data-command-structure],[data-action],[data-filter],[data-category],[data-open-task],[data-open-record],[data-open-inventory],[data-inventory-mode],[data-pass-filter],[data-pass-toggle],[data-edit-reward]');
+ const target=e.target.closest('[data-command-worker],[data-command-next],[data-command-lane],[data-command-structure],[data-action],[data-filter],[data-category],[data-open-task],[data-open-record],[data-open-inventory],[data-inventory-mode],[data-pass-filter],[data-pass-toggle],[data-edit-reward],[data-layout-copy]');
  if(!target)return;
+ if(target.dataset.layoutCopy){
+  const choice=chosenLayout(state,target.dataset.layoutCopy);
+  if(!choice){notify('This layout is no longer available for the selected hall level.','warn');return;}
+  if(!navigator.clipboard?.writeText){
+   window.prompt('Copy this official Clash of Clans link:',choice.url);
+   return;
+  }
+  navigator.clipboard.writeText(choice.url)
+   .then(()=>{log('layout-link-copy','OK',choice.id);notify('Copied '+choice.title+' link. Open it on your playing device to import.');})
+   .catch(()=>{log('layout-link-copy','FAILED',choice.id);window.prompt('Copy this layout link:',choice.url);});
+  return;
+ }
  if(target.dataset.commandWorker){openCommandDetail('worker:'+target.dataset.commandWorker);return;}
  if(target.dataset.commandNext){openCommandDetail('lane:'+target.dataset.commandNext);return;}
  if(target.dataset.commandLane){openCommandDetail('lane:'+target.dataset.commandLane);return;}
@@ -511,6 +525,7 @@ function clickAction(e){
  if(action==='scan-resources'){view='scan';render();return;}
  if(action==='go-upgrades'){view='upgrades';render();return;}
  if(action==='go-guides'){view='guides';render();return;}
+ if(action==='go-layouts'){view='layouts';render();return;}
  if(action==='jump-assistants'){
   const section=el('vc-assistants');
   section?.scrollIntoView({block:'start',behavior:'smooth'});
