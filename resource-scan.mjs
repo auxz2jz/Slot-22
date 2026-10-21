@@ -2,7 +2,7 @@
 // saved in localStorage, GitHub, or sent to the planner's backend (there is none).
 // Open-source Tesseract.js (Apache 2.0) is loaded on demand via an external CDN.
 // OCR must always be reviewed and explicitly confirmed before balances change.
-import {SCAN_FIELDS,numberText,extractCounterCandidates,suggestCounters,suggestOneCounter,validateResourceUpdates} from './resource-ocr.mjs';
+import {SCAN_FIELDS,numberText,extractCounterCandidates,suggestCounters,suggestOneCounter,agreeSingleCounter,validateResourceUpdates} from './resource-ocr.mjs';
 import {CROP_PRESETS,normalizeCrop,draggedCrop,movedCrop,sizedCrop,cropPixels} from './resource-crop.mjs';
 import {homeHudRects,whiteTextPixels} from './resource-hud.mjs';
 
@@ -284,18 +284,36 @@ export function mountResourceScanner(panel,profile,onCommit){
     for(const row of rows){
      const label=SCAN_FIELDS.home.find(([key])=>key===row.key)?.[1]||row.key;
      tell(kind,'Reading '+label+' separately from its resource bar…');
-     await worker.setParameters({tessedit_pageseg_mode:'7',tessedit_char_whitelist:'0123456789'});
+     // Gold uses game-styled, outlined digits. Single-line PSM 7 can omit or
+     // misread them; word PSM 8 treats the isolated group as one number.
+     await worker.setParameters({tessedit_pageseg_mode:row.key==='gold'?'8':'7',
+      tessedit_char_whitelist:'0123456789'});
      const one=section.querySelector('[data-scan-auto-canvas="'+row.key+'"]');
      croppedCanvas(one,selectedImage.image,row.rect,row.filter);
      const data=await worker.recognize(one);
      if(disposed||loaded.get(kind)!==selectedImage)return;
      const text=data?.data?.text||'';
-     rawParts.push(label+': '+(text.trim()||'(unreadable)'));
-     const guess=suggestOneCounter(extractCounterCandidates(text),kind,row.key);
+     let guess;
+     if(row.key==='gold'){
+      // Cross-check against an independently preprocessed image. If the two
+      // readings disagree, leave Gold unselected rather than saving a guess.
+      const normal=document.createElement('canvas');
+      croppedCanvas(normal,selectedImage.image,row.rect,'normal');
+      const second=await worker.recognize(normal);
+      if(disposed||loaded.get(kind)!==selectedImage)return;
+      const other=second?.data?.text||'';
+      rawParts.push('Gold bright: '+(text.trim()||'(unreadable)')+
+       ' | Gold original: '+(other.trim()||'(unreadable)'));
+      guess=agreeSingleCounter(text,other,kind,row.key);
+     }else{
+      rawParts.push(label+': '+(text.trim()||'(unreadable)'));
+      guess=suggestOneCounter(extractCounterCandidates(text),kind,row.key);
+     }
      if(guess.proposed[row.key]){
       proposed[row.key]=guess.proposed[row.key];
       candidates.push({...guess.proposed[row.key],label:row.key});
-     }else issues.push(label+' unreadable or ambiguous. Crop this number manually, or enter it by hand.');
+     }else issues.push(guess.issues.length?guess.issues.join(' '):
+       label+' unreadable or ambiguous. Crop this number manually, or enter it by hand.');
     }
     const previews=section.querySelector('[data-scan-auto-previews]');
     if(previews)previews.hidden=false;
@@ -311,7 +329,8 @@ export function mountResourceScanner(panel,profile,onCommit){
      ' Home counters proposed. Inspect the four exact OCR crops and compare every digit. No amount has been saved. '+issues.join(' '));
    }else{
     const target=section.querySelector('[data-scan-target]').value;
-    await worker.setParameters({tessedit_pageseg_mode:target==='stack'?'11':'7',
+    await worker.setParameters({// A single cropped Gold word needs PSM 8 rather than PSM 7.
+      tessedit_pageseg_mode:target==='stack'?'11':kind==='home'&&target==='gold'?'8':'7',
       tessedit_char_whitelist:target==='stack'?'':'0123456789'});
     const canvas=section.querySelector('[data-scan-crop]');
     updateCrop(kind);

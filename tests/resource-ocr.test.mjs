@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {SCAN_FIELDS,parseCounterAmount,extractCounterCandidates,suggestCounters,suggestOneCounter,validateResourceUpdates} from '../resource-ocr.mjs';
+import {SCAN_FIELDS,parseCounterAmount,extractCounterCandidates,suggestCounters,suggestOneCounter,agreeSingleCounter,validateResourceUpdates} from '../resource-ocr.mjs';
 
 test('read whole numbers with normal commas, spaces and periods',()=>{
  for(const variant of ['19,000,000','19.000.000','19 000 000','19000000']){
@@ -78,4 +78,23 @@ test('one-counter selection assigns only its chosen resource with a single clean
  const rounded=suggestOneCounter(extractCounterCandidates('19M'),'home','gold');
  assert.equal(rounded.proposed.gold.approximate,true);
  assert.ok(rounded.issues.some(x=>x.includes('rounded')));
+});
+
+test('Gold cross-check proposes only matching complete OCR digits',()=>{
+ const good=agreeSingleCounter('19 000 000','19000000','home','gold');
+ assert.deepEqual(Object.keys(good.proposed),['gold']);
+ assert.equal(good.proposed.gold.value,19000000);
+ assert.equal(good.proposed.gold.method,'cross-checked-ocr');
+ for(const [first,second] of [
+  ['13 000 000','19 000 000'],
+  ['19000000',''],
+  ['19 000 000','oops'],
+  ['Gold: 19 000 000','Elixir: 19 000 000'],
+  ['19000000\\n123','19000000']
+ ]){
+  const r=agreeSingleCounter(first,second,'home','gold');
+  assert.deepEqual(r.proposed,{},first+' vs '+second);
+  assert.ok(r.issues.length>0);
+ }
+ assert.deepEqual(agreeSingleCounter('19M','19M','home','gold').proposed.gold.approximate,true);
 });

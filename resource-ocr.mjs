@@ -98,6 +98,23 @@ export function suggestOneCounter(candidates,mode,key){
  if(rows.some(r=>r.approximate))issues.push('K/M/B values are rounded and must be explicitly accepted.');
  return {proposed,issues,candidates:rows};
 }
+// Two independent views of a large stylized counter must agree before it is
+// proposed. This prevents a confident-but-wrong Gold value from being selected.
+export function agreeSingleCounter(rawPrimary,rawCrosscheck,mode,key){
+ const primary=suggestOneCounter(extractCounterCandidates(rawPrimary),mode,key);
+ const cross=suggestOneCounter(extractCounterCandidates(rawCrosscheck),mode,key);
+ const a=primary.proposed[key],b=cross.proposed[key];
+ const candidates=[...primary.candidates];
+ if(!a||!b)return {proposed:{},candidates,issues:[
+  'Two readable '+key+' results are required. Inspect the crop and enter the amount manually if necessary.'
+ ]};
+ if(a.value!==b.value||a.approximate!==b.approximate)
+  return {proposed:{},candidates,issues:[
+   'Conflicting '+key+' OCR readings ('+a.display+' versus '+b.display+'). Check the image and enter the correct amount.'
+  ]};
+ const issues=a.approximate?['K/M/B is a rounded reading and requires explicit acceptance.']:[];
+ return {proposed:{[key]:{...a,method:'cross-checked-ocr'}},candidates,issues};
+}
 // Validate all requested changes together, without mutating the user's data.
 // A checked field with no valid value aborts, rather than being saved as zero.
 export function validateResourceUpdates(profile,updates){
