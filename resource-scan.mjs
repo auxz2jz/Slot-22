@@ -1,14 +1,19 @@
 // Phone-friendly local screenshot scanner. Image bytes and OCR text are never
 // saved in localStorage, GitHub, or sent to the planner's backend (there is none).
-// Open-source Tesseract.js (Apache 2.0) is loaded on demand via an external CDN.
+// Open-source Tesseract.js (Apache 2.0) is loaded on demand from versioned local files.
 // OCR must always be reviewed and explicitly confirmed before balances change.
 import {SCAN_FIELDS,numberText,extractCounterCandidates,suggestCounters,suggestOneCounter,agreeSingleCounter,validateResourceUpdates} from './resource-ocr.mjs';
 import {CROP_PRESETS,normalizeCrop,draggedCrop,movedCrop,sizedCrop,cropPixels} from './resource-crop.mjs';
 import {homeHudRects,whiteTextPixels} from './resource-hud.mjs';
 
-const SCRIPT_URL='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
-const WORKER_URL='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js';
-const LANGUAGE_URL='https://tessdata.projectnaptha.com/4.0.0';
+// Use the browser application's own origin for OCR, including the worker, WASM
+// builds, and language file. This prevents a CDN dependency and permits offline
+// scanning after the service worker has cached the v33 assets.
+const OCR_ASSETS=new URL('./vendor/ocr/',import.meta.url);
+const SCRIPT_URL=new URL('tesseract.min.js',OCR_ASSETS).href;
+const WORKER_URL=new URL('worker.min.js',OCR_ASSETS).href;
+const LANGUAGE_URL=new URL('lang',OCR_ASSETS).href;
+const CORE_URL=new URL('core',OCR_ASSETS).href;
 const fmt=n=>numberText(Number.isFinite(n)?n:0);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const CROP_PREF_KEY='slot22-resource-crop-layout-v1';
@@ -45,7 +50,7 @@ async function ocrEngine(){
    script.src=SCRIPT_URL;script.async=true;script.crossOrigin='anonymous';
    script.onload=()=>globalThis.Tesseract?.createWorker?
      resolve(globalThis.Tesseract):reject(Error('OCR engine loaded without createWorker.'));
-   script.onerror=()=>reject(Error('Could not load the OCR engine. Check your internet connection or browser privacy settings.'));
+   script.onerror=()=>reject(Error('Could not load the local OCR engine files. Reopen the app online once and retry.'));
    document.head.append(script);
   }).catch(e=>{scriptPromise=null;throw e});
  }
@@ -102,7 +107,7 @@ export function renderResourceScanner(profile){
    '<p>Take a screenshot in each village, then choose it here. The scanner reads the upper-right counters on your phone. '+
    'For the Home Village, try Auto-read first: it examines each upper-right counter separately. You can also draw or resize a box and scan one number at a time.</p>'+
    '<p class="smallmuted">Your images are processed inside your browser, never saved in your planner or sent to GitHub. '+
-   'The open-source OCR engine downloads on first use, so an internet connection is needed. '+
+   'The open-source OCR engine is supplied with this app. Open the app online once to cache its files for offline use. '+
    'OCR can misread digits or rounded amounts. You always approve edits first.</p>'+
    '<p class="smallmuted">Current selected account: <strong>'+esc(profile?.displayName||profile?.playerTag||'Unknown')+
    ' ('+esc(profile?.playerTag||'')+')</strong>. Gems are shared between villages; if both screenshots differ, choose only one Gems entry.</p>'+
@@ -269,12 +274,12 @@ export function mountResourceScanner(panel,profile,onCommit){
   const selectedImage=loaded.get(kind);
   busy=true;
   panel.querySelectorAll('[data-scan-read],[data-scan-auto]').forEach(b=>b.disabled=true);
-  tell(kind,'Preparing OCR. The first scan may take a minute while language data downloads…');
+  tell(kind,'Preparing the local OCR engine and English model…');
   try{
    const engine=await ocrEngine();
    if(disposed||loaded.get(kind)!==selectedImage)return;
    if(!worker)worker=await engine.createWorker('eng',1,{
-    workerPath:WORKER_URL,langPath:LANGUAGE_URL,
+    workerPath:WORKER_URL,langPath:LANGUAGE_URL,corePath:CORE_URL,workerBlobURL:false,
     logger:e=>{if(e.status==='recognizing text')tell(kind,'Reading resource numbers: '+Math.round((e.progress||0)*100)+'%');}
    });
    if(disposed||loaded.get(kind)!==selectedImage)return;

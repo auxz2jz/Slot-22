@@ -257,3 +257,11 @@ All positions and recommendations are defined in pass-rewards.mjs and claim reco
 - [x] S22-112e–f: pure tests cover each Hall and photo/code pairing, incorrect links, current-account isolation, beginner guards; Chrome browser checks TH18/BH10 browsing and no stored state writes.
 - [ ] S22-112g: GitHub CI, browser and live screenshot OCR regression, Pages deployment and Samsung opening/preview acceptance (external link can still fail or be unsupported in game). Prior source public profiles and any unsynced phone resources unchanged.
 - Supported external game handoff is layout-specific; no independently verified public link opens the Barracks upgrade directly. In-game Build menu can be described, not automatically controlled. Match base selections to goals but never claim "best" is proven.
+
+
+## October 24 — v33 bundled local OCR release candidate (S22-117)
+- [x] S22-117a: point `resource-scan.mjs` to already vendored Tesseract.js 6.0.1, local worker, all four adaptive WASM core variants and English `eng.traineddata.gz`; no external OCR CDNs required. Do not change recognition semantics or automatic save protections.
+- [x] S22-117b: cache the browser OCR assets under separate `slot22-static-v33` and version HTML/CSS/app links. Remove no-longer-needed OCR CDN script/connect CSP grants. Existing game/profile data remains untouched.
+- [x] S22-117c: extend real-Chrome OCR job trigger and require observed local Tesseract script load with no CDN requests. Initial PR #6 commit `fd850439` passed Verify static web app, Browser startup smoke, and Live screenshot OCR browser check (synthetic image, not Samsung).
+- [ ] S22-117d: after final doc commits, verify current PR checks, merge only when green, then verify push workflows and GitHub Pages v33 publication. On Android run guided Home/Builder screenshot and optionally offline acceptance separately; do not claim user verification from CI.
+- Preserve `data/player-state.json` and both profiles. Offline recognition depends on successful cache installation and adequate browser storage; if unsupported, show a correct error rather than changing resources.
