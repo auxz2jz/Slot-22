@@ -70,10 +70,18 @@ export function inventoryUpgradeRows(profile){
       finite(entry?.s)?entry.s:null;
    const actualSeconds=finite(seconds)?seconds*factor:null;
    const ore=entry?.ore?.some(v=>v>0)?entry.ore:null;
-   const affordability=ore?
-     ['shiny','glowy','starry'].every((key,i)=>finite(profile.resources?.[key])&&profile.resources[key]>=ore[i]):
-     finite(cost)&&cost>0&&finite(profile.resources?.[rawCurrency])?
-     profile.resources[rawCurrency]>=cost:null;
+   const oreKeys=['shiny','glowy','starry'];
+   const knownCost=ore?ore.some(v=>v>0):finite(cost)&&cost>0&&!!rawCurrency;
+   const knownBalance=ore?oreKeys.every(key=>finite(profile.resources?.[key])):
+     !!rawCurrency&&finite(profile.resources?.[rawCurrency]);
+   const affordability=!knownCost||!knownBalance?null:ore?
+     ore.every((n,i)=>profile.resources[oreKeys[i]]>=n):
+     profile.resources[rawCurrency]>=cost;
+   const requiredResources=ore?Object.fromEntries(oreKeys.map((k,i)=>[k,ore[i]||0])):
+     knownCost?{[rawCurrency]:cost}:{};
+   const resourceShortage=!knownCost||!knownBalance?null:Object.fromEntries(
+     Object.entries(requiredResources).filter(([key,amount])=>amount>profile.resources[key])
+      .map(([key,amount])=>[key,amount-profile.resources[key]]));
    const status=working?'working':!ref?'unknown':!entry?'catalog-max':
     blocked.length?'locked':'ready';
    const name=labelFor(row.data);
@@ -86,7 +94,8 @@ export function inventoryUpgradeRows(profile){
     level,target,count:row.cnt||1,status,blocked,working,photo,
     totalSeconds:actualSeconds,estimatedFinish:working&&finite(x.timestamp)?
        (x.timestamp+row.timer)*1000:null,
-    priceText,affordability,
+    priceText,affordability,knownCost,knownBalance,requiredResources,
+    resourceShortage,currency:rawCurrency,cost,oreCosts:ore,
     boosted:factor!==1,source:manual?.price>0?'game quote':entry?'MIT reference':'unavailable',
     supercharges:ref?.superchargeLevels?.length||0});
   }
