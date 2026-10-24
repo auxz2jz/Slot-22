@@ -1,0 +1,57 @@
+name: Vendor local screenshot OCR runtime
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vendor-ocr.yml'
+permissions:
+  contents: write
+concurrency:
+  group: vendor-ocr-runtime
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download pinned upstream MIT and Apache software
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p vendor/ocr/core vendor/ocr/lang
+          mkdir -p /tmp/slot22-ocr-packages
+          cd /tmp/slot22-ocr-packages
+          npm pack 'tesseract.js@6.0.1' --silent
+          npm pack 'tesseract.js-core@6.0.0' --silent
+          mkdir -p tesseract tesseract-core
+          tar xzf tesseract.js-6.0.1.tgz -C tesseract --strip-components=1
+          tar xzf tesseract.js-core-6.0.0.tgz -C tesseract-core --strip-components=1
+          cp tesseract/dist/tesseract.min.js "$GITHUB_WORKSPACE/vendor/ocr/"
+          cp tesseract/dist/worker.min.js "$GITHUB_WORKSPACE/vendor/ocr/"
+          cp tesseract-core/tesseract-core*.wasm.js "$GITHUB_WORKSPACE/vendor/ocr/core/"
+          cp tesseract-core/tesseract-core*.wasm "$GITHUB_WORKSPACE/vendor/ocr/core/"
+          cp tesseract/LICENSE.md "$GITHUB_WORKSPACE/vendor/ocr/TESSERACT_LICENSE.md" 2>/dev/null || cp tesseract/LICENSE "$GITHUB_WORKSPACE/vendor/ocr/TESSERACT_LICENSE.md"
+          cp tesseract-core/LICENSE "$GITHUB_WORKSPACE/vendor/ocr/TESSERACT_CORE_LICENSE" 2>/dev/null || true
+          curl --fail --location --retry 3 \
+            https://tessdata.projectnaptha.com/4.0.0_fast/eng.traineddata.gz \
+            --output "$GITHUB_WORKSPACE/vendor/ocr/lang/eng.traineddata.gz"
+          test -s "$GITHUB_WORKSPACE/vendor/ocr/lang/eng.traineddata.gz"
+          ls -lh "$GITHUB_WORKSPACE/vendor/ocr/" "$GITHUB_WORKSPACE/vendor/ocr/core/" "$GITHUB_WORKSPACE/vendor/ocr/lang/"
+      - name: Commit OCR runtime only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add vendor/ocr/
+          if git diff --cached --quiet; then
+            echo "OCR runtime already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "vendor: pin local Tesseract browser OCR runtime and fast English model"
+          git push origin HEAD:main
