@@ -82,7 +82,7 @@ test('assistant cards show actual recorded cooldowns without claiming readiness 
  assert.match(html,/Repeat target: Freeze Spell/);
  assert.match(html,/Use today unconfirmed/);
  assert.match(html,/Current task not reported/);
- assert.match(html,/Next:<\/b> Gold, Elixir or Dark Elixir conversion/);
+ assert.match(html,/Next use:<\/b> Gold, Elixir or Dark Elixir conversion/);
  const labDetail=renderVisualWorkerDetail(p,'worker:helper:93000001',commandOverview(p),snapshot*1000);
  assert.match(labDetail,/Freeze Spell/);
  assert.match(labDetail,/cooldown end:/i);
