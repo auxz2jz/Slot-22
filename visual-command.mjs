@@ -6,6 +6,7 @@ import {labelFor} from './catalog.mjs';
 import {helperSummary} from './snapshot-insights.mjs';
 import {helperActionRecommendations} from './helper-advice.mjs';
 import {inventoryUpgradeRows} from './upgrade-directory.mjs';
+import {laneResourceRecommendations,facilityResourceRecommendations,describeCost,describeShortage,helperResourceAdvice} from './resource-recommendations.mjs';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const timed=r=>Number.isFinite(r?.timer)&&r.timer>=0;
@@ -55,15 +56,33 @@ export function visualWorkforce(profile,overview,now=Date.now()){
   kind,slot:i+1,job:jobs[i]||null,next:next[i]||null
  }));
  const helpers=helperSummary(x),advice=helperActionRecommendations(profile);
+ const recommendations=laneResourceRecommendations(profile,overview);
+ const withChoices=(slots,lane)=>slots.map((slot,i)=>({
+  ...slot,priorityUpgrade:recommendations[lane].ideal[i]||null,
+  affordableUpgrade:recommendations[lane].allocated[i]||null
+ }));
  return {snapshotAt:x.timestamp*1000,
-  home:createSlots(homeCount,homeJobs,homeNext,'home'),
-  builder:createSlots(Math.max(2,Math.min(builderJobs.length,2)),builderJobs,builderNext,'builder'),
-  homeExtra:homeJobs.slice(homeCount),builderExtra:builderJobs.slice(2),
+  home:withChoices(createSlots(homeCount,homeJobs,homeNext,'home'),'homeBuilders'),
+  builder:withChoices(createSlots(Math.max(2,Math.min(builderJobs.length,2)),builderJobs,builderNext,'builder'),'builderBuilders'),
+  recommendations,homeExtra:homeJobs.slice(homeCount),builderExtra:builderJobs.slice(2),
   helpers:helpers.map(h=>({...h,advice:advice.find(a=>a.id===h.id)}))
  };
 }
 const jobTitle=job=>job?job.name+' '+job.lvl+' → '+(job.lvl+1):'No active job reported';
-function jobCard(slot,now){
+function upgradeChoice(kind,item,profile){
+ const label=kind==='priority'?'Recommended next':'Fits saved resources';
+ if(!item)return '<span class="vc-choice vc-choice-'+kind+'"><small>'+label+'</small>'+
+   '<span class="vc-choice-name">No verified '+(kind==='priority'?'eligible':'affordable')+' upgrade</span>'+
+   '<small>'+(kind==='priority'?'Import fresh JSON or check level requirements':'Check or scan your balances')+'</small></span>';
+ const picture=img(item.group,item.name,item.level,'⚒');
+ return '<span class="vc-choice vc-choice-'+kind+'"><small>'+label+'</small>'+
+  '<span class="vc-choice-main">'+picture+'<span><b>'+esc(item.title)+'</b>'+
+  '<small>'+esc(describeCost(item))+'</small></span></span>'+
+  (kind==='priority'&&!item.affordability?'<small class="vc-shortage">'+esc(describeShortage(item,profile.resources))+'</small>':'')+
+  '</span>';
+}
+
+function jobCard(slot,profile,now){
  const j=slot.job,base=slot.kind==='home'?'Builder':'Base slot';
  const pic=j?img(j.category,j.name,j.lvl):img(slot.kind==='home'?'buildings':'buildings2',
    slot.kind==='home'?"Builder’s Hut":'Builder Hall',slot.kind==='home'?2:9);
@@ -73,7 +92,8 @@ function jobCard(slot,now){
   (j?liveBar(j.start,j.end,now,'Tracked since first observed')+
     '<span class="vc-eta" data-timer-end="'+j.end+'">'+esc(j.remaining)+'</span>':
     '<span class="vc-eta">No timed construction at export</span>')+
-  '<span class="vc-next"><b>Next:</b> '+esc(slot.next?.title||'Check available upgrades')+'</span>'+
+  upgradeChoice('priority',slot.priorityUpgrade,profile)+
+  upgradeChoice('affordable',slot.affordableUpgrade,profile)+
   '</button>';
 }
 const helperIcons={93000000:'🛠️',93000001:'🧪',93000002:'⚖️',93000003:'💎'};
@@ -92,7 +112,8 @@ function assistantCard(h,now,snapshotAt){
  (hasCooldown?liveBar(pctStart,h.snapshotEnd,now,'Recorded helper cooldown')+
    '<span class="vc-eta" data-helper-cooldown-end="'+h.snapshotEnd+'">'+esc(remaining(h.snapshotEnd,now))+'</span>':
    '<span class="vc-eta">Check Helper Hut for availability</span>')+
- '<span class="vc-next"><b>Next:</b> '+esc(suggested)+'</span></button>';
+ '<span class="vc-next"><b>Next use:</b> '+esc(suggested)+'</span>'+
+ '<span class="vc-resource-note">'+esc(helperResourceAdvice(h))+'</span></button>';
 }
 const laneIcons={
  homeLab:['buildings','Laboratory',12,'⚗️'],
@@ -100,7 +121,7 @@ const laneIcons={
  pets:['buildings','Pet House',3,'🐾'],
  equipment:['buildings','Blacksmith',6,'⚒']
 };
-function researchCard(profile,q,now){
+function researchCard(profile,q,now,rec){
  const x=profile.export;
  const job=currentJobs(profile,q.id==='homeLab'?['spells','units','siege_machines']:
   q.id==='starLab'?['units2']:q.id==='pets'?['pets']:[],now)[0]||null;
@@ -114,7 +135,9 @@ function researchCard(profile,q,now){
  (job?liveBar(job.start,job.end,now,'Tracked since first observed')+
  '<span class="vc-eta" data-timer-end="'+job.end+'">'+esc(job.remaining)+'</span>':
  '<span class="vc-eta">'+(q.id==='equipment'?'Instant when upgraded':'No timed research in last export')+'</span>')+
- '<span class="vc-next"><b>Next:</b> '+esc(q.nextTitle)+'</span></button>';
+ upgradeChoice('priority',rec?.best||null,profile)+
+  upgradeChoice('affordable',rec?.affordable||null,profile)+
+  '</button>';
 }
 const section=(name,id,content,subtitle='')=>
  '<section class="vc-section"'+(id==='assistants'?' id="vc-assistants" tabindex="-1"':'')+'><header><div><h3>'+esc(name)+'</h3>'+
@@ -125,16 +148,16 @@ export function renderVisualCommand(profile,overview,now=Date.now()){
  if(!v)return '';
  const queue=id=>overview.queueStates.find(q=>q.id===id);
  const home=section('Home builders · Heroes use builders','homeBuilders',
-  '<div class="vc-worker-grid">'+v.home.map(s=>jobCard(s,now)).join('')+'</div>',
+  '<div class="vc-worker-grid">'+v.home.map(s=>jobCard(s,profile,now)).join('')+'</div>',
   v.home.length+' tracked builder huts · slot numbers are not game identities');
  const builder=section('Builder Base construction','builderBuilders',
-  '<div class="vc-worker-grid">'+v.builder.map(s=>jobCard(s,now)).join('')+'</div>',
+  '<div class="vc-worker-grid">'+v.builder.map(s=>jobCard(s,profile,now)).join('')+'</div>',
   'Builder slot numbers are display positions');
  const helpers=section('Helper Hut · four assistants','assistants',
   '<div class="vc-worker-grid">'+v.helpers.map(h=>assistantCard(h,now,v.snapshotAt)).join('')+'</div>',
   'Individual availability must be confirmed in game');
  const research=section('Independent upgrades',null,
-  '<div class="vc-worker-grid">'+['homeLab','starLab','pets','equipment'].map(id=>researchCard(profile,queue(id),now)).join('')+'</div>',
+  '<div class="vc-worker-grid">'+['homeLab','starLab','pets','equipment'].map(id=>researchCard(profile,queue(id),now,v.recommendations[id])).join('')+'</div>',
   'No construction builder needed · Heroes use the Home builders above');
  const next=['homeBuilders','builderBuilders','homeLab','starLab','pets','equipment'].map(id=>queue(id))
   .filter(Boolean).map(q=>'<button class="vc-next-item" type="button" data-command-next="'+q.id+'">'+
