@@ -1,4 +1,4 @@
-// Optional connected smoke test of the REAL third-party OCR worker on GitHub
+// Connected smoke test of the REAL repository-bundled OCR worker on GitHub
 // runners, using a synthetic screenshot. No personal screenshot is uploaded.
 import {spawn} from 'node:child_process';
 import {setTimeout as delay} from 'node:timers/promises';
@@ -23,10 +23,14 @@ try{
  await new Promise((ok,fail)=>{ws.addEventListener('open',ok,{once:true});
    ws.addEventListener('error',fail,{once:true});});
  let seq=0;
- const waiting=new Map(),issues=[];
+ const waiting=new Map(),issues=[],ocrAssetRequests=[];
  ws.addEventListener('message',e=>{
   const m=JSON.parse(String(e.data));
   if(waiting.has(m.id)){waiting.get(m.id)(m);waiting.delete(m.id)}
+  if(m.method==='Network.requestWillBeSent'){
+   const url=m.params?.request?.url||'';
+   if(/tesseract|traineddata|jsdelivr|tessdata|\.wasm/i.test(url))ocrAssetRequests.push(url);
+  }
   if(m.method==='Runtime.exceptionThrown'||m.method==='Log.entryAdded'){
    const details=JSON.stringify(m.params);
    if(/tesseract|webassembly|worker|script|network|refused|blocked|exception/i.test(details))
@@ -36,7 +40,7 @@ try{
  const cmd=(method,params={})=>new Promise(resolve=>{
   const id=++seq;waiting.set(id,resolve);ws.send(JSON.stringify({id,method,params}));
  });
- await cmd('Runtime.enable');await cmd('Log.enable');await cmd('Page.enable');
+ await cmd('Runtime.enable');await cmd('Log.enable');await cmd('Network.enable');await cmd('Page.enable');
  await cmd('Page.navigate',{url:'http://127.0.0.1:8765/index.html'});
  await delay(3500);
  const expr=`(async()=>{
@@ -81,6 +85,11 @@ try{
  if(!last||last?.message.startsWith('OCR failed')||!last?.recognized?.trim())
   throw Error('Live browser OCR failed: '+JSON.stringify(last));
  if(last.stored)throw Error('OCR changed resources without user confirmation.');
+ if(!ocrAssetRequests.some(url=>url.startsWith('http://127.0.0.1:8765/vendor/ocr/tesseract.min.js')))
+  throw Error('Scanner did not load the bundled OCR script: '+JSON.stringify(ocrAssetRequests));
+ if(ocrAssetRequests.some(url=>/cdn\.jsdelivr\.net|tessdata\.projectnaptha\.com/i.test(url)))
+  throw Error('OCR unexpectedly fetched a third-party CDN: '+JSON.stringify(ocrAssetRequests));
+ console.log('LOCAL OCR ASSET REQUESTS:',ocrAssetRequests);
  const expected=['19,000,000','17,504,427','408,530','4,049'];
  if(last.selected!==4||JSON.stringify(last.numbers)!==JSON.stringify(expected))
   throw Error('OCR did not identify each synthetic counter correctly: '+JSON.stringify(last));
